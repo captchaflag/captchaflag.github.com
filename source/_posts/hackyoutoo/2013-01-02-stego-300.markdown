@@ -1,0 +1,98 @@
+---
+layout: post
+title: "Hack You Too - Stego 300"
+date: 2013-01-02 18:53
+comments: true
+categories: [stego, jpeg, mp3]
+author: stacks0n
+---
+
+## Challenge
+What can be hidden here?
+
+File: [stego_300.jpg](http://hackyou.ctf.su/files/stego_300.jpg)
+
+## Analysis
+Let's see about any hidden or appended data:
+```
+root@bt:~/Desktop# stegdetect stego_300.jpg 
+stego_300.jpg : skipped (false positive likely) appended(1827)<[nonrandom][data][Rar!.....s......]> 
+```
+
+Okay, looks like a RAR file might be appended to the end of the image.
+```
+stacks0n@stacks0n-MacBook-Pro:~/Desktop> binwalk stego_300.jpg                           
+
+DECIMAL         HEX             DESCRIPTION
+-------------------------------------------------------------------------------------------------------
+112861          0x1B8DD         RAR archive data [NSRL|RAR]
+443990          0x6C656         7-zip archive data, version 0.3
+
+stacks0n@stacks0n-MacBook-Pro:~/Desktop> dd if=stego_300.jpg bs=1 skip=112861 of=stego300.rar
+```
+
+Sure enough. When extracting stego300.rar we see two files:
+```
+root@bt:~/Desktop# unrar l stego300.rar 
+
+UNRAR 3.90 beta 2 freeware      Copyright (c) 1993-2009 Alexander Roshal
+
+Archive stego300.rar
+
+ Name             Size   Packed Ratio  Date   Time     Attr      CRC   Meth Ver
+-------------------------------------------------------------------------------
+ DO_NOT_LOOKING_HERE.mp3   331005   331005 100% 04-12-12 21:21  ...H.A.   CDBAD2DD m0d 2.0
+ Flag.7z           198      198 100% 04-12-12 22:18  .....A.   EC3A9712 m0b 2.9
+-------------------------------------------------------------------------------
+    2           331203   331203 100%
+```
+* DO_NOT_LOOKING_HERE.mp3 is a clip from Suzanne Vega's "Tom's Diner"
+* Flag.7z is password protected
+
+Next step is to look into mp3 steganography, which likely contains the passphrase to extract the flag. Looking around I find [MP3Stego](http://www.petitcolas.net/fabien/steganography/mp3stego/) tools which should help. When running, it requires a passphrase so let's try the text on the original image 'MUSTNOTHACK'
+
+```
+C:\Users\stacks0n\Desktop> Decode.exe -P MUSTNOTHACK -X DO_NOT_LOOKING_HERE.mp3
+MP3StegoEncoder 1.1.17
+See README file for copyright info
+Input file = 'DO_NOT_LOOKING_HERE.mp3'  output file = 'DO_NOT_LOOKING_HERE.mp3.pcm'
+Will attempt to extract hidden information. Output: DO_NOT_LOOKING_HERE.mp3.txt
+the bit stream file DO_NOT_LOOKING_HERE.mp3 is a BINARY file
+HDR: s=FFF, id=1, l=3, ep=off, br=9, sf=0, pd=1, pr=0, m=3, js=0, c=0, o=0, e=0
+alg.=MPEG-1, layer=III, tot bitrate=128, sfrq=44.1
+mode=single-ch, sblim=32, jsbd=32, ch=1
+[Frame  791]Avg slots/frame = 417.434; b/smp = 2.90; br = 127.839 kbps
+Decoding of "DO_NOT_LOOKING_HERE.mp3" is finished
+The decoded PCM output file name is "DO_NOT_LOOKING_HERE.mp3.pcm"
+
+C:\Users\stacks0n\Desktop> type DO_NOT_LOOKING_HERE.mp3.txt
+INEVERASKEDABOUTTHIS!
+```
+
+This gives us the passphrase needed to open up Flag.7z.
+
+```
+root@bt:~/Desktop# 7z x Flag.7z 
+
+7-Zip 9.04 beta  Copyright (c) 1999-2009 Igor Pavlov  2009-05-30
+p7zip Version 9.04 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,1 CPU)
+
+Processing archive: Flag.7z
+
+Enter password (will not be echoed) :
+
+Extracting  K3y
+
+Everything is Ok
+
+Size:       13
+Compressed: 198
+ 
+root@bt:~/Desktop# cat K3y 
+VERYEASYSTEGO
+```
+
+## Solution
+```
+VERYEASYSTEGO
+```
