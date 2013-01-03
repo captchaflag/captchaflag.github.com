@@ -1,0 +1,46 @@
+---
+layout: post
+title: "ATAST 2012 - Challenge 11"
+date: 2013-01-02 22:00
+comments: true
+categories: [reversing]
+author: stacks0n
+---
+
+## Analysis
+Reversing challenge. Program calls getuid() and compares against 0x934 before printing token.
+```
+.text:0804852E                 call    _getuid
+.text:08048533                 cmp     eax, 2356
+.text:08048538                 jz      short loc_804855E
+.text:0804853A                 mov     dword ptr [esp], offset s ; "Anuthorized Usage Deteceted "
+.text:08048541                 call    _puts
+.text:08048546                 mov     dword ptr [esp], offset aProgramShuttin ; "PROGRAM SHUTTING DOWN "
+.text:0804854D                 call    _puts
+.text:08048552                 mov     dword ptr [esp], 1 ; status
+.text:08048559                 call    _exit
+.text:0804855E ; ---------------------------------------------------------------------------
+.text:0804855E
+.text:0804855E loc_804855E:                            ; CODE XREF: main+64j
+.text:0804855E                 mov     eax, offset format ; "your token is %s\n"
+.text:08048563                 lea     edx, [esp+32h]
+.text:08048567                 mov     [esp+4], edx
+.text:0804856B                 mov     [esp], eax      ; format
+.text:0804856E                 call    _printf
+```
+Simply change execution and get your flag:
+```
+(gdb) b * 0x08048533
+Breakpoint 1 at 0x8048533
+(gdb) c
+Continuing.
+
+Breakpoint 1, 0x08048533 in main ()
+(gdb) set $eax=0x934
+(gdb) c
+Continuing.
+your token is Y0U_G07_An07h3R_345Y_Fl49
+```
+
+## Solution
+Y0U_G07_An07h3R_345Y_Fl49

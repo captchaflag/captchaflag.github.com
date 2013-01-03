@@ -1,0 +1,62 @@
+---
+layout: post
+title: "ATAST 2012 - Bin 200"
+date: 2013-01-02 21:51
+comments: true
+categories: [bin]
+author: stacks0n
+---
+## Challenge
+hello again,we have a new binary for you, its also password protected and have some kind of protection mechanisms,see if you can get us the pass. here is the [binary](http://ctf.atast-competition.com/ctf/downloads/bin200.zip)
+
+## Analysis
+There is a check to determine whether a debugger is attached. To work around that, we need to break at the beginning of main() and manually set $eip to the block for the success case.
+```
+.text:080485ED loc_80485ED:                            ; CODE XREF: main+Dj
+.text:080485ED                 mov     dword ptr [esp+0Ch], 0
+.text:080485F5                 mov     dword ptr [esp+8], 0
+.text:080485FD                 mov     dword ptr [esp+4], 0
+.text:08048605                 mov     dword ptr [esp], 0 ; request
+.text:0804860C                 call    _ptrace
+.text:08048611                 test    eax, eax
+.text:08048613                 jns     short loc_8048628
+.text:08048615                 mov     dword ptr [esp], offset s ; "Debugger detected!"
+.text:0804861C                 call    _puts
+.text:08048621                 mov     eax, 0
+.text:08048626                 jmp     short locret_804865B
+.text:08048628 ; ---------------------------------------------------------------------------
+.text:08048628
+.text:08048628 loc_8048628:                            ; CODE XREF: main+52j
+.text:08048628                 mov     eax, [ebp+arg_4]
+.text:0804862B                 add     eax, 4
+.text:0804862E                 mov     eax, [eax]
+.text:08048630                 mov     [esp], eax
+.text:08048633                 call    pwd
+```
+
+The code then runs the pwd() function, which first checks that the password is of length 7. Then GeneratePassword() is called to create a password.
+```
+(gdb) b main
+Breakpoint 1 at 0x80485c4
+(gdb) b * 0x0804859c
+Breakpoint 2 at 0x0804859c
+(gdb) run 1234567
+0x080485c4 in main ()
+(gdb) set $eip=0x08048628
+(gdb) continue
+0x0804859c in pwd ()
+(gdb) x /8bx $esp
+0xbffff238:     0xce    0xf4    0xff    0xbf    0x5c    0xf2    0xff    0xbf
+(gdb) x /s 0xbffff4ce
+0xbffff4ce:     "1234567"
+(gdb) x /s 0xbffff25c
+0xbffff25c:     "fspiyrw"
+```
+
+```
+stacks0n@ubuntu:~/Desktop$ ./bin200 fspiyrw
+nice work go ahead validate what you've found
+```
+
+## Solution
+fspiyrw

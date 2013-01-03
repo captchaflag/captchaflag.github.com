@@ -1,0 +1,99 @@
+---
+layout: post
+title: "ATAST 2012 - Challenge 10"
+date: 2013-01-02 21:57
+comments: true
+categories: [reversing]
+author: stacks0n
+---
+
+## Challenge
+hello again.recentely we intercepted a transmission between Our Rival company  and one of their agents.
+the transmission contained two sets of data.
+
+first set was 77.46.113.96.109.110.96.90.62.109.116.107.111.90.65.80.105.94.79.100.106.105.103
+
+and the second set was 
+```
+ZnVuY3Rpb24gZG9fc29tZXRoaW5nKCRzb21ldGhpbmdfdG9fd29ya19vbikNCnsNCiANCiAgICAkaWwgPSBzdHJsZW4oJHNvbWV0aGluZ190b193b3JrX29uKTsNCiAgICAkcmsgPSByYW5kKDEsIDkpOyANCiANCiAgICAkaSA9IDA7DQogICAgd2hpbGUgKCRpIDwgJGlsKQ0KICAgIHsNCiANCiAgICAgICAgJGljWyRpXSA9IChvcmQoJHNvbWV0aGluZ190b193b3JrX29uWyRpXSkgLSAkcmspOw0KIA0KICAgICAgICAkaSsrOyANCiAgICB9DQoNCiAgICAkam9iZG9uZSA9IGltcGxvZGUoJy4nLCAkaWMpIC4gJy4nIC4gKG9yZCgkcmspKzUwKTsNCiAgICByZXR1cm4gJGpvYmRvbmU7DQp9
+```
+
+see what you can do ;)
+
+## Analysis
+The second set is Base64 data of what looks like PHP code:
+```php
+function do_something($something_to_work_on)
+{
+ 
+    $il = strlen($something_to_work_on);
+    $rk = rand(1, 9); 
+ 
+    $i = 0;
+    while ($i < $il)
+    {
+ 
+        $ic[$i] = (ord($something_to_work_on[$i]) - $rk);
+ 
+        $i++; 
+    }
+
+    $jobdone = implode('.', $ic) . '.' . (ord($rk)+50);
+    return $jobdone;
+}
+```
+
+So, I wrote the following code to crack their message. Note, need to run it for all values of $rk:
+```php
+<?php
+function do_something($something_to_work_on, $cipher, $rk)
+{
+    $key = array();
+    $il = strlen($something_to_work_on);
+
+    $i = 0;
+    while ($i < $il)
+    {
+
+        $ic[$i] = (ord($something_to_work_on[$i]) - $rk);
+        $key[$ic[$i]] = $something_to_work_on[$i];
+
+        $i++;
+    }
+
+    $i = 0;
+    while ($i < sizeof($cipher))
+    {
+        print $key[$cipher[$i]];
+        $i++;
+    }
+    print "\n";
+}
+
+
+$i = 1;
+while ($i <= 9)
+{
+    do_something("!@#$%^&*()_-0123456789+=[]{};:'\",.<>/?`~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    array(77,46,113,96,109,110,96,90,62,109,116,107,111,90,65,80,105,94,79,100,106,105,103), $i);
+    $i++;
+}
+
+?>
+```
+
+```
+stacks0n@stacks0ns-MacBook-Pro:~/> php chall10.php
+N/ranoa[?nulp[BQj_Pekjh
+O0sbopb@ovmqCRk`Qflki
+P1tcpqc]Apwnr]DSlaRgmlj
+Q2udqrd^Bqxos^ETmbShnmk
+R3verse_Crypt_FUncTionl
+S4wfstf`Dszqu`GVodUjpom
+T5xgtugaEt{rvaHWpeVkqpn
+U6yhuvhbFuswbIXqfWlrqo
+V7zivwicGv}txcJYrgXmsrp
+```
+
+## Solution
+R3verse_Crypt_FUncTion

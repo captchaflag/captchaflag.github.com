@@ -1,0 +1,53 @@
+---
+layout: post
+title: "ATAST 2012 - Bin 100"
+date: 2013-01-02 21:46
+comments: true
+categories: [bin]
+author: stacks0n
+---
+
+## Challenge
+we recovered a binary from one of X company machines. its password protected :( , see if you can get us the pass. here is the [binary](http://www.atast-ctf.net/ctf/downloads/bin100.zip)
+
+## Analysis
+Binary simply asks for a password. HexRays decompilation:
+```
+    ##  unsigned int v4; // [sp+4Eh] [bp-22h]@1
+    ##  unsigned int v5; // [sp+52h] [bp-1Eh]@1
+    ##  unsigned int v6; // [sp+56h] [bp-1Ah]@1
+    ##  signed __int16 v7; // [sp+5Ah] [bp-16h]@1
+    ##  int v8; // [sp+5Ch] [bp-14h]@1
+    ##
+    ##  v8 = *MK_FP(__GS__, 20);
+    ##  v4 = 0x5375116Fu;
+    ##  v5 = 0x4D6D1512u;
+    ##  v6 = 0x73156978u;
+    ##  v7 = 0x45u;
+    ##  fwrite("Password Required : ", 1u, 0x14u, stdout);
+    ##  fflush(stdout);
+    ##  fgets((char *)&v2, 20, stdin);
+    ##  for ( i = 0; i < strlen((const char *)&v2); ++i )
+    ##  {
+    ##    *((_BYTE *)&v3 + i) = *((_BYTE *)&v4 + i) ^ 0x21;
+    ##    if ( strncmp((const char *)&v2, (const char *)&v3, i) )
+    ##    {
+    ##      puts("Wrong !!!! better luck next time :D ");
+    ##      result = 0;
+    ##      goto LABEL_9;
+    ##    }
+    ##  }
+    ##  
+```
+
+And the following code will get us the password:
+```ruby
+#!/usr/bin/env ruby
+"6f 11 75 53 12 15 6d 4d 78 69 15 73 45".split(" ").each do |char|
+  print (char.to_i(16) ^ 0x21).chr
+end
+N0Tr34LlYH4Rd
+```
+
+## Solution
+N0Tr34LlYH4Rd
