@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hack You Too - Stego 300 - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge What can be hidden here? File: stego_300.jpg Analysis Let&#8217;s see about any hidden or appended data:
+1
+2
+root@bt:~/Desktop# stegdetect &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2013/01/02/stego-300/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hack You Too - Stego 300</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T18:53:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>What can be hidden here?</p>
+
+<p>File: <a href="http://hackyou.ctf.su/files/stego_300.jpg">stego_300.jpg</a></p>
+
+<h2>Analysis</h2>
+
+<p>Let&#8217;s see about any hidden or appended data:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@bt:~/Desktop# stegdetect stego<em>300.jpg 
+</span><span class='line'>stego</em>300.jpg : skipped (false positive likely) appended(1827)&lt;[nonrandom][data][Rar!.....s......]&gt; </span></code></pre></td></tr></table></div></figure></p>
+
+<p>Okay, looks like a RAR file might be appended to the end of the image.
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>stacks0n@stacks0n-MacBook-Pro:~/Desktop&gt; binwalk stego<em>300.jpg<br>
+</span><span class='line'>
+</span><span class='line'>DECIMAL         HEX             DESCRIPTION
+</span><span class='line'>-------------------------------------------------------------------------------------------------------
+</span><span class='line'>112861          0x1B8DD         RAR archive data [NSRL|RAR]
+</span><span class='line'>443990          0x6C656         7-zip archive data, version 0.3
+</span><span class='line'>
+</span><span class='line'>stacks0n@stacks0n-MacBook-Pro:~/Desktop&gt; dd if=stego</em>300.jpg bs=1 skip=112861 of=stego300.rar</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Sure enough. When extracting stego300.rar we see two files:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@bt:~/Desktop# unrar l stego300.rar 
+</span><span class='line'>
+</span><span class='line'>UNRAR 3.90 beta 2 freeware      Copyright (c) 1993-2009 Alexander Roshal
+</span><span class='line'>
+</span><span class='line'>Archive stego300.rar
+</span><span class='line'>
+</span><span class='line'> Name             Size   Packed Ratio  Date   Time     Attr      CRC   Meth Ver
+</span><span class='line'>-------------------------------------------------------------------------------
+</span><span class='line'> DO<em>NOT</em>LOOKING<em>HERE.mp3   331005   331005 100% 04-12-12 21:21  ...H.A.   CDBAD2DD m0d 2.0
+</span><span class='line'> Flag.7z           198      198 100% 04-12-12 22:18  .....A.   EC3A9712 m0b 2.9
+</span><span class='line'>-------------------------------------------------------------------------------
+</span><span class='line'>    2           331203   331203 100%</span></code></pre></td></tr></table></div></figure>
+* DO</em>NOT<em>LOOKING</em>HERE.mp3 is a clip from Suzanne Vega&#8217;s &quot;Tom&#8217;s Diner&quot;
+* Flag.7z is password protected</p>
+
+<p>Next step is to look into mp3 steganography, which likely contains the passphrase to extract the flag. Looking around I find <a href="http://www.petitcolas.net/fabien/steganography/mp3stego/">MP3Stego</a> tools which should help. When running, it requires a passphrase so let&#8217;s try the text on the original image &#8216;MUSTNOTHACK&#8217;</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>C:\Users\stacks0n\Desktop&gt; Decode.exe -P MUSTNOTHACK -X DO_NOT_LOOKING_HERE.mp3
+</span><span class='line'>MP3StegoEncoder 1.1.17
+</span><span class='line'>See README file for copyright info
+</span><span class='line'>Input file = 'DO_NOT_LOOKING_HERE.mp3'  output file = 'DO_NOT_LOOKING_HERE.mp3.pcm'
+</span><span class='line'>Will attempt to extract hidden information. Output: DO_NOT_LOOKING_HERE.mp3.txt
+</span><span class='line'>the bit stream file DO_NOT_LOOKING_HERE.mp3 is a BINARY file
+</span><span class='line'>HDR: s=FFF, id=1, l=3, ep=off, br=9, sf=0, pd=1, pr=0, m=3, js=0, c=0, o=0, e=0
+</span><span class='line'>alg.=MPEG-1, layer=III, tot bitrate=128, sfrq=44.1
+</span><span class='line'>mode=single-ch, sblim=32, jsbd=32, ch=1
+</span><span class='line'>[Frame  791]Avg slots/frame = 417.434; b/smp = 2.90; br = 127.839 kbps
+</span><span class='line'>Decoding of "DO_NOT_LOOKING_HERE.mp3" is finished
+</span><span class='line'>The decoded PCM output file name is "DO_NOT_LOOKING_HERE.mp3.pcm"
+</span><span class='line'>
+</span><span class='line'>C:\Users\stacks0n\Desktop&gt; type DO_NOT_LOOKING_HERE.mp3.txt
+</span><span class='line'>INEVERASKEDABOUTTHIS!</span></code></pre></td></tr></table></div></figure>
+
+<p>This gives us the passphrase needed to open up Flag.7z.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@bt:~/Desktop# 7z x Flag.7z 
+</span><span class='line'>
+</span><span class='line'>7-Zip 9.04 beta  Copyright (c) 1999-2009 Igor Pavlov  2009-05-30
+</span><span class='line'>p7zip Version 9.04 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,1 CPU)
+</span><span class='line'>
+</span><span class='line'>Processing archive: Flag.7z
+</span><span class='line'>
+</span><span class='line'>Enter password (will not be echoed) :
+</span><span class='line'>
+</span><span class='line'>Extracting  K3y
+</span><span class='line'>
+</span><span class='line'>Everything is Ok
+</span><span class='line'>
+</span><span class='line'>Size:       13
+</span><span class='line'>Compressed: 198
+</span><span class='line'> 
+</span><span class='line'>root@bt:~/Desktop# cat K3y 
+</span><span class='line'>VERYEASYSTEGO</span></code></pre></td></tr></table></div></figure>
+
+<h2>Solution</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>VERYEASYSTEGO</span></code></pre></td></tr></table></div></figure>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">stacks0n</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T18:53:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/jpeg/'>jpeg</a>, <a class='category' href='/blog/categories/mp3/'>mp3</a>, <a class='category' href='/blog/categories/stego/'>stego</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2013/01/02/stego-300/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2013/01/02/stego-300/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/01/02/stego-300/">Hack You Too - Stego 300</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2013/01/02/stego-300/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2013/01/02/stego-300/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
