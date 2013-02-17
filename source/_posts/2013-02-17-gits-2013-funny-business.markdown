@@ -52,10 +52,6 @@ int __cdecl sub_8048D70(int sock_fd)
   }
   return v1;
 }
-
-void read_data_from_socket(int fd, char * buffer, int size) {
-idk, reads some shit off the wire
-}
 ```
 
 We first send the size of our zlib data, which must be less than 0x4000. The size we provide is then used for the number of bytes to be read off the wire next.
