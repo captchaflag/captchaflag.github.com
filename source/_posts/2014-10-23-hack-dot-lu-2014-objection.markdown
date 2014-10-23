@@ -78,8 +78,9 @@ object.  Since this is turned into javascript, there will be many built-in
 methods we could call besides `get_token()` and `login()`.
 
 One method, `__defineGetter__` takes as parameters a property and a function
-body.  By overriding `is_admin` with a null body, the check in `get_token()`
-will not function as expected, and we will be able to see the token.
+body.  By overriding `is_admin` with the function: `-> con.write "#it\n`, the
+check in `get_token()` will not function as expected, and we will be able to see
+the token.
 
 ## Solution
 
