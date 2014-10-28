@@ -7,7 +7,7 @@ author: stacks0n
 categories: [web, sqli]
 ---
 
-hallenge
+## Challenge
 In the Wild Wild Web, there are really bad guys. The sheriff doesn't know them all. Therefore, he needs your help.
 Upload pictures of criminals to this site and help the sheriff to arrest them.
 You can make this Wild Wild Web much less wild!!!

@@ -1,13 +1,11 @@
 ---
-layou: post
+layout: post
 title: "Hack.lu 2014 - Douchemac"
 date: 2014-10-24 14:57
 comments: true
 categories: [hacklu, crypto]
 author: m3g4tr0n
 ---
-## Douchemac
-
 ## Challenge
 * by martin (Crypto)
 * 200 (+100) Points
