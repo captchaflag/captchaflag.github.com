@@ -1,0 +1,932 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hack.lu 2014 - Personnel Database - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge Lots of criminals in this area work for one big boss, but we have been unable to
+determine who he is. We know that their organization has &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-personnel-database/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hack.lu 2014 - Personnel Database</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-23T10:23:00-04:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2014</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>Lots of criminals in this area work for one big boss, but we have been unable to
+determine who he is. We know that their organization has one central personnel
+database that might also contain information about their boss, whose username is
+simply “boss”. However, when you register in their system, you only get access
+level zero, which is not enough for reading data about the boss - that guy is
+level 10. Do you think you can get around their protections? </p>
+
+<p>Download</p>
+
+<p>nc wildwildweb.fluxfingers.net 1410</p>
+
+<p>Note: The users dir will be wiped every 5 minutes.</p>
+
+<h2>Analysis</h2>
+
+<p>Downloading the file gives us:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+<span class='line-number'>163</span>
+<span class='line-number'>164</span>
+<span class='line-number'>165</span>
+<span class='line-number'>166</span>
+<span class='line-number'>167</span>
+<span class='line-number'>168</span>
+<span class='line-number'>169</span>
+<span class='line-number'>170</span>
+<span class='line-number'>171</span>
+<span class='line-number'>172</span>
+<span class='line-number'>173</span>
+<span class='line-number'>174</span>
+<span class='line-number'>175</span>
+<span class='line-number'>176</span>
+<span class='line-number'>177</span>
+<span class='line-number'>178</span>
+<span class='line-number'>179</span>
+<span class='line-number'>180</span>
+<span class='line-number'>181</span>
+<span class='line-number'>182</span>
+<span class='line-number'>183</span>
+<span class='line-number'>184</span>
+<span class='line-number'>185</span>
+<span class='line-number'>186</span>
+<span class='line-number'>187</span>
+<span class='line-number'>188</span>
+<span class='line-number'>189</span>
+<span class='line-number'>190</span>
+<span class='line-number'>191</span>
+<span class='line-number'>192</span>
+<span class='line-number'>193</span>
+<span class='line-number'>194</span>
+<span class='line-number'>195</span>
+<span class='line-number'>196</span>
+<span class='line-number'>197</span>
+<span class='line-number'>198</span>
+<span class='line-number'>199</span>
+<span class='line-number'>200</span>
+<span class='line-number'>201</span>
+<span class='line-number'>202</span>
+<span class='line-number'>203</span>
+<span class='line-number'>204</span>
+<span class='line-number'>205</span>
+<span class='line-number'>206</span>
+<span class='line-number'>207</span>
+<span class='line-number'>208</span>
+<span class='line-number'>209</span>
+<span class='line-number'>210</span>
+<span class='line-number'>211</span>
+<span class='line-number'>212</span>
+<span class='line-number'>213</span>
+<span class='line-number'>214</span>
+<span class='line-number'>215</span>
+<span class='line-number'>216</span>
+<span class='line-number'>217</span>
+<span class='line-number'>218</span>
+<span class='line-number'>219</span>
+<span class='line-number'>220</span>
+<span class='line-number'>221</span>
+<span class='line-number'>222</span>
+<span class='line-number'>223</span>
+<span class='line-number'>224</span>
+<span class='line-number'>225</span>
+<span class='line-number'>226</span>
+<span class='line-number'>227</span>
+<span class='line-number'>228</span>
+<span class='line-number'>229</span>
+<span class='line-number'>230</span>
+<span class='line-number'>231</span>
+<span class='line-number'>232</span>
+<span class='line-number'>233</span>
+<span class='line-number'>234</span>
+<span class='line-number'>235</span>
+<span class='line-number'>236</span>
+<span class='line-number'>237</span>
+<span class='line-number'>238</span>
+<span class='line-number'>239</span>
+<span class='line-number'>240</span>
+<span class='line-number'>241</span>
+<span class='line-number'>242</span>
+<span class='line-number'>243</span>
+<span class='line-number'>244</span>
+<span class='line-number'>245</span>
+<span class='line-number'>246</span>
+<span class='line-number'>247</span>
+<span class='line-number'>248</span>
+<span class='line-number'>249</span>
+<span class='line-number'>250</span>
+<span class='line-number'>251</span>
+<span class='line-number'>252</span>
+<span class='line-number'>253</span>
+<span class='line-number'>254</span>
+<span class='line-number'>255</span>
+<span class='line-number'>256</span>
+<span class='line-number'>257</span>
+<span class='line-number'>258</span>
+<span class='line-number'>259</span>
+<span class='line-number'>260</span>
+<span class='line-number'>261</span>
+<span class='line-number'>262</span>
+<span class='line-number'>263</span>
+<span class='line-number'>264</span>
+<span class='line-number'>265</span>
+<span class='line-number'>266</span>
+<span class='line-number'>267</span>
+<span class='line-number'>268</span>
+<span class='line-number'>269</span>
+<span class='line-number'>270</span>
+<span class='line-number'>271</span>
+<span class='line-number'>272</span>
+<span class='line-number'>273</span>
+<span class='line-number'>274</span>
+<span class='line-number'>275</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdbool.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;string.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;errno.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;arpa/inet.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/socket.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;netinet/in.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/types.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdint.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;sys/stat.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;fcntl.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">static</span> <span class="kt">uint32_t</span> <span class="n">crc32_tab</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="mh">0x00000000</span><span class="p">,</span> <span class="mh">0x77073096</span><span class="p">,</span> <span class="mh">0xee0e612c</span><span class="p">,</span> <span class="mh">0x990951ba</span><span class="p">,</span> <span class="mh">0x076dc419</span><span class="p">,</span> <span class="mh">0x706af48f</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xe963a535</span><span class="p">,</span> <span class="mh">0x9e6495a3</span><span class="p">,</span> <span class="mh">0x0edb8832</span><span class="p">,</span> <span class="mh">0x79dcb8a4</span><span class="p">,</span> <span class="mh">0xe0d5e91e</span><span class="p">,</span> <span class="mh">0x97d2d988</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x09b64c2b</span><span class="p">,</span> <span class="mh">0x7eb17cbd</span><span class="p">,</span> <span class="mh">0xe7b82d07</span><span class="p">,</span> <span class="mh">0x90bf1d91</span><span class="p">,</span> <span class="mh">0x1db71064</span><span class="p">,</span> <span class="mh">0x6ab020f2</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xf3b97148</span><span class="p">,</span> <span class="mh">0x84be41de</span><span class="p">,</span> <span class="mh">0x1adad47d</span><span class="p">,</span> <span class="mh">0x6ddde4eb</span><span class="p">,</span> <span class="mh">0xf4d4b551</span><span class="p">,</span> <span class="mh">0x83d385c7</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x136c9856</span><span class="p">,</span> <span class="mh">0x646ba8c0</span><span class="p">,</span> <span class="mh">0xfd62f97a</span><span class="p">,</span> <span class="mh">0x8a65c9ec</span><span class="p">,</span> <span class="mh">0x14015c4f</span><span class="p">,</span> <span class="mh">0x63066cd9</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xfa0f3d63</span><span class="p">,</span> <span class="mh">0x8d080df5</span><span class="p">,</span> <span class="mh">0x3b6e20c8</span><span class="p">,</span> <span class="mh">0x4c69105e</span><span class="p">,</span> <span class="mh">0xd56041e4</span><span class="p">,</span> <span class="mh">0xa2677172</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x3c03e4d1</span><span class="p">,</span> <span class="mh">0x4b04d447</span><span class="p">,</span> <span class="mh">0xd20d85fd</span><span class="p">,</span> <span class="mh">0xa50ab56b</span><span class="p">,</span> <span class="mh">0x35b5a8fa</span><span class="p">,</span> <span class="mh">0x42b2986c</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xdbbbc9d6</span><span class="p">,</span> <span class="mh">0xacbcf940</span><span class="p">,</span> <span class="mh">0x32d86ce3</span><span class="p">,</span> <span class="mh">0x45df5c75</span><span class="p">,</span> <span class="mh">0xdcd60dcf</span><span class="p">,</span> <span class="mh">0xabd13d59</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x26d930ac</span><span class="p">,</span> <span class="mh">0x51de003a</span><span class="p">,</span> <span class="mh">0xc8d75180</span><span class="p">,</span> <span class="mh">0xbfd06116</span><span class="p">,</span> <span class="mh">0x21b4f4b5</span><span class="p">,</span> <span class="mh">0x56b3c423</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xcfba9599</span><span class="p">,</span> <span class="mh">0xb8bda50f</span><span class="p">,</span> <span class="mh">0x2802b89e</span><span class="p">,</span> <span class="mh">0x5f058808</span><span class="p">,</span> <span class="mh">0xc60cd9b2</span><span class="p">,</span> <span class="mh">0xb10be924</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x2f6f7c87</span><span class="p">,</span> <span class="mh">0x58684c11</span><span class="p">,</span> <span class="mh">0xc1611dab</span><span class="p">,</span> <span class="mh">0xb6662d3d</span><span class="p">,</span> <span class="mh">0x76dc4190</span><span class="p">,</span> <span class="mh">0x01db7106</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x98d220bc</span><span class="p">,</span> <span class="mh">0xefd5102a</span><span class="p">,</span> <span class="mh">0x71b18589</span><span class="p">,</span> <span class="mh">0x06b6b51f</span><span class="p">,</span> <span class="mh">0x9fbfe4a5</span><span class="p">,</span> <span class="mh">0xe8b8d433</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x7807c9a2</span><span class="p">,</span> <span class="mh">0x0f00f934</span><span class="p">,</span> <span class="mh">0x9609a88e</span><span class="p">,</span> <span class="mh">0xe10e9818</span><span class="p">,</span> <span class="mh">0x7f6a0dbb</span><span class="p">,</span> <span class="mh">0x086d3d2d</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x91646c97</span><span class="p">,</span> <span class="mh">0xe6635c01</span><span class="p">,</span> <span class="mh">0x6b6b51f4</span><span class="p">,</span> <span class="mh">0x1c6c6162</span><span class="p">,</span> <span class="mh">0x856530d8</span><span class="p">,</span> <span class="mh">0xf262004e</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x6c0695ed</span><span class="p">,</span> <span class="mh">0x1b01a57b</span><span class="p">,</span> <span class="mh">0x8208f4c1</span><span class="p">,</span> <span class="mh">0xf50fc457</span><span class="p">,</span> <span class="mh">0x65b0d9c6</span><span class="p">,</span> <span class="mh">0x12b7e950</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x8bbeb8ea</span><span class="p">,</span> <span class="mh">0xfcb9887c</span><span class="p">,</span> <span class="mh">0x62dd1ddf</span><span class="p">,</span> <span class="mh">0x15da2d49</span><span class="p">,</span> <span class="mh">0x8cd37cf3</span><span class="p">,</span> <span class="mh">0xfbd44c65</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x4db26158</span><span class="p">,</span> <span class="mh">0x3ab551ce</span><span class="p">,</span> <span class="mh">0xa3bc0074</span><span class="p">,</span> <span class="mh">0xd4bb30e2</span><span class="p">,</span> <span class="mh">0x4adfa541</span><span class="p">,</span> <span class="mh">0x3dd895d7</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xa4d1c46d</span><span class="p">,</span> <span class="mh">0xd3d6f4fb</span><span class="p">,</span> <span class="mh">0x4369e96a</span><span class="p">,</span> <span class="mh">0x346ed9fc</span><span class="p">,</span> <span class="mh">0xad678846</span><span class="p">,</span> <span class="mh">0xda60b8d0</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x44042d73</span><span class="p">,</span> <span class="mh">0x33031de5</span><span class="p">,</span> <span class="mh">0xaa0a4c5f</span><span class="p">,</span> <span class="mh">0xdd0d7cc9</span><span class="p">,</span> <span class="mh">0x5005713c</span><span class="p">,</span> <span class="mh">0x270241aa</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xbe0b1010</span><span class="p">,</span> <span class="mh">0xc90c2086</span><span class="p">,</span> <span class="mh">0x5768b525</span><span class="p">,</span> <span class="mh">0x206f85b3</span><span class="p">,</span> <span class="mh">0xb966d409</span><span class="p">,</span> <span class="mh">0xce61e49f</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x5edef90e</span><span class="p">,</span> <span class="mh">0x29d9c998</span><span class="p">,</span> <span class="mh">0xb0d09822</span><span class="p">,</span> <span class="mh">0xc7d7a8b4</span><span class="p">,</span> <span class="mh">0x59b33d17</span><span class="p">,</span> <span class="mh">0x2eb40d81</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xb7bd5c3b</span><span class="p">,</span> <span class="mh">0xc0ba6cad</span><span class="p">,</span> <span class="mh">0xedb88320</span><span class="p">,</span> <span class="mh">0x9abfb3b6</span><span class="p">,</span> <span class="mh">0x03b6e20c</span><span class="p">,</span> <span class="mh">0x74b1d29a</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xead54739</span><span class="p">,</span> <span class="mh">0x9dd277af</span><span class="p">,</span> <span class="mh">0x04db2615</span><span class="p">,</span> <span class="mh">0x73dc1683</span><span class="p">,</span> <span class="mh">0xe3630b12</span><span class="p">,</span> <span class="mh">0x94643b84</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x0d6d6a3e</span><span class="p">,</span> <span class="mh">0x7a6a5aa8</span><span class="p">,</span> <span class="mh">0xe40ecf0b</span><span class="p">,</span> <span class="mh">0x9309ff9d</span><span class="p">,</span> <span class="mh">0x0a00ae27</span><span class="p">,</span> <span class="mh">0x7d079eb1</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xf00f9344</span><span class="p">,</span> <span class="mh">0x8708a3d2</span><span class="p">,</span> <span class="mh">0x1e01f268</span><span class="p">,</span> <span class="mh">0x6906c2fe</span><span class="p">,</span> <span class="mh">0xf762575d</span><span class="p">,</span> <span class="mh">0x806567cb</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x196c3671</span><span class="p">,</span> <span class="mh">0x6e6b06e7</span><span class="p">,</span> <span class="mh">0xfed41b76</span><span class="p">,</span> <span class="mh">0x89d32be0</span><span class="p">,</span> <span class="mh">0x10da7a5a</span><span class="p">,</span> <span class="mh">0x67dd4acc</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xf9b9df6f</span><span class="p">,</span> <span class="mh">0x8ebeeff9</span><span class="p">,</span> <span class="mh">0x17b7be43</span><span class="p">,</span> <span class="mh">0x60b08ed5</span><span class="p">,</span> <span class="mh">0xd6d6a3e8</span><span class="p">,</span> <span class="mh">0xa1d1937e</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x38d8c2c4</span><span class="p">,</span> <span class="mh">0x4fdff252</span><span class="p">,</span> <span class="mh">0xd1bb67f1</span><span class="p">,</span> <span class="mh">0xa6bc5767</span><span class="p">,</span> <span class="mh">0x3fb506dd</span><span class="p">,</span> <span class="mh">0x48b2364b</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xd80d2bda</span><span class="p">,</span> <span class="mh">0xaf0a1b4c</span><span class="p">,</span> <span class="mh">0x36034af6</span><span class="p">,</span> <span class="mh">0x41047a60</span><span class="p">,</span> <span class="mh">0xdf60efc3</span><span class="p">,</span> <span class="mh">0xa867df55</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x316e8eef</span><span class="p">,</span> <span class="mh">0x4669be79</span><span class="p">,</span> <span class="mh">0xcb61b38c</span><span class="p">,</span> <span class="mh">0xbc66831a</span><span class="p">,</span> <span class="mh">0x256fd2a0</span><span class="p">,</span> <span class="mh">0x5268e236</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xcc0c7795</span><span class="p">,</span> <span class="mh">0xbb0b4703</span><span class="p">,</span> <span class="mh">0x220216b9</span><span class="p">,</span> <span class="mh">0x5505262f</span><span class="p">,</span> <span class="mh">0xc5ba3bbe</span><span class="p">,</span> <span class="mh">0xb2bd0b28</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x2bb45a92</span><span class="p">,</span> <span class="mh">0x5cb36a04</span><span class="p">,</span> <span class="mh">0xc2d7ffa7</span><span class="p">,</span> <span class="mh">0xb5d0cf31</span><span class="p">,</span> <span class="mh">0x2cd99e8b</span><span class="p">,</span> <span class="mh">0x5bdeae1d</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x9b64c2b0</span><span class="p">,</span> <span class="mh">0xec63f226</span><span class="p">,</span> <span class="mh">0x756aa39c</span><span class="p">,</span> <span class="mh">0x026d930a</span><span class="p">,</span> <span class="mh">0x9c0906a9</span><span class="p">,</span> <span class="mh">0xeb0e363f</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x72076785</span><span class="p">,</span> <span class="mh">0x05005713</span><span class="p">,</span> <span class="mh">0x95bf4a82</span><span class="p">,</span> <span class="mh">0xe2b87a14</span><span class="p">,</span> <span class="mh">0x7bb12bae</span><span class="p">,</span> <span class="mh">0x0cb61b38</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x92d28e9b</span><span class="p">,</span> <span class="mh">0xe5d5be0d</span><span class="p">,</span> <span class="mh">0x7cdcefb7</span><span class="p">,</span> <span class="mh">0x0bdbdf21</span><span class="p">,</span> <span class="mh">0x86d3d2d4</span><span class="p">,</span> <span class="mh">0xf1d4e242</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x68ddb3f8</span><span class="p">,</span> <span class="mh">0x1fda836e</span><span class="p">,</span> <span class="mh">0x81be16cd</span><span class="p">,</span> <span class="mh">0xf6b9265b</span><span class="p">,</span> <span class="mh">0x6fb077e1</span><span class="p">,</span> <span class="mh">0x18b74777</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x88085ae6</span><span class="p">,</span> <span class="mh">0xff0f6a70</span><span class="p">,</span> <span class="mh">0x66063bca</span><span class="p">,</span> <span class="mh">0x11010b5c</span><span class="p">,</span> <span class="mh">0x8f659eff</span><span class="p">,</span> <span class="mh">0xf862ae69</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x616bffd3</span><span class="p">,</span> <span class="mh">0x166ccf45</span><span class="p">,</span> <span class="mh">0xa00ae278</span><span class="p">,</span> <span class="mh">0xd70dd2ee</span><span class="p">,</span> <span class="mh">0x4e048354</span><span class="p">,</span> <span class="mh">0x3903b3c2</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xa7672661</span><span class="p">,</span> <span class="mh">0xd06016f7</span><span class="p">,</span> <span class="mh">0x4969474d</span><span class="p">,</span> <span class="mh">0x3e6e77db</span><span class="p">,</span> <span class="mh">0xaed16a4a</span><span class="p">,</span> <span class="mh">0xd9d65adc</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x40df0b66</span><span class="p">,</span> <span class="mh">0x37d83bf0</span><span class="p">,</span> <span class="mh">0xa9bcae53</span><span class="p">,</span> <span class="mh">0xdebb9ec5</span><span class="p">,</span> <span class="mh">0x47b2cf7f</span><span class="p">,</span> <span class="mh">0x30b5ffe9</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xbdbdf21c</span><span class="p">,</span> <span class="mh">0xcabac28a</span><span class="p">,</span> <span class="mh">0x53b39330</span><span class="p">,</span> <span class="mh">0x24b4a3a6</span><span class="p">,</span> <span class="mh">0xbad03605</span><span class="p">,</span> <span class="mh">0xcdd70693</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0x54de5729</span><span class="p">,</span> <span class="mh">0x23d967bf</span><span class="p">,</span> <span class="mh">0xb3667a2e</span><span class="p">,</span> <span class="mh">0xc4614ab8</span><span class="p">,</span> <span class="mh">0x5d681b02</span><span class="p">,</span> <span class="mh">0x2a6f2b94</span><span class="p">,</span>
+</span><span class='line'>  <span class="mh">0xb40bbe37</span><span class="p">,</span> <span class="mh">0xc30c8ea1</span><span class="p">,</span> <span class="mh">0x5a05df1b</span><span class="p">,</span> <span class="mh">0x2d02ef8d</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// no. you&#39;re *not* supposed to bruteforce this challenge. 2^32 is still a</span>
+</span><span class='line'><span class="c1">// bit much.</span>
+</span><span class='line'><span class="kt">uint32_t</span> <span class="nf">hash_password</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">size_t</span> <span class="n">size</span> <span class="o">=</span> <span class="n">strlen</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">uint32_t</span> <span class="n">crc</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">crc</span> <span class="o">=</span> <span class="n">crc</span> <span class="o">^</span> <span class="o">~</span><span class="mi">0U</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span><span class="n">size</span><span class="o">--</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">crc</span> <span class="o">=</span> <span class="n">crc32_tab</span><span class="p">[(</span><span class="n">crc</span> <span class="o">^</span> <span class="o">*</span><span class="n">p</span><span class="o">++</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">]</span> <span class="o">^</span> <span class="p">(</span><span class="n">crc</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="n">crc</span> <span class="o">^</span> <span class="o">~</span><span class="mi">0U</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">// usernames must match /^[a-zA-Z0-9_]{1,20}$/</span>
+</span><span class='line'><span class="n">bool</span> <span class="nf">username_sane</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">user</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">)</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">user</span> <span class="o">==</span> <span class="sc">&#39;\0&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">user</span><span class="p">;</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span> <span class="n">p</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">p</span> <span class="o">&gt;=</span> <span class="sc">&#39;a&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">*</span><span class="n">p</span> <span class="o">&lt;=</span> <span class="sc">&#39;z&#39;</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">p</span> <span class="o">&gt;=</span> <span class="sc">&#39;A&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">*</span><span class="n">p</span> <span class="o">&lt;=</span> <span class="sc">&#39;Z&#39;</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">p</span> <span class="o">&gt;=</span> <span class="sc">&#39;0&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">*</span><span class="n">p</span> <span class="o">&lt;=</span> <span class="sc">&#39;9&#39;</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">p</span> <span class="o">==</span> <span class="sc">&#39;_&#39;</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="nf">rtrim</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">str</span><span class="o">+</span><span class="n">strlen</span><span class="p">(</span><span class="n">str</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="n">str</span><span class="p">;</span> <span class="n">p</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">p</span> <span class="o">!=</span> <span class="sc">&#39;\r&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">*</span><span class="n">p</span> <span class="o">!=</span> <span class="sc">&#39;\n&#39;</span> <span class="o">&amp;&amp;</span> <span class="o">*</span><span class="n">p</span> <span class="o">!=</span> <span class="sc">&#39; &#39;</span> <span class="o">&amp;&amp;</span> <span class="o">*</span><span class="n">p</span> <span class="o">!=</span> <span class="sc">&#39;\t&#39;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">open_userfile</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">user</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">username_sane</span><span class="p">(</span><span class="n">user</span><span class="p">))</span> <span class="p">{</span> <span class="n">errno</span> <span class="o">=</span> <span class="n">EACCES</span><span class="p">;</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// construct path: &quot;users/{username}&quot;</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">path</span><span class="p">[</span><span class="mi">6</span><span class="o">+</span><span class="mi">20</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;users/&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">strcpy</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="mi">6</span><span class="p">,</span> <span class="n">user</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="mo">0700</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">struct</span> <span class="n">userdata</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">uint32_t</span> <span class="n">hash</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">access_level</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">description</span><span class="p">[</span><span class="mi">512</span><span class="p">];</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">struct</span> <span class="n">userdata</span> <span class="o">*</span><span class="nf">read_userfile</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">user</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">userdata</span> <span class="o">*</span><span class="n">res</span> <span class="o">=</span> <span class="n">calloc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="o">*</span><span class="n">res</span><span class="p">));</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">res</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">open_userfile</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">FILE</span> <span class="o">*</span><span class="n">f</span> <span class="o">=</span> <span class="n">fdopen</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span> <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">line</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="n">f</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">rtrim</span><span class="p">(</span><span class="n">line</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">key</span> <span class="o">=</span> <span class="n">line</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">eqsign</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="sc">&#39;=&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">eqsign</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>    <span class="o">*</span><span class="n">eqsign</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">value</span> <span class="o">=</span> <span class="n">eqsign</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&quot;hash&quot;</span><span class="p">))</span> <span class="n">res</span><span class="o">-&gt;</span><span class="n">hash</span> <span class="o">=</span> <span class="n">atoll</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&quot;access_level&quot;</span><span class="p">))</span> <span class="n">res</span><span class="o">-&gt;</span><span class="n">access_level</span> <span class="o">=</span> <span class="n">atoi</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&quot;description&quot;</span><span class="p">))</span> <span class="n">strcpy</span><span class="p">(</span><span class="n">res</span><span class="o">-&gt;</span><span class="n">description</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">else</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;fatal error: bad key </span><span class="se">\&quot;</span><span class="s">%s</span><span class="se">\&quot;</span><span class="s"> in config, aborting</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">),</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="nf">write_userfile</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">user</span><span class="p">,</span> <span class="k">struct</span> <span class="n">userdata</span> <span class="o">*</span><span class="n">ud</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">open_userfile</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">O_WRONLY</span><span class="o">|</span><span class="n">O_TRUNC</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">perror</span><span class="p">(</span><span class="s">&quot;can&#39;t open userdata&quot;</span><span class="p">),</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">FILE</span> <span class="o">*</span><span class="n">f</span> <span class="o">=</span> <span class="n">fdopen</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="n">perror</span><span class="p">(</span><span class="s">&quot;can&#39;t fdopen userdata&quot;</span><span class="p">),</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">fprintf</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&quot;hash=%llu</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span><span class="p">)</span><span class="n">ud</span><span class="o">-&gt;</span><span class="n">hash</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">fprintf</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&quot;access_level=%u</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">ud</span><span class="o">-&gt;</span><span class="n">access_level</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">fprintf</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s">&quot;description=%s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">ud</span><span class="o">-&gt;</span><span class="n">description</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">fclose</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="nf">handle</span><span class="p">(</span><span class="kt">int</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">alarm</span><span class="p">(</span><span class="mi">60</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Let&#39;s handle the socket like a normal terminal or so. Makes the code much</span>
+</span><span class='line'>  <span class="c1">// nicer. :)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">dup2</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span> <span class="o">||</span> <span class="n">dup2</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">setbuf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">username</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">userdata</span> <span class="o">*</span><span class="n">ud</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">bool</span> <span class="n">logged_in</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">line</span><span class="p">[</span><span class="mi">512</span><span class="p">];</span> <span class="cm">/* last incoming command */</span>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;&gt; &quot;</span><span class="p">),</span> <span class="n">fgets</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="n">stdin</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">rtrim</span><span class="p">(</span><span class="n">line</span><span class="p">);</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">cmd</span> <span class="o">=</span> <span class="n">line</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">params</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="sc">&#39; &#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="o">*</span><span class="n">params</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">params</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="s">&quot;whoami&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">((</span><span class="n">logged_in</span><span class="o">?</span><span class="s">&quot;You are logged in as %s.</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">:</span><span class="s">&quot;You are not logged in.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">),</span> <span class="n">username</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="s">&quot;user&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">params</span> <span class="o">||</span> <span class="o">!</span><span class="n">username_sane</span><span class="p">(</span><span class="n">params</span><span class="p">))</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;missing/bad username</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="n">strcpy</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">params</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">ud</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">logged_in</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">ud</span> <span class="o">=</span> <span class="n">read_userfile</span><span class="p">(</span><span class="n">username</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="n">ud</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;username accepted, please provide password</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">perror</span><span class="p">(</span><span class="s">&quot;username not accepted&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="s">&quot;pass&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">ud</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;invalid request</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">params</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;missing password</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="n">hash_password</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="n">ud</span><span class="o">-&gt;</span><span class="n">hash</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;login ok</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">logged_in</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you accidentially mistyped your password, please try again</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="s">&quot;register&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">params</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;missing arguments</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="kt">char</span> <span class="o">*</span><span class="n">pass</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="sc">&#39;:&#39;</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">pass</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;missing password</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="o">*</span><span class="n">pass</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">pass</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">pass</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;password too short</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">open_userfile</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">O_WRONLY</span><span class="o">|</span><span class="n">O_EXCL</span><span class="o">|</span><span class="n">O_CREAT</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;unable to create user: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span> <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">strcpy</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">params</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">ud</span> <span class="o">=</span> <span class="n">calloc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="o">*</span><span class="n">ud</span><span class="p">));</span>
+</span><span class='line'>      <span class="n">logged_in</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">ud</span><span class="o">-&gt;</span><span class="n">hash</span> <span class="o">=</span> <span class="n">hash_password</span><span class="p">(</span><span class="n">pass</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;user created successfully</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="s">&quot;logout&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">logged_in</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you&#39;re not even logged in, how could you log out?</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="n">logged_in</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">write_userfile</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">ud</span><span class="p">);</span>
+</span><span class='line'>      <span class="o">*</span><span class="n">username</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">ud</span><span class="p">);</span> <span class="n">ud</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Uh, who are you again? I have forgotten.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="s">&quot;whois&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">logged_in</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you must be logged in for this</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">params</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;missing username&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">struct</span> <span class="n">userdata</span> <span class="o">*</span><span class="n">ud_</span> <span class="o">=</span> <span class="n">read_userfile</span><span class="p">(</span><span class="n">params</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">ud_</span><span class="p">)</span> <span class="p">{</span><span class="n">perror</span><span class="p">(</span><span class="s">&quot;unable to read userdata&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="n">ud_</span><span class="o">-&gt;</span><span class="n">access_level</span> <span class="o">&gt;=</span> <span class="n">ud</span><span class="o">-&gt;</span><span class="n">access_level</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;your access level is too low. sending bandit team to your location.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">free</span><span class="p">(</span><span class="n">ud_</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;user</span><span class="se">\t</span><span class="s">%s</span><span class="se">\n</span><span class="s">level</span><span class="se">\t</span><span class="s">%u</span><span class="se">\n</span><span class="s">descr</span><span class="se">\t\&quot;</span><span class="s">%s</span><span class="se">\&quot;\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">ud_</span><span class="o">-&gt;</span><span class="n">access_level</span><span class="p">,</span> <span class="n">ud_</span><span class="o">-&gt;</span><span class="n">description</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">ud_</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="s">&quot;levelup&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">logged_in</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you must be logged in for this</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">params</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;missing username&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">struct</span> <span class="n">userdata</span> <span class="o">*</span><span class="n">ud_</span> <span class="o">=</span> <span class="n">read_userfile</span><span class="p">(</span><span class="n">params</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">ud_</span><span class="p">)</span> <span class="p">{</span><span class="n">perror</span><span class="p">(</span><span class="s">&quot;unable to read userdata&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="n">ud_</span><span class="o">-&gt;</span><span class="n">access_level</span> <span class="o">&gt;=</span> <span class="n">ud</span><span class="o">-&gt;</span><span class="n">access_level</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;your access level is too low for that! sending bandit team to your location.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">free</span><span class="p">(</span><span class="n">ud_</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="n">ud_</span><span class="o">-&gt;</span><span class="n">access_level</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">write_userfile</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">ud_</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;user promoted to level %u</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">ud_</span><span class="o">-&gt;</span><span class="n">access_level</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">free</span><span class="p">(</span><span class="n">ud_</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="s">&quot;set_description&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">logged_in</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;you must be logged in for this</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">params</span><span class="p">)</span> <span class="p">{</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;missing description</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">continue</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>      <span class="n">strcpy</span><span class="p">(</span><span class="n">ud</span><span class="o">-&gt;</span><span class="n">description</span><span class="p">,</span> <span class="n">params</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;description set</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">printf</span><span class="p">(</span><span class="s">&quot;unknown command</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">AF_INET6</span><span class="p">,</span> <span class="n">SOCK_STREAM</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">perror</span><span class="p">(</span><span class="s">&quot;unable to create server socket&quot;</span><span class="p">),</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">struct</span> <span class="n">sockaddr_in6</span> <span class="n">bind_addr</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">sin6_family</span> <span class="o">=</span> <span class="n">AF_INET6</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">sin6_port</span> <span class="o">=</span> <span class="n">htons</span><span class="p">(</span><span class="mi">1410</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">bind</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="p">(</span><span class="k">struct</span> <span class="n">sockaddr</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">bind_addr</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">bind_addr</span><span class="p">)))</span> <span class="n">perror</span><span class="p">(</span><span class="s">&quot;unable to bind socket&quot;</span><span class="p">),</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">listen</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">))</span> <span class="n">perror</span><span class="p">(</span><span class="s">&quot;deaf&quot;</span><span class="p">),</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">s_</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">s_</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;accept failed, is this bad?&quot;</span><span class="p">);</span> <span class="cm">/* On Error Resume Next */</span>
+</span><span class='line'>      <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="n">pid_t</span> <span class="n">child_pid</span> <span class="o">=</span> <span class="n">fork</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">child_pid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">perror</span><span class="p">(</span><span class="s">&quot;can&#39;t fork! that&#39;s bad, I think.&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">close</span><span class="p">(</span><span class="n">s_</span><span class="p">);</span>
+</span><span class='line'>      <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">child_pid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">close</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">handle</span><span class="p">(</span><span class="n">s_</span><span class="p">),</span> <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">close</span><span class="p">(</span><span class="n">s_</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<h2>Solution</h2>
+
+<p>The <code>read_userfile()</code> function reads lines 256 bytes at a time.  However, when
+writing the file you can write descriptions close to 512 bytes.  This allows you
+to write long lines that will be treated as two lines by <code>read_userfile()</code>.
+Since the original <code>access_level=0</code> line is written before the description, an
+additional line can overwrite the <code>access_level</code> variable.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'> <span class="k">struct</span> <span class="n">userdata</span> <span class="o">*</span><span class="nf">read_userfile</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">user</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>   <span class="k">struct</span> <span class="n">userdata</span> <span class="o">*</span><span class="n">res</span> <span class="o">=</span> <span class="n">calloc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="o">*</span><span class="n">res</span><span class="p">));</span>
+</span><span class='line'>   <span class="k">if</span> <span class="p">(</span><span class="n">res</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span><span class='line'>   <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">open_userfile</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">);</span>
+</span><span class='line'>   <span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span><span class='line'>   <span class="kt">FILE</span> <span class="o">*</span><span class="n">f</span> <span class="o">=</span> <span class="n">fdopen</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">);</span>
+</span><span class='line'>   <span class="k">if</span> <span class="p">(</span><span class="n">f</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span> <span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'>   <span class="kt">char</span> <span class="n">line</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+</span><span class='line'>   <span class="k">while</span> <span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">),</span> <span class="n">f</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>     <span class="n">rtrim</span><span class="p">(</span><span class="n">line</span><span class="p">);</span>
+</span><span class='line'>     <span class="kt">char</span> <span class="o">*</span><span class="n">key</span> <span class="o">=</span> <span class="n">line</span><span class="p">;</span>
+</span><span class='line'>     <span class="kt">char</span> <span class="o">*</span><span class="n">eqsign</span> <span class="o">=</span> <span class="n">strchr</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="sc">&#39;=&#39;</span><span class="p">);</span>
+</span><span class='line'>     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">eqsign</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>     <span class="o">*</span><span class="n">eqsign</span> <span class="o">=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span>
+</span><span class='line'>     <span class="kt">char</span> <span class="o">*</span><span class="n">value</span> <span class="o">=</span> <span class="n">eqsign</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&quot;hash&quot;</span><span class="p">))</span> <span class="n">res</span><span class="o">-&gt;</span><span class="n">hash</span> <span class="o">=</span> <span class="n">atoll</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span><span class='line'>     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&quot;access_level&quot;</span><span class="p">))</span> <span class="n">res</span><span class="o">-&gt;</span><span class="n">access_level</span> <span class="o">=</span> <span class="n">atoi</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span><span class='line'>     <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s">&quot;description&quot;</span><span class="p">))</span> <span class="n">strcpy</span><span class="p">(</span><span class="n">res</span><span class="o">-&gt;</span><span class="n">description</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+</span><span class='line'>     <span class="k">else</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;fatal error: bad key </span><span class="se">\&quot;</span><span class="s">%s</span><span class="se">\&quot;</span><span class="s"> in config, aborting</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">),</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>   <span class="p">}</span>
+</span><span class='line'>   <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+</span><span class='line'> <span class="p">}</span>
+</span><span class='line'>
+</span></code></pre></td></tr></table></div></figure>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="err">$</span> <span class="n">nc</span> <span class="n">wildwildweb</span><span class="p">.</span><span class="n">fluxfingers</span><span class="p">.</span><span class="n">net</span> <span class="mi">1410</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="k">register</span> <span class="n">test</span><span class="o">:</span><span class="n">password</span>
+</span><span class='line'><span class="n">user</span> <span class="n">created</span> <span class="n">successfully</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="n">set_description</span>  <span class="n">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</span> <span class="n">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaccess_level</span><span class="o">=</span><span class="mi">50</span>
+</span><span class='line'><span class="n">description</span> <span class="n">set</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="n">logout</span>
+</span><span class='line'><span class="n">Uh</span><span class="p">,</span> <span class="n">who</span> <span class="n">are</span> <span class="n">you</span> <span class="n">again</span><span class="o">?</span> <span class="n">I</span> <span class="n">have</span> <span class="n">forgotten</span><span class="p">.</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="n">user</span> <span class="n">test</span>
+</span><span class='line'><span class="n">username</span> <span class="n">accepted</span><span class="p">,</span> <span class="n">please</span> <span class="n">provide</span> <span class="n">password</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="n">pass</span> <span class="n">password</span>
+</span><span class='line'><span class="n">login</span> <span class="n">ok</span>
+</span><span class='line'><span class="o">&gt;</span> <span class="n">whois</span> <span class="n">boss</span>
+</span><span class='line'><span class="n">user</span>  <span class="n">boss</span>
+</span><span class='line'><span class="n">level</span>  <span class="mi">10</span>
+</span><span class='line'><span class="n">descr</span>  <span class="s">&quot;flag{this_is_why_gets_is_better_than_fgets}&quot;</span>
+</span><span class='line'><span class="o">&gt;</span>
+</span><span class='line'><span class="err">$</span>
+</span></code></pre></td></tr></table></div></figure>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">darby</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-23T10:23:00-04:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/exploiting/'>exploiting</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-personnel-database/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-personnel-database/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/05/23/defcon-quals-2014-shitsco/" title="Previous Post: DefCon Quals 2014 - shitsco">&laquo; DefCon Quals 2014 - shitsco</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/10/23/hack-dot-lu-2014-objection/" title="Next Post: Hack.lu 2014 - Objection">Hack.lu 2014 - Objection &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-personnel-database/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-personnel-database/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

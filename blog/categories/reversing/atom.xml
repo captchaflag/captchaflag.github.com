@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: reversing | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/reversing/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2014 - Gunslinger Joe's Gold Stash]]></title>
+    <link href="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-gunslinger-joes-gold-stash/"/>
+    <updated>2014-10-23T13:39:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-gunslinger-joes-gold-stash</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>Silly Gunslinger Joe has learned from his mistakes with his private terminal and
+now tries to remember passwords. But he's gotten more paranoid and chose to
+develope an additional method: protect all his private stuff with a secure
+locking mechanism that no one would be able to figure out! He's so confident
+with this new method that he even started using it to protect all his precious
+gold. So … we better steal all of it!</p>
+
+<p>SSH: joes_gold@wildwildweb.fluxfingers.net</p>
+
+<p>PORT: 1415</p>
+
+<p>PASSWORD: 1gs67uendsx71xmma8</p>
+
+<h2>Analysis</h2>
+
+<p>Provided with a regular shell. There is a set uid/gid program 'gold_stash' for
+gold group and a FLAG owned by gold.</p>
+
+<p>```
+joes<em>gold@goldstash:~$ id
+uid=1000(joes</em>gold) gid=1000(joes<em>gold) groups=1000(joes</em>gold)</p>
+
+<p>joes<em>gold@goldstash:~$ ls -al
+drwxr-xr-x 2 joes</em>gold joes<em>gold  4096 Oct  6 23:09 .
+drwxr-xr-x 3 root      root       4096 Oct  6 22:56 ..
+-rw-r--r-- 1 joes</em>gold joes<em>gold  3106 Feb 20  2014 .bashrc
+-r-------- 1 gold      gold         46 Oct  6 23:04 FLAG
+-rwsr-sr-x 1 gold      gold      13186 Oct  6 23:03 gold</em>stash</p>
+
+<p>joes_gold@goldstash:~$ id -u gold
+1001
+```</p>
+
+<p>Here is the decompiled code of gold_stash:</p>
+
+<p>```c
+int _<em>cdecl main(int argc, const char **argv, const char **envp)
+{
+  __uid</em>t v3; // er12@7
+  _<em>uid</em>t v4; // ebx@7
+  _<em>uid</em>t v5; // eax@7
+  int result; // eax@8
+  __int64 v7; // rcx@8
+  char *argva; // [sp+0h] [bp-230h]@7
+  __int64 v9; // [sp+8h] [bp-228h]@7
+  char username; // [sp+10h] [bp-220h]@1
+  char password; // [sp+110h] [bp-120h]@1
+  __int64 v12; // [sp+218h] [bp-18h]@1</p>
+
+<p>v12 = *MK<em>FP(<strong>FS</strong>, 0x28LL);
+  memset(&amp;username, 0, 0x100uLL);
+  memset(&amp;password, 0, 0x100uLL);
+  puts(&quot;          (</em>/-------------____________________<strong><em>)&quot;);
+  puts(&quot;          <code>|  /~~~~~~~~~~\\                       |&quot;);
+  puts(&quot;           ;  |--------(-||______________________|&quot;);
+  puts(&quot;           ;  |--------(-| ____________|&quot;);
+  puts(&quot;           ;  \\__________/'&quot;);
+  puts(&quot;         _/__         ___;&quot;);
+  puts(&quot;      ,~~    |  __--~~       Gunslinger Joe's&quot;);
+  puts(&quot;     '        ~~| (  |       Private Stash of Gold&quot;);
+  puts(&quot;    '      '~~</code></em></strong>_'&quot;);
+  puts(&quot;   '      '&quot;);
+  puts(&quot;  '      <code>Password Protection activated!&quot;);
+  puts(&quot; '</code>&quot;);
+  puts(&quot;'--------<code>&quot;);
+  printf(&quot;Username: &quot;, 0LL);
+  fflush(_bss_start);
+  read(0, &amp;username, 0xFFuLL);
+  printf(&quot;Password: &quot;, &amp;username);
+  fflush(_bss_start);
+  read(0, &amp;password, 0xFFuLL);
+  if ( strchr(&amp;username, 0xA) )
+    *strchr(&amp;username, 0xA) = 0;
+  if ( strchr(&amp;password, 0xA) )
+    *strchr(&amp;password, 0xA) = 0;
+  if ( !strcmp(&amp;username, &quot;Joe&quot;) &amp;&amp; !strcmp(&amp;password, &quot;omg_joe_is_so_rich&quot;) )
+  {
+    puts(&quot;Access granted!&quot;);
+    v3 = geteuid();
+    v4 = geteuid();
+    v5 = geteuid();
+    setresuid(v5, v4, v3);
+    argva = &quot;/bin/sh&quot;;
+    v9 = 0LL;
+    execve(&quot;/bin/sh&quot;, &amp;argva, 0LL);
+  }
+  puts(&quot;Authentication failed!&quot;);
+  result = 0;
+  v7 = *MK_FP(__FS__, 0x28LL) ^ v12;
+  return result;
+}
+</code>``</p>
+
+<p>The expected username and password don't work. However, they work in the
+following cases:</p>
+
+<ul>
+<li>running strace</li>
+<li>running gdb</li>
+<li>running the binary on a local VM (Linux ubuntu 3.5.0-23-generic)</li>
+<li>copying the binary and running it on the remote VM</li>
+</ul>
+
+<p>So, it's something about running the box in its native environment that makes it
+work.  We found a kernel module on the box...</p>
+
+<p><code>
+joes_gold@goldstash:~$ lsmod
+Module                  Size  Used by
+nfnetlink              14606  0 
+bluetooth             391136  0 
+joe                    12678  0 
+ppdev                  17671  0 
+serio_raw              13462  0 
+i2c_piix4              22155  0 
+parport_pc             32701  0 
+lp                     17759  0 
+parport                42348  3 lp,ppdev,parport_pc
+mac_hid                13205  0 
+psmouse               106678  0 
+pcnet32                41545  0 
+mii                    13934  1 pcnet32
+joes_gold@goldstash:~$ uname -a
+Linux goldstash 3.13.0-36-generic #63-Ubuntu SMP Wed Sep 3 21:30:07 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux
+joes_gold@goldstash:~$ ls /lib/modules/3.13.0-36-generic/kernel/joe/joe.ko
+/lib/modules/3.13.0-36-generic/kernel/joe/joe.ko
+joes_gold@goldstash:~$ 
+</code></p>
+
+<p>The joe kernel module has functions such as:</p>
+
+<ul>
+<li>joe</li>
+<li>findshit</li>
+<li>lolcred</li>
+<li>fuqstring</li>
+</ul>
+
+<p>There are references to the password (&quot;omg<em>joe</em>is<em>so</em>rich&quot;) which appear to find
+it in userland memory. It then appears to change it. The string is modified in
+user input.</p>
+
+<p>```c
+<strong>int64 __fastcall joe(</strong>int64 a1, __int64 a2)
+{
+  __int64 v2; // rdx@1
+  __int64 v3; // r14@1
+  __int64 v4; // r12@1
+  __int64 v5; // rax@1
+  __int64 v6; // rbx@1
+  int v7; // er13@1
+  __int64 v8; // rax@1
+  bool v9; // cf@1
+  bool v10; // zf@1
+  __int64 v12; // rsi@3
+  signed __int64 v13; // rcx@3
+  __int64 v14; // rdi@3
+  signed __int64 v15; // rsi@6
+  signed __int64 v16; // rax@6
+  bool v17; // zf@12
+  signed __int64 v18; // rcx@13
+  __int64 v19; // rsi@13
+  __int64 v20; // rdi@13</p>
+
+<p><em>fentry__(a1);
+  v3 = v2;
+  v4 = a2;
+  LODWORD(v5) = kmem</em>cache<em>alloc</em>trace(<em>((<em>QWORD *)&amp;kmalloc</em>caches + 0x20000008), 0x80D0LL, 0x100LL);
+  v6 = v5;
+  v7 = ((int (_<em>fastcall *)(</em>QWORD, __int64, __int64))</em>(&amp;o<em>read + 0x40000000))((unsigned int)a1, a2, v3);
+  copy</em>from<em>user(v6, a2, 0xFFLL);
+  v8 = *(</em>QWORD <em>)(current<em>task + 0x4B0LL);
+  v9 = *(</em>DWORD *)(v8 + 0x14) &lt; 0x3E9u;
+  v10 = *(<em>DWORD *)(v8 + 0x14) == 0x3E9;
+  if ( *(</em>DWORD *)(v8 + 0x14) != 0x3E9 )
+    goto LABEL<em>2;
+  v12 = v6;
+  v13 = 0x12LL;
+  v14 = (__int64)&quot;omg</em>joe<em>is</em>so<em>rich&quot;;
+  do
+  {
+    if ( !v13 )
+      break;
+    v9 = *(</em>BYTE *)v12 &lt; *(<em>BYTE *)v14;
+    v10 = *(</em>BYTE *)v12++ == *(<em>BYTE *)v14++;
+    --v13;
+  }
+  while ( v10 );
+  v15 = 1LL;
+  v16 = 0LL;
+  if ( (!v9 &amp;&amp; !v10) == v9 )
+  {
+    while ( 1 )
+    {
+      *(</em>BYTE *)(v6 + v16) = xor_key[v16] ^ (</em>(<em>BYTE *)(v6 + v16) - 4);
+      if ( v15 == 0x12 )
+        break;
+      v16 = v15++;
+    }
+LABEL</em>10:
+    copy<em>to</em>user(v4, v6, 0x12LL);
+    goto LABEL<em>2;
+  }
+  while ( 1 )
+  {
+    *(</em>BYTE <em>)(v6 + v16) = xor_key[v16] ^ (</em>(<em>BYTE *)(v6 + v16) - 4);
+    v17 = v15 == 0x12;
+    if ( v15 == 0x12 )
+      break;
+    v16 = v15++;
+  }
+  v18 = 0x12LL;
+  v19 = v6;
+  v20 = (__int64)&quot;omg</em>joe<em>is</em>so<em>rich&quot;;
+  do
+  {
+    if ( !v18 )
+      break;
+    v17 = *(</em>BYTE *)v19++ == *(<em>BYTE *)v20++;
+    --v18;
+  }
+  while ( v17 );
+  if ( v17 )
+    goto LABEL</em>10;
+LABEL_2:
+  kfree(v6);
+  return v7;
+}
+```</p>
+
+<p>The fuqstring function (in-lined above) appears to do a simple modification of
+the target string:</p>
+
+<p>```
+xor_key         db '123456789012445678',0</p>
+
+<p>char * fuqstring(char *buffer)
+{
+  int counter;
+  int index;</p>
+
+<p>counter = 1;
+  for ( index = 0; ; index = counter++ )
+  {
+    buffer[index] = xor_key[index] ^ (buffer[index] - 4);
+    if ( counter == 18 )
+      break;
+  }
+  return buffer;
+}
+```</p>
+
+<h2>Solution</h2>
+
+<p>This code gives the password:</p>
+
+<p>```python</p>
+
+<h1>!/usr/bin/env python</h1>
+
+<p>userdata = &quot;omg<em>joe</em>is<em>so</em>rich&quot;
+xorkey =   &quot;123456789012445678&quot;</p>
+
+<p>assert(len(userdata) == len(xorkey))</p>
+
+<p>index = 0
+res = &quot;&quot;
+for userbyte in userdata:
+  res += chr(4+(ord(userbyte) ^ ord(xorkey[index])))
+  index += 1
+print res</p>
+
+<p>OUTPUT:
+bcXoc]VkTGrE_oKcXT
+```</p>
+
+<p>Providing the password gives us a shell running as gold.</p>
+
+<p><code>text
+joes_gold@goldstash:~$ ./gold_stash 
+          (_/-------------_______________________)
+          `|  /~~~~~~~~~~\                       |
+           ;  |--------(-||______________________|
+           ;  |--------(-| ____________|
+           ;  \__________/'
+         _/__         ___;
+      ,~~    |  __--~~       Gunslinger Joe's
+     '        ~~| (  |       Private Stash of Gold
+    '      '~~  `____'
+   '      '
+  '      `            Password Protection activated!
+ '       `
+'--------`
+Username: Joe
+Password: bcXoc]VkTGrE_oKcXT
+Access granted!
+$ cat FLAG
+flag{joe_thought_youd_never_find_that_module}
+$ 
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ATAST 2012 - Challenge 11]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/01/02/atast-2012-challenge-11/"/>
+    <updated>2013-01-02T22:00:00-05:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/01/02/atast-2012-challenge-11</id>
+    <content type="html"><![CDATA[<h2>Analysis</h2>
+
+<p>Reversing challenge. Program calls getuid() and compares against 0x934 before printing token.
+<code>
+.text:0804852E                 call    _getuid
+.text:08048533                 cmp     eax, 2356
+.text:08048538                 jz      short loc_804855E
+.text:0804853A                 mov     dword ptr [esp], offset s ; &quot;Anuthorized Usage Deteceted &quot;
+.text:08048541                 call    _puts
+.text:08048546                 mov     dword ptr [esp], offset aProgramShuttin ; &quot;PROGRAM SHUTTING DOWN &quot;
+.text:0804854D                 call    _puts
+.text:08048552                 mov     dword ptr [esp], 1 ; status
+.text:08048559                 call    _exit
+.text:0804855E ; ---------------------------------------------------------------------------
+.text:0804855E
+.text:0804855E loc_804855E:                            ; CODE XREF: main+64j
+.text:0804855E                 mov     eax, offset format ; &quot;your token is %s\n&quot;
+.text:08048563                 lea     edx, [esp+32h]
+.text:08048567                 mov     [esp+4], edx
+.text:0804856B                 mov     [esp], eax      ; format
+.text:0804856E                 call    _printf
+</code>
+Simply change execution and get your flag:
+```
+(gdb) b * 0x08048533
+Breakpoint 1 at 0x8048533
+(gdb) c
+Continuing.</p>
+
+<p>Breakpoint 1, 0x08048533 in main ()
+(gdb) set $eax=0x934
+(gdb) c
+Continuing.
+your token is Y0U<em>G07</em>An07h3R<em>345Y</em>Fl49
+```</p>
+
+<h2>Solution</h2>
+
+<p>Y0U<em>G07</em>An07h3R<em>345Y</em>Fl49</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ATAST 2012 - Challenge 10]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/01/02/atast-2012-challenge-10/"/>
+    <updated>2013-01-02T21:57:00-05:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/01/02/atast-2012-challenge-10</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>hello again.recentely we intercepted a transmission between Our Rival company  and one of their agents.
+the transmission contained two sets of data.</p>
+
+<p>first set was 77.46.113.96.109.110.96.90.62.109.116.107.111.90.65.80.105.94.79.100.106.105.103</p>
+
+<p>and the second set was 
+<code>
+ZnVuY3Rpb24gZG9fc29tZXRoaW5nKCRzb21ldGhpbmdfdG9fd29ya19vbikNCnsNCiANCiAgICAkaWwgPSBzdHJsZW4oJHNvbWV0aGluZ190b193b3JrX29uKTsNCiAgICAkcmsgPSByYW5kKDEsIDkpOyANCiANCiAgICAkaSA9IDA7DQogICAgd2hpbGUgKCRpIDwgJGlsKQ0KICAgIHsNCiANCiAgICAgICAgJGljWyRpXSA9IChvcmQoJHNvbWV0aGluZ190b193b3JrX29uWyRpXSkgLSAkcmspOw0KIA0KICAgICAgICAkaSsrOyANCiAgICB9DQoNCiAgICAkam9iZG9uZSA9IGltcGxvZGUoJy4nLCAkaWMpIC4gJy4nIC4gKG9yZCgkcmspKzUwKTsNCiAgICByZXR1cm4gJGpvYmRvbmU7DQp9
+</code></p>
+
+<p>see what you can do ;)</p>
+
+<h2>Analysis</h2>
+
+<p>The second set is Base64 data of what looks like PHP code:
+```php
+function do<em>something($something</em>to<em>work</em>on)
+{</p>
+
+<pre><code>$il = strlen($something_to_work_on);
+$rk = rand(1, 9); 
+
+$i = 0;
+while ($i &lt; $il)
+{
+
+    $ic[$i] = (ord($something_to_work_on[$i]) - $rk);
+
+    $i++; 
+}
+
+$jobdone = implode('.', $ic) . '.' . (ord($rk)+50);
+return $jobdone;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>So, I wrote the following code to crack their message. Note, need to run it for all values of $rk:
+```php
+&lt;?php
+function do<em>something($something</em>to<em>work</em>on, $cipher, $rk)
+{
+    $key = array();
+    $il = strlen($something<em>to</em>work_on);</p>
+
+<pre><code>$i = 0;
+while ($i &lt; $il)
+{
+
+    $ic[$i] = (ord($something_to_work_on[$i]) - $rk);
+    $key[$ic[$i]] = $something_to_work_on[$i];
+
+    $i++;
+}
+
+$i = 0;
+while ($i &lt; sizeof($cipher))
+{
+    print $key[$cipher[$i]];
+    $i++;
+}
+print &quot;\n&quot;;
+</code></pre>
+
+<p>}</p>
+
+<p>$i = 1;
+while ($i &lt;= 9)
+{
+    do<em>something(&quot;!@#$%^&amp;*()</em>-0123456789+=[]{};:'\&quot;,.&lt;&gt;/?`~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;,
+    array(77,46,113,96,109,110,96,90,62,109,116,107,111,90,65,80,105,94,79,100,106,105,103), $i);
+    $i++;
+}</p>
+
+<p>?&gt;
+```</p>
+
+<p><code>
+stacks0n@stacks0ns-MacBook-Pro:~/&gt; php chall10.php
+N/ranoa[?nulp[BQj_Pekjh
+O0sbopb@ovmqCRk`Qflki
+P1tcpqc]Apwnr]DSlaRgmlj
+Q2udqrd^Bqxos^ETmbShnmk
+R3verse_Crypt_FUncTionl
+S4wfstf`Dszqu`GVodUjpom
+T5xgtugaEt{rvaHWpeVkqpn
+U6yhuvhbFuswbIXqfWlrqo
+V7zivwicGv}txcJYrgXmsrp
+</code></p>
+
+<h2>Solution</h2>
+
+<p>R3verse<em>Crypt</em>FUncTion</p>
+]]></content>
+  </entry>
+  
+</feed>

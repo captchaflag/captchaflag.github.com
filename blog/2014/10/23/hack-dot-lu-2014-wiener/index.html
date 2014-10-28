@@ -1,0 +1,478 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hack.lu 2014 - wiener - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge It&#8217;s gold rush time! The New York Herald just reported about the Californian gold rush. We know a sheriff there is hiring guys to &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-wiener/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hack.lu 2014 - Wiener</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-23T20:42:00-04:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2014</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>It&#8217;s gold rush time! The New York Herald just reported about the Californian gold rush. We know a sheriff there is hiring guys to help him fill his own pockets. We know he already has a deadful amount of gold in his secret vault. However, it is protected by a secret only he knows.
+When new deputies apply for the job, they get their own secret, but that only provies entry to a vault of all deputy sheriffs. No idiot would store their stuff in this vault.
+But maybe we can find a way to gain access to the sheriff&#8217;s vault? Have a go at it: </p>
+
+<p>nc wildwildweb.fluxfingers.net 1426</p>
+
+<p>You might also need <a href="https://wildwildweb.fluxfingers.net/static/chals/wiener_38ff175d336b9c75fbf1b77290978015.py">this</a>.</p>
+
+<h2>Analysis</h2>
+
+<p>When you connect to wildwildweb.fluxfingers.net on port 1426, you are greeted by a service that accepts commands to list users, register, and get a user&#8217;s public key. If you register with &#8216;r&#8217;, the service creates a user for you and then discloses that the &quot;locker&quot; is on port 1427. The wording hints that the goal for this challenge is to ssh into port 1427 as the sheriff. Using the &#8216;p&#8217; command, you can get the sheriff&#8217;s public key:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ssh-rsa AAAAB3NzaC1yc2EAAAEAAoX41P4pzhFgXt8iGGiTfBtwrjduNNZ/m7eMKaLXnKRqYOoCpw/bQOgFtdhUJVlosrHwQ5Y9zWFxTOT8XHDsxNdWrRaF1mHbOdFagB0cOC7ZegSPD4XZCcgRaR0//iYutwzNH6fboap5E58hwUs9/pU0BJHP86WmrpYEMpV4259bzBkuFqpi9oeoA45gwBUY+MyqC+/ladra6OSTEKejw73c9jf8guU0C+9BBbUztqUxiVZQsu+jN9lMenZEd2e1EpoEvPPNlbtg9r/RoSZYUwEkrYxv1xZSuODrSC/MR1BDtBDfxP5fvGvaCMphJEKEpKtbMRvGad8MdTUmp5waVwAAAQACrrY39hUq/U+zot0WWuydW0XnDSuC54o1P3oXUYWdGW9Wy20RcAGV8Qaac9nlcQlQuBQimrTFVJODwsh+DNl/kEdIoTAkANx2tCWR2hfauvlGqq8WQPEyevFr5FuIMGA5R6nDMJyk1syfGivP2s8oX7wvcw5RWuHZNZHM2Y9cRnTsSlhZJkcA9wCk9Nz3w8NbvFefbr+A2jPGwR9oZVCSu+Zw1SJbjlcdWW/kJttZpqBar3ezkXRIss+8s71ke0Z3KxMTP8aP+ryzdSNyuUmjcEuFlt9KRPCFOT7iv4D485NxntlKs0iFL2peDEk++jLaW/YBBjoDO+r3O6R9ggXb sheriff</span></code></pre></td></tr></table></div></figure>
+
+<p>This challenge also provided the source for the service listening on port 1426. Here is the important function:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">create_parameters</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">2048</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">p</span> <span class="o">=</span> <span class="n">get_prime</span><span class="p">(</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">q</span> <span class="o">=</span> <span class="n">get_prime</span><span class="p">(</span><span class="n">size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">N</span> <span class="o">=</span> <span class="n">p</span> <span class="o">*</span> <span class="n">q</span>
+</span><span class='line'>    <span class="n">phi_N</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">d</span> <span class="o">=</span> <span class="n">prng</span><span class="o">.</span><span class="n">getrandbits</span><span class="p">(</span><span class="n">size</span> <span class="o">//</span> <span class="mi">5</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">e</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gmpy</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">phi_N</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span> <span class="o">%</span> <span class="n">phi_N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">break</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">assert</span> <span class="n">test_key</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">N</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>This function generates the public and private keys used in RSA. The public key consists of the modulus <em>N</em> and public exponent <em>e</em>, and the private key consists of the modulus <em>N</em> and private exponent <em>d</em>. 
+The trick to this challenge is to notice that the private exponent <em>d</em> generated by this function is small relative to <em>N</em>. The vulnerability is in the challenge&#8217;s name: Wiener&#8217;s attack on RSA.</p>
+
+<h2>Solution</h2>
+
+<p>Now we know that the goal is to ssh into port 1427 on wildwildweb.fluxfingers.net as the sheriff. We can accomplish this by calculating his private exponent <em>d</em> using Wiener&#8217;s attack and generating his private key.</p>
+
+<p>First, we extracted <em>N</em> and <em>e</em> from the sheriff&#8217;s public key:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-keygen -f sheriffkey -e -m PKCS8 | openssl rsa -pubin -text
+</span><span class='line'>Public-Key: <span class="o">(</span>2042 bit<span class="o">)</span>
+</span><span class='line'>Modulus:
+</span><span class='line'>02:ae:b6:37:f6:15:2a:fd:4f:b3:a2:dd:16:5a:ec:
+</span><span class='line'>9d:5b:45:e7:0d:2b:82:e7:8a:35:3f:7a:17:51:85:
+</span><span class='line'>9d:19:6f:56:cb:6d:11:70:01:95:f1:06:9a:73:d9:
+</span><span class='line'>e5:71:09:50:b8:14:22:9a:b4:c5:54:93:83:c2:c8:
+</span><span class='line'>7e:0c:d9:7f:90:47:48:a1:30:24:00:dc:76:b4:25:
+</span><span class='line'>91:da:17:da:ba:f9:46:aa:af:16:40:f1:32:7a:f1:
+</span><span class='line'>6b:e4:5b:88:30:60:39:47:a9:c3:30:9c:a4:d6:cc:
+</span><span class='line'>9f:1a:2b:cf:da:cf:28:5f:bc:2f:73:0e:51:5a:e1:
+</span><span class='line'>d9:35:91:cc:d9:8f:5c:46:74:ec:4a:58:59:26:47:
+</span><span class='line'>00:f7:00:a4:f4:dc:f7:c3:c3:5b:bc:57:9f:6e:bf:
+</span><span class='line'>80:da:33:c6:c1:1f:68:65:50:92:bb:e6:70:d5:22:
+</span><span class='line'>5b:8e:57:1d:59:6f:e4:26:db:59:a6:a0:5a:af:77:
+</span><span class='line'>b3:91:74:48:b2:cf:bc:b3:bd:64:7b:46:77:2b:13:
+</span><span class='line'>13:3f:c6:8f:fa:bc:b3:75:23:72:b9:49:a3:70:4b:
+</span><span class='line'>85:96:df:4a:44:f0:85:39:3e:e2:bf:80:f8:f3:93:
+</span><span class='line'>71:9e:d9:4a:b3:48:85:2f:6a:5e:0c:49:3e:fa:32:
+</span><span class='line'>da:5b:f6:01:06:3a:03:3b:ea:f7:3b:a4:7d:82:05:
+</span><span class='line'>db
+</span><span class='line'>Exponent:
+</span><span class='line'>02:85:f8:d4:fe:29:ce:11:60:5e:df:22:18:68:93:
+</span><span class='line'>7c:1b:70:ae:37:6e:34:d6:7f:9b:b7:8c:29:a2:d7:
+</span><span class='line'>9c:a4:6a:60:ea:02:a7:0f:db:40:e8:05:b5:d8:54:
+</span><span class='line'>25:59:68:b2:b1:f0:43:96:3d:cd:61:71:4c:e4:fc:
+</span><span class='line'>5c:70:ec:c4:d7:56:ad:16:85:d6:61:db:39:d1:5a:
+</span><span class='line'>80:1d:1c:38:2e:d9:7a:04:8f:0f:85:d9:09:c8:11:
+</span><span class='line'>69:1d:3f:fe:26:2e:b7:0c:cd:1f:a7:db:a1:aa:79:
+</span><span class='line'>13:9f:21:c1:4b:3d:fe:95:34:04:91:cf:f3:a5:a6:
+</span><span class='line'>ae:96:04:32:95:78:db:9f:5b:cc:19:2e:16:aa:62:
+</span><span class='line'>f6:87:a8:03:8e:60:c0:15:18:f8:cc:aa:0b:ef:e5:
+</span><span class='line'>69:da:da:e8:e4:93:10:a7:a3:c3:bd:dc:f6:37:fc:
+</span><span class='line'>82:e5:34:0b:ef:41:05:b5:33:b6:a5:31:89:56:50:
+</span><span class='line'>b2:ef:a3:37:d9:4c:7a:76:44:77:67:b5:12:9a:04:
+</span><span class='line'>bc:f3:cd:95:bb:60:f6:bf:d1:a1:26:58:53:01:24:
+</span><span class='line'>ad:8c:6f:d7:16:52:b8:e0:eb:48:2f:cc:47:50:43:
+</span><span class='line'>b4:10:df:c4:fe:5f:bc:6b:da:08:ca:61:24:42:84:
+</span><span class='line'>a4:ab:5b:31:1b:c6:69:df:0c:75:35:26:a7:9c:1a:
+</span><span class='line'>57
+</span></code></pre></td></tr></table></div></figure>
+
+<p>We wrote a script to convert those values into integers and used <a href="https://github.com/pablocelayes/rsa-wiener-attack">https://github.com/pablocelayes/rsa-wiener-attack</a> to recover <em>d</em>. 
+Note: We had to increase the recursion limit with sys.setrecursionlimit(10000).</p>
+
+<p>Here are the values we found for <em>N</em>, <em>e</em>, and <em>d</em>:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">modulus</span> <span class="mi">338630205260455689413627911306068443537112802550361922213620660503310212139001530156458392949653034244789612680980241965923780722889133495349537107789761426092510299239678696031652780059016898519278860185536978111680123402473365833456785718098200501968322228116681190425490850863660038143310790555506293106653050174262471649179173093656763946257235681980586392230447218179278964626176124426615857733950102117938674282636936094069075258237416065546593509302494726576026227551920883962084579635168761189995794814926094510046419165007371450799003658587100556051088147493947712592469412133312536422828670173807709914587</span>
+</span><span class='line'><span class="n">public</span> <span class="n">exponent</span> <span class="mi">318540665379393469901456665807211509077755719995811520039095212139429238053864597311950397094944291616119321660193803737677538864969915331331528398734504661147661499115125056479426948683504604460936703005724827506058051215012025774714463561829608252938657297504427643593752676857551877096958959488289759878259498255905255543409142370769036479607835226542428818361327569095305960454592450213005148130508649794732855515489990191085723757628463901282599712670814223322126866814011761400443596552984309315434653984387419451894484613987942298157348306834118923950284809853541881602043240244910348705406353947587203832407</span>
+</span><span class='line'><span class="n">private</span> <span class="n">exponent</span> <span class="mi">724746542590011388513367385228693742222740657137483753552318433232068370338961145215199994578740789016238655979015224570943</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We then used <a href="https://gist.github.com/ddddavidee/b34c2b67757a54ce75cb">https://gist.github.com/ddddavidee/b34c2b67757a54ce75cb</a> to recover <em>p</em> and <em>q</em>:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">p</span> <span class="o">=</span> <span class="mi">12001304129015480165432875074437607933493850611499879464845243350215176144760883615322622081442653872645865326992384034722586201972392183010813439352778246403016897976571514715418700569567613729681273931557848857971070286176848136118602099586101089743239644367344468295964691411425416652519752140536869089101</span>
+</span><span class='line'><span class="n">q</span> <span class="o">=</span> <span class="mi">28216117316929874067495888027767527011360661622486842768414059951572932145196930641365509243766454218518793508840136548374994021850853203018205749779390383366761851772055038753940967432004901699256177783249460134792699230632136386268348434203012426963129659057781488950062703849444443906614331812260961682887</span>
+</span></code></pre></td></tr></table></div></figure>
+Now that we had all of the parameters, we used a function from the provided source code to generate the private key:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">asn1<em>encode</em>priv<em>key</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">key</span> <span class="o">=</span> <span class="n">pyasn1</em>modules</span><span class="o">.</span><span class="n">rfc3447</span><span class="o">.</span><span class="n">RSAPrivateKey</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">dp</span> <span class="o">=</span> <span class="n">d</span> <span class="o">%</span> <span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">dq</span> <span class="o">=</span> <span class="n">d</span> <span class="o">%</span> <span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">qInv</span> <span class="o">=</span> <span class="n">gmpy</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">assert</span> <span class="p">(</span><span class="n">qInv</span> <span class="o">*</span> <span class="n">q</span><span class="p">)</span> <span class="o">%</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="n">key</span><span class="o">.</span><span class="n">setComponentByName</span><span class="p">(</span><span class="s">&#39;version&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">key</span><span class="o">.</span><span class="n">setComponentByName</span><span class="p">(</span><span class="s">&#39;modulus&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">key</span><span class="o">.</span><span class="n">setComponentByName</span><span class="p">(</span><span class="s">&#39;publicExponent&#39;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">key</span><span class="o">.</span><span class="n">setComponentByName</span><span class="p">(</span><span class="s">&#39;privateExponent&#39;</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">key</span><span class="o">.</span><span class="n">setComponentByName</span><span class="p">(</span><span class="s">&#39;prime1&#39;</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">key</span><span class="o">.</span><span class="n">setComponentByName</span><span class="p">(</span><span class="s">&#39;prime2&#39;</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">key</span><span class="o">.</span><span class="n">setComponentByName</span><span class="p">(</span><span class="s">&#39;exponent1&#39;</span><span class="p">,</span> <span class="n">dp</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">key</span><span class="o">.</span><span class="n">setComponentByName</span><span class="p">(</span><span class="s">&#39;exponent2&#39;</span><span class="p">,</span> <span class="n">dq</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">key</span><span class="o">.</span><span class="n">setComponentByName</span><span class="p">(</span><span class="s">&#39;coefficient&#39;</span><span class="p">,</span> <span class="n">qInv</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">ber<em>key</span> <span class="o">=</span> <span class="n">pyasn1</span><span class="o">.</span><span class="n">codec</span><span class="o">.</span><span class="n">ber</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">pem</em>key</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">ber<em>key</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;ascii&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;-----BEGIN RSA PRIVATE KEY-----&#39;</span><span class="p">]</span>
+</span><span class='line'>    <span class="n">out</span> <span class="o">+=</span> <span class="p">[</span><span class="n">pem</em>key</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">64</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pem_key</span><span class="p">),</span> <span class="mi">64</span><span class="p">)]</span>
+</span><span class='line'>    <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;-----END RSA PRIVATE KEY-----</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">out</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&quot;ascii&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Finally, we could ssh into the server and grab the flag:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh -i sheriff<em>priv sheriff@wildwildweb.fluxfingers.net -p 1427
+</span><span class='line'>Woah look how much gold that old croaker has: flag<span class="o">{</span>TONS</em>OF<em>GOLD</em>SUCH<em>WOW</em>MUCH_GLOW<span class="o">}</span>
+</span><span class='line'>Connection to wildwildweb.fluxfingers.net closed.
+</span></code></pre></td></tr></table></div></figure></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">saboteuse</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-23T20:42:00-04:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rsa/'>RSA</a>, <a class='category' href='/blog/categories/crypto/'>crypto</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-wiener/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-wiener/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/10/23/hack-dot-lu-2014-gunslinger-joes-gold-stash/" title="Previous Post: Hack.lu 2014 - Gunslinger Joe's Gold Stash">&laquo; Hack.lu 2014 - Gunslinger Joe's Gold Stash</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/" title="Next Post: Hack.lu 2014 - ImageUpload">Hack.lu 2014 - ImageUpload &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-wiener/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-wiener/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

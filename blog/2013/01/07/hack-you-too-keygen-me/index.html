@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hack You Too - Keygen Me? - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge You need the right key. File: keygen_me.exe Analysis Windows GUI executable. Simply takes one input and appears to check the result. When &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2013/01/07/hack-you-too-keygen-me/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hack You Too - Keygen Me?</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-07T21:14:00-05:00" pubdate data-updated="true">Jan 7<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>You need the right key.</p>
+
+<p>File: <a href="http://hackyou.ctf.su/files/keygen_me.exe">keygen_me.exe</a></p>
+
+<h2>Analysis</h2>
+
+<p>Windows GUI executable. Simply takes one input and appears to check the result. When we enter junk, we get a message of <code>xD Try again!</code>. Looking at the strings, it is not completely obvious where this is printed. However, there are not many user functions and eventually we see a call to <a href="http://msdn.microsoft.com/en-us/library/ms645489%28VS.85%29.aspx">GetDlgItemTextA()</a> which stores user input from dialog box into a buffer.
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>.text:01391252                 call    ds:GetDlgItemTextA</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Just following loading the user input into the buffer, we see manipulation of the data and a character by character comparison afterwards.
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>.text:01391260 loc<em>1391260:
+</span><span class='line'>.text:01391260                 mov     dl, [ebp+eax+String]
+</span><span class='line'>.text:01391264                 add     dl, al
+</span><span class='line'>.text:01391266                 xor     dl, byte ptr [ebp+eax+Hackplanet]
+</span><span class='line'>.text:0139126A                 inc     eax
+</span><span class='line'>.text:0139126B                 mov     [ebp+eax+key], dl
+</span><span class='line'>.text:0139126F                 cmp     eax, 11
+</span><span class='line'>.text:01391272                 jl      short loc</em>1391260
+</span><span class='line'>.text:01391274                 cmp     [ebp+key+1], 39
+</span><span class='line'>.text:01391278                 jnz     short loc<em>13912C5
+</span><span class='line'>.text:0139127A                 cmp     [ebp+key+2], 15
+</span><span class='line'>.text:0139127E                 jnz     short loc</em>13912C5
+</span><span class='line'>.text:01391280                 cmp     [ebp+key+3], 11
+</span><span class='line'>.text:01391284                 jnz     short loc<em>13912C5
+</span><span class='line'>.text:01391286                 cmp     [ebp+key+4], 1
+</span><span class='line'>.text:0139128A                 jnz     short loc</em>13912C5
+</span><span class='line'>.text:0139128C                 cmp     [ebp+key+5], 60
+</span><span class='line'>.text:01391290                 jnz     short loc<em>13912C5
+</span><span class='line'>.text:01391292                 mov     cl, 10
+</span><span class='line'>.text:01391294                 cmp     [ebp+key+6], cl
+</span><span class='line'>.text:01391297                 jnz     short loc</em>13912C5
+</span><span class='line'>.text:01391299                 mov     al, 8
+</span><span class='line'>.text:0139129B                 cmp     [ebp+key+7], al
+</span><span class='line'>.text:0139129E                 jnz     short loc<em>13912C5
+</span><span class='line'>.text:013912A0                 cmp     [ebp+key+8], 28
+</span><span class='line'>.text:013912A4                 jnz     short loc</em>13912C5
+</span><span class='line'>.text:013912A6                 cmp     [ebp+key+9], al
+</span><span class='line'>.text:013912A9                 jnz     short loc<em>13912C5
+</span><span class='line'>.text:013912AB                 cmp     [ebp+key+0Ah], 25
+</span><span class='line'>.text:013912AF                 jnz     short loc</em>13912C5
+</span><span class='line'>.text:013912B1                 cmp     [ebp+key+0Bh], cl</span></code></pre></td></tr></table></div></figure></p>
+
+<p>The following Ruby code reverses the above
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/bin/env ruby</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Hackplanet&quot;</span>
+</span><span class='line'><span class="n">solution</span> <span class="o">=</span> <span class="o">[</span><span class="mh">0x27</span><span class="p">,</span> <span class="mh">0x0f</span><span class="p">,</span> <span class="mh">0x0b</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mh">0x3c</span><span class="p">,</span> <span class="mh">0x0a</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x1c</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x19</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">solution</span><span class="o">.</span><span class="n">each_index</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+</span><span class='line'>    <span class="nb">print</span> <span class="p">((</span> <span class="n">key</span><span class="o">[</span><span class="n">i</span><span class="o">].</span><span class="n">ord</span> <span class="o">^</span> <span class="n">solution</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="p">)</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">chr</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="nb">puts</span> <span class="s2">&quot;&quot;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>stacks0n@stacks0ns-MacBook-Pro:~&gt; ./keygen_me.rb
+</span><span class='line'>omfgHacked
+</span></code></pre></td></tr></table></div></figure>
+
+<h2>Solution</h2>
+
+<p>omfgHacked</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">stacks0n</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-07T21:14:00-05:00" pubdate data-updated="true">Jan 7<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/bin/'>bin</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2013/01/07/hack-you-too-keygen-me/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2013/01/07/hack-you-too-keygen-me/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/02/atast-2012-challenge-11/" title="Previous Post: ATAST 2012 - Challenge 11">&laquo; ATAST 2012 - Challenge 11</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/02/17/gits-2013-funny-business/" title="Next Post: GitS 2013 - Funny Business">GitS 2013 - Funny Business &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2013/01/07/hack-you-too-keygen-me/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2013/01/07/hack-you-too-keygen-me/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

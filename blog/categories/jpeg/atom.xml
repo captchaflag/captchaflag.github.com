@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: jpeg | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/jpeg/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hack You Too - Stego 300]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/01/02/stego-300/"/>
+    <updated>2013-01-02T18:53:00-05:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/01/02/stego-300</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>What can be hidden here?</p>
+
+<p>File: <a href="http://hackyou.ctf.su/files/stego_300.jpg">stego_300.jpg</a></p>
+
+<h2>Analysis</h2>
+
+<p>Let's see about any hidden or appended data:
+<code>
+root@bt:~/Desktop# stegdetect stego_300.jpg 
+stego_300.jpg : skipped (false positive likely) appended(1827)&lt;[nonrandom][data][Rar!.....s......]&gt; 
+</code></p>
+
+<p>Okay, looks like a RAR file might be appended to the end of the image.
+```
+stacks0n@stacks0n-MacBook-Pro:~/Desktop&gt; binwalk stego_300.jpg                           </p>
+
+<h2>DECIMAL         HEX             DESCRIPTION</h2>
+
+<p>112861          0x1B8DD         RAR archive data [NSRL|RAR]
+443990          0x6C656         7-zip archive data, version 0.3</p>
+
+<p>stacks0n@stacks0n-MacBook-Pro:~/Desktop&gt; dd if=stego_300.jpg bs=1 skip=112861 of=stego300.rar
+```</p>
+
+<p>Sure enough. When extracting stego300.rar we see two files:
+```
+root@bt:~/Desktop# unrar l stego300.rar </p>
+
+<p>UNRAR 3.90 beta 2 freeware      Copyright (c) 1993-2009 Alexander Roshal</p>
+
+<p>Archive stego300.rar</p>
+
+<h2> Name             Size   Packed Ratio  Date   Time     Attr      CRC   Meth Ver</h2>
+
+<p>DO<em>NOT</em>LOOKING_HERE.mp3   331005   331005 100% 04-12-12 21:21  ...H.A.   CDBAD2DD m0d 2.0</p>
+
+<h2> Flag.7z           198      198 100% 04-12-12 22:18  .....A.   EC3A9712 m0b 2.9</h2>
+
+<pre><code>2           331203   331203 100%
+</code></pre>
+
+<p>```
+* DO<em>NOT</em>LOOKING_HERE.mp3 is a clip from Suzanne Vega's &quot;Tom's Diner&quot;
+* Flag.7z is password protected</p>
+
+<p>Next step is to look into mp3 steganography, which likely contains the passphrase to extract the flag. Looking around I find <a href="http://www.petitcolas.net/fabien/steganography/mp3stego/">MP3Stego</a> tools which should help. When running, it requires a passphrase so let's try the text on the original image 'MUSTNOTHACK'</p>
+
+<p>```
+C:\Users\stacks0n\Desktop&gt; Decode.exe -P MUSTNOTHACK -X DO<em>NOT</em>LOOKING<em>HERE.mp3
+MP3StegoEncoder 1.1.17
+See README file for copyright info
+Input file = 'DO</em>NOT<em>LOOKING</em>HERE.mp3'  output file = 'DO<em>NOT</em>LOOKING<em>HERE.mp3.pcm'
+Will attempt to extract hidden information. Output: DO</em>NOT<em>LOOKING</em>HERE.mp3.txt
+the bit stream file DO<em>NOT</em>LOOKING<em>HERE.mp3 is a BINARY file
+HDR: s=FFF, id=1, l=3, ep=off, br=9, sf=0, pd=1, pr=0, m=3, js=0, c=0, o=0, e=0
+alg.=MPEG-1, layer=III, tot bitrate=128, sfrq=44.1
+mode=single-ch, sblim=32, jsbd=32, ch=1
+[Frame  791]Avg slots/frame = 417.434; b/smp = 2.90; br = 127.839 kbps
+Decoding of &quot;DO</em>NOT<em>LOOKING</em>HERE.mp3&quot; is finished
+The decoded PCM output file name is &quot;DO<em>NOT</em>LOOKING_HERE.mp3.pcm&quot;</p>
+
+<p>C:\Users\stacks0n\Desktop&gt; type DO<em>NOT</em>LOOKING_HERE.mp3.txt
+INEVERASKEDABOUTTHIS!
+```</p>
+
+<p>This gives us the passphrase needed to open up Flag.7z.</p>
+
+<p>```
+root@bt:~/Desktop# 7z x Flag.7z </p>
+
+<p>7-Zip 9.04 beta  Copyright (c) 1999-2009 Igor Pavlov  2009-05-30
+p7zip Version 9.04 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,1 CPU)</p>
+
+<p>Processing archive: Flag.7z</p>
+
+<p>Enter password (will not be echoed) :</p>
+
+<p>Extracting  K3y</p>
+
+<p>Everything is Ok</p>
+
+<p>Size:       13
+Compressed: 198</p>
+
+<p>root@bt:~/Desktop# cat K3y 
+VERYEASYSTEGO
+```</p>
+
+<h2>Solution</h2>
+
+<p><code>
+VERYEASYSTEGO
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

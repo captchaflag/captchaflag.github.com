@@ -1,0 +1,783 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hack.lu 2014 - Gunslinger Joe's Gold Stash - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge Silly Gunslinger Joe has learned from his mistakes with his private terminal and
+now tries to remember passwords. But he&#8217;s gotten &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-gunslinger-joes-gold-stash/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hack.lu 2014 - Gunslinger Joe's Gold Stash</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-23T13:39:00-04:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2014</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>Silly Gunslinger Joe has learned from his mistakes with his private terminal and
+now tries to remember passwords. But he&#8217;s gotten more paranoid and chose to
+develope an additional method: protect all his private stuff with a secure
+locking mechanism that no one would be able to figure out! He&#8217;s so confident
+with this new method that he even started using it to protect all his precious
+gold. So … we better steal all of it!</p>
+
+<p>SSH: joes_gold@wildwildweb.fluxfingers.net</p>
+
+<p>PORT: 1415</p>
+
+<p>PASSWORD: 1gs67uendsx71xmma8</p>
+
+<h2>Analysis</h2>
+
+<p>Provided with a regular shell. There is a set uid/gid program &#8216;gold_stash&#8217; for
+gold group and a FLAG owned by gold.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>joes_gold@goldstash:~$ id
+</span><span class='line'>uid=1000(joes_gold) gid=1000(joes_gold) groups=1000(joes_gold)
+</span><span class='line'>
+</span><span class='line'>joes_gold@goldstash:~$ ls -al
+</span><span class='line'>drwxr-xr-x 2 joes_gold joes_gold  4096 Oct  6 23:09 .
+</span><span class='line'>drwxr-xr-x 3 root      root       4096 Oct  6 22:56 ..
+</span><span class='line'>-rw-r--r-- 1 joes_gold joes_gold  3106 Feb 20  2014 .bashrc
+</span><span class='line'>-r-------- 1 gold      gold         46 Oct  6 23:04 FLAG
+</span><span class='line'>-rwsr-sr-x 1 gold      gold      13186 Oct  6 23:03 gold_stash
+</span><span class='line'>
+</span><span class='line'>joes_gold@goldstash:~$ id -u gold
+</span><span class='line'>1001</span></code></pre></td></tr></table></div></figure>
+
+<p>Here is the decompiled code of gold_stash:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="kr">__cdecl</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">envp</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="n">__uid_t</span> <span class="n">v3</span><span class="p">;</span> <span class="c1">// er12@7</span>
+</span><span class='line'>  <span class="n">__uid_t</span> <span class="n">v4</span><span class="p">;</span> <span class="c1">// ebx@7</span>
+</span><span class='line'>  <span class="n">__uid_t</span> <span class="n">v5</span><span class="p">;</span> <span class="c1">// eax@7</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">result</span><span class="p">;</span> <span class="c1">// eax@8</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v7</span><span class="p">;</span> <span class="c1">// rcx@8</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">argva</span><span class="p">;</span> <span class="c1">// [sp+0h] [bp-230h]@7</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v9</span><span class="p">;</span> <span class="c1">// [sp+8h] [bp-228h]@7</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">username</span><span class="p">;</span> <span class="c1">// [sp+10h] [bp-220h]@1</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">password</span><span class="p">;</span> <span class="c1">// [sp+110h] [bp-120h]@1</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v12</span><span class="p">;</span> <span class="c1">// [sp+218h] [bp-18h]@1</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">v12</span> <span class="o">=</span> <span class="o">*</span><span class="n">MK_FP</span><span class="p">(</span><span class="n">__FS__</span><span class="p">,</span> <span class="mh">0x28LL</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">username</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0x100uLL</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">password</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0x100uLL</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;          (_/-------------_______________________)&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;          `|  /~~~~~~~~~~</span><span class="se">\\</span><span class="s">                       |&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;           ;  |--------(-||______________________|&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;           ;  |--------(-| ____________|&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;           ;  </span><span class="se">\\</span><span class="s">__________/&#39;&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;         _/__         ___;&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;      ,~~    |  __--~~       Gunslinger Joe&#39;s&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;     &#39;        ~~| (  |       Private Stash of Gold&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;    &#39;      &#39;~~  `____&#39;&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;   &#39;      &#39;&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;  &#39;      `            Password Protection activated!&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot; &#39;       `&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;&#39;--------`&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Username: &quot;</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">fflush</span><span class="p">(</span><span class="n">_bss_start</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">username</span><span class="p">,</span> <span class="mh">0xFFuLL</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Password: &quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">username</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">fflush</span><span class="p">(</span><span class="n">_bss_start</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">password</span><span class="p">,</span> <span class="mh">0xFFuLL</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span> <span class="n">strchr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">username</span><span class="p">,</span> <span class="mh">0xA</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>    <span class="o">*</span><span class="n">strchr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">username</span><span class="p">,</span> <span class="mh">0xA</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span> <span class="n">strchr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">password</span><span class="p">,</span> <span class="mh">0xA</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>    <span class="o">*</span><span class="n">strchr</span><span class="p">(</span><span class="o">&amp;</span><span class="n">password</span><span class="p">,</span> <span class="mh">0xA</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="o">&amp;</span><span class="n">username</span><span class="p">,</span> <span class="s">&quot;Joe&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="o">&amp;</span><span class="n">password</span><span class="p">,</span> <span class="s">&quot;omg_joe_is_so_rich&quot;</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">puts</span><span class="p">(</span><span class="s">&quot;Access granted!&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">v3</span> <span class="o">=</span> <span class="n">geteuid</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">v4</span> <span class="o">=</span> <span class="n">geteuid</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">v5</span> <span class="o">=</span> <span class="n">geteuid</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">setresuid</span><span class="p">(</span><span class="n">v5</span><span class="p">,</span> <span class="n">v4</span><span class="p">,</span> <span class="n">v3</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">argva</span> <span class="o">=</span> <span class="s">&quot;/bin/sh&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">v9</span> <span class="o">=</span> <span class="mi">0LL</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">execve</span><span class="p">(</span><span class="s">&quot;/bin/sh&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">argva</span><span class="p">,</span> <span class="mi">0LL</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">puts</span><span class="p">(</span><span class="s">&quot;Authentication failed!&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">v7</span> <span class="o">=</span> <span class="o">*</span><span class="n">MK_FP</span><span class="p">(</span><span class="n">__FS__</span><span class="p">,</span> <span class="mh">0x28LL</span><span class="p">)</span> <span class="o">^</span> <span class="n">v12</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>The expected username and password don&#8217;t work. However, they work in the
+following cases:</p>
+
+<ul>
+<li>running strace</li>
+<li>running gdb</li>
+<li>running the binary on a local VM (Linux ubuntu 3.5.0-23-generic)</li>
+<li>copying the binary and running it on the remote VM</li>
+</ul>
+
+<p>So, it&#8217;s something about running the box in its native environment that makes it
+work.  We found a kernel module on the box&#8230;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">joes_gold</span><span class="err">@</span><span class="n">goldstash</span><span class="o">:~</span><span class="err">$</span> <span class="n">lsmod</span>
+</span><span class='line'><span class="n">Module</span>                  <span class="n">Size</span>  <span class="n">Used</span> <span class="n">by</span>
+</span><span class='line'><span class="n">nfnetlink</span>              <span class="mi">14606</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">bluetooth</span>             <span class="mi">391136</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">joe</span>                    <span class="mi">12678</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">ppdev</span>                  <span class="mi">17671</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">serio_raw</span>              <span class="mi">13462</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">i2c_piix4</span>              <span class="mi">22155</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">parport_pc</span>             <span class="mi">32701</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">lp</span>                     <span class="mi">17759</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">parport</span>                <span class="mi">42348</span>  <span class="mi">3</span> <span class="n">lp</span><span class="p">,</span><span class="n">ppdev</span><span class="p">,</span><span class="n">parport_pc</span>
+</span><span class='line'><span class="n">mac_hid</span>                <span class="mi">13205</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">psmouse</span>               <span class="mi">106678</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">pcnet32</span>                <span class="mi">41545</span>  <span class="mi">0</span>
+</span><span class='line'><span class="n">mii</span>                    <span class="mi">13934</span>  <span class="mi">1</span> <span class="n">pcnet32</span>
+</span><span class='line'><span class="n">joes_gold</span><span class="err">@</span><span class="n">goldstash</span><span class="o">:~</span><span class="err">$</span> <span class="n">uname</span> <span class="o">-</span><span class="n">a</span>
+</span><span class='line'><span class="n">Linux</span> <span class="n">goldstash</span> <span class="mf">3.13.0</span><span class="o">-</span><span class="mi">36</span><span class="o">-</span><span class="n">generic</span> <span class="err">#</span><span class="mi">63</span><span class="o">-</span><span class="n">Ubuntu</span> <span class="n">SMP</span> <span class="n">Wed</span> <span class="n">Sep</span> <span class="mi">3</span> <span class="mi">21</span><span class="o">:</span><span class="mi">30</span><span class="o">:</span><span class="mo">07</span> <span class="n">UTC</span> <span class="mi">2014</span> <span class="n">x86_64</span> <span class="n">x86_64</span> <span class="n">x86_64</span> <span class="n">GNU</span><span class="o">/</span><span class="n">Linux</span>
+</span><span class='line'><span class="n">joes_gold</span><span class="err">@</span><span class="n">goldstash</span><span class="o">:~</span><span class="err">$</span> <span class="n">ls</span> <span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="mf">3.13.0</span><span class="o">-</span><span class="mi">36</span><span class="o">-</span><span class="n">generic</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">joe</span><span class="o">/</span><span class="n">joe</span><span class="p">.</span><span class="n">ko</span>
+</span><span class='line'><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">modules</span><span class="o">/</span><span class="mf">3.13.0</span><span class="o">-</span><span class="mi">36</span><span class="o">-</span><span class="n">generic</span><span class="o">/</span><span class="n">kernel</span><span class="o">/</span><span class="n">joe</span><span class="o">/</span><span class="n">joe</span><span class="p">.</span><span class="n">ko</span>
+</span><span class='line'><span class="n">joes_gold</span><span class="err">@</span><span class="n">goldstash</span><span class="o">:~</span><span class="err">$</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>The joe kernel module has functions such as:</p>
+
+<ul>
+<li>joe</li>
+<li>findshit</li>
+<li>lolcred</li>
+<li>fuqstring</li>
+</ul>
+
+<p>There are references to the password (&quot;omg<em>joe</em>is<em>so</em>rich&quot;) which appear to find
+it in userland memory. It then appears to change it. The string is modified in
+user input.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kr">__int64</span> <span class="kr">__fastcall</span> <span class="nf">joe</span><span class="p">(</span><span class="kr">__int64</span> <span class="n">a1</span><span class="p">,</span> <span class="kr">__int64</span> <span class="n">a2</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v2</span><span class="p">;</span> <span class="c1">// rdx@1</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v3</span><span class="p">;</span> <span class="c1">// r14@1</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v4</span><span class="p">;</span> <span class="c1">// r12@1</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v5</span><span class="p">;</span> <span class="c1">// rax@1</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v6</span><span class="p">;</span> <span class="c1">// rbx@1</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">v7</span><span class="p">;</span> <span class="c1">// er13@1</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v8</span><span class="p">;</span> <span class="c1">// rax@1</span>
+</span><span class='line'>  <span class="n">bool</span> <span class="n">v9</span><span class="p">;</span> <span class="c1">// cf@1</span>
+</span><span class='line'>  <span class="n">bool</span> <span class="n">v10</span><span class="p">;</span> <span class="c1">// zf@1</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v12</span><span class="p">;</span> <span class="c1">// rsi@3</span>
+</span><span class='line'>  <span class="kt">signed</span> <span class="kr">__int64</span> <span class="n">v13</span><span class="p">;</span> <span class="c1">// rcx@3</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v14</span><span class="p">;</span> <span class="c1">// rdi@3</span>
+</span><span class='line'>  <span class="kt">signed</span> <span class="kr">__int64</span> <span class="n">v15</span><span class="p">;</span> <span class="c1">// rsi@6</span>
+</span><span class='line'>  <span class="kt">signed</span> <span class="kr">__int64</span> <span class="n">v16</span><span class="p">;</span> <span class="c1">// rax@6</span>
+</span><span class='line'>  <span class="n">bool</span> <span class="n">v17</span><span class="p">;</span> <span class="c1">// zf@12</span>
+</span><span class='line'>  <span class="kt">signed</span> <span class="kr">__int64</span> <span class="n">v18</span><span class="p">;</span> <span class="c1">// rcx@13</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v19</span><span class="p">;</span> <span class="c1">// rsi@13</span>
+</span><span class='line'>  <span class="kr">__int64</span> <span class="n">v20</span><span class="p">;</span> <span class="c1">// rdi@13</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">_fentry__</span><span class="p">(</span><span class="n">a1</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">v3</span> <span class="o">=</span> <span class="n">v2</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">v4</span> <span class="o">=</span> <span class="n">a2</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">LODWORD</span><span class="p">(</span><span class="n">v5</span><span class="p">)</span> <span class="o">=</span> <span class="n">kmem_cache_alloc_trace</span><span class="p">(</span><span class="o">*</span><span class="p">((</span><span class="n">_QWORD</span> <span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">kmalloc_caches</span> <span class="o">+</span> <span class="mh">0x20000008</span><span class="p">),</span> <span class="mh">0x80D0LL</span><span class="p">,</span> <span class="mh">0x100LL</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">v6</span> <span class="o">=</span> <span class="n">v5</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">v7</span> <span class="o">=</span> <span class="p">((</span><span class="kt">int</span> <span class="p">(</span><span class="kr">__fastcall</span> <span class="o">*</span><span class="p">)(</span><span class="n">_QWORD</span><span class="p">,</span> <span class="kr">__int64</span><span class="p">,</span> <span class="kr">__int64</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="o">&amp;</span><span class="n">o_read</span> <span class="o">+</span> <span class="mh">0x40000000</span><span class="p">))((</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">v3</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">copy_from_user</span><span class="p">(</span><span class="n">v6</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="mh">0xFFLL</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">v8</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">_QWORD</span> <span class="o">*</span><span class="p">)(</span><span class="n">current_task</span> <span class="o">+</span> <span class="mh">0x4B0LL</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">v9</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">_DWORD</span> <span class="o">*</span><span class="p">)(</span><span class="n">v8</span> <span class="o">+</span> <span class="mh">0x14</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mh">0x3E9u</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">v10</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">_DWORD</span> <span class="o">*</span><span class="p">)(</span><span class="n">v8</span> <span class="o">+</span> <span class="mh">0x14</span><span class="p">)</span> <span class="o">==</span> <span class="mh">0x3E9</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span> <span class="o">*</span><span class="p">(</span><span class="n">_DWORD</span> <span class="o">*</span><span class="p">)(</span><span class="n">v8</span> <span class="o">+</span> <span class="mh">0x14</span><span class="p">)</span> <span class="o">!=</span> <span class="mh">0x3E9</span> <span class="p">)</span>
+</span><span class='line'>    <span class="k">goto</span> <span class="n">LABEL_2</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">v12</span> <span class="o">=</span> <span class="n">v6</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">v13</span> <span class="o">=</span> <span class="mh">0x12LL</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">v14</span> <span class="o">=</span> <span class="p">(</span><span class="kr">__int64</span><span class="p">)</span><span class="s">&quot;omg_joe_is_so_rich&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">do</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">v13</span> <span class="p">)</span>
+</span><span class='line'>      <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">v9</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="p">)</span><span class="n">v12</span> <span class="o">&lt;</span> <span class="o">*</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="p">)</span><span class="n">v14</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">v10</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="p">)</span><span class="n">v12</span><span class="o">++</span> <span class="o">==</span> <span class="o">*</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="p">)</span><span class="n">v14</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="o">--</span><span class="n">v13</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span> <span class="n">v10</span> <span class="p">);</span>
+</span><span class='line'>  <span class="n">v15</span> <span class="o">=</span> <span class="mi">1LL</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">v16</span> <span class="o">=</span> <span class="mi">0LL</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span> <span class="p">(</span><span class="o">!</span><span class="n">v9</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">v10</span><span class="p">)</span> <span class="o">==</span> <span class="n">v9</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">(</span> <span class="mi">1</span> <span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="o">*</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="p">)(</span><span class="n">v6</span> <span class="o">+</span> <span class="n">v16</span><span class="p">)</span> <span class="o">=</span> <span class="n">xor_key</span><span class="p">[</span><span class="n">v16</span><span class="p">]</span> <span class="o">^</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="p">)(</span><span class="n">v6</span> <span class="o">+</span> <span class="n">v16</span><span class="p">)</span> <span class="o">-</span> <span class="mi">4</span><span class="p">);</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span> <span class="n">v15</span> <span class="o">==</span> <span class="mh">0x12</span> <span class="p">)</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">v16</span> <span class="o">=</span> <span class="n">v15</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="nl">LABEL_10:</span>
+</span><span class='line'>    <span class="n">copy_to_user</span><span class="p">(</span><span class="n">v4</span><span class="p">,</span> <span class="n">v6</span><span class="p">,</span> <span class="mh">0x12LL</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">goto</span> <span class="n">LABEL_2</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span> <span class="mi">1</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="o">*</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="p">)(</span><span class="n">v6</span> <span class="o">+</span> <span class="n">v16</span><span class="p">)</span> <span class="o">=</span> <span class="n">xor_key</span><span class="p">[</span><span class="n">v16</span><span class="p">]</span> <span class="o">^</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="p">)(</span><span class="n">v6</span> <span class="o">+</span> <span class="n">v16</span><span class="p">)</span> <span class="o">-</span> <span class="mi">4</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">v17</span> <span class="o">=</span> <span class="n">v15</span> <span class="o">==</span> <span class="mh">0x12</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span> <span class="n">v15</span> <span class="o">==</span> <span class="mh">0x12</span> <span class="p">)</span>
+</span><span class='line'>      <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">v16</span> <span class="o">=</span> <span class="n">v15</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">v18</span> <span class="o">=</span> <span class="mh">0x12LL</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">v19</span> <span class="o">=</span> <span class="n">v6</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">v20</span> <span class="o">=</span> <span class="p">(</span><span class="kr">__int64</span><span class="p">)</span><span class="s">&quot;omg_joe_is_so_rich&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">do</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span><span class="n">v18</span> <span class="p">)</span>
+</span><span class='line'>      <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">v17</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="p">)</span><span class="n">v19</span><span class="o">++</span> <span class="o">==</span> <span class="o">*</span><span class="p">(</span><span class="n">_BYTE</span> <span class="o">*</span><span class="p">)</span><span class="n">v20</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="o">--</span><span class="n">v18</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span> <span class="n">v17</span> <span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span> <span class="n">v17</span> <span class="p">)</span>
+</span><span class='line'>    <span class="k">goto</span> <span class="n">LABEL_10</span><span class="p">;</span>
+</span><span class='line'><span class="nl">LABEL_2:</span>
+</span><span class='line'>  <span class="n">kfree</span><span class="p">(</span><span class="n">v6</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">v7</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>The fuqstring function (in-lined above) appears to do a simple modification of
+the target string:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">xor_key</span>         <span class="n">db</span> <span class="err">&#39;</span><span class="mi">123456789012445678</span><span class="err">&#39;</span><span class="p">,</span><span class="mi">0</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">char</span> <span class="o">*</span> <span class="n">fuqstring</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">buffer</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">counter</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">index</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">counter</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">for</span> <span class="p">(</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="p">;</span> <span class="n">index</span> <span class="o">=</span> <span class="n">counter</span><span class="o">++</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">xor_key</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">^</span> <span class="p">(</span><span class="n">buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">-</span> <span class="mi">4</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span> <span class="n">counter</span> <span class="o">==</span> <span class="mi">18</span> <span class="p">)</span>
+</span><span class='line'>      <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">buffer</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<h2>Solution</h2>
+
+<p>This code gives the password:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/env python</span>
+</span><span class='line'><span class="n">userdata</span> <span class="o">=</span> <span class="s">&quot;omg_joe_is_so_rich&quot;</span>
+</span><span class='line'><span class="n">xorkey</span> <span class="o">=</span>   <span class="s">&quot;123456789012445678&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">userdata</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">xorkey</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'><span class="n">res</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+</span><span class='line'><span class="k">for</span> <span class="n">userbyte</span> <span class="ow">in</span> <span class="n">userdata</span><span class="p">:</span>
+</span><span class='line'>  <span class="n">res</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="mi">4</span><span class="o">+</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">userbyte</span><span class="p">)</span> <span class="o">^</span> <span class="nb">ord</span><span class="p">(</span><span class="n">xorkey</span><span class="p">[</span><span class="n">index</span><span class="p">])))</span>
+</span><span class='line'>  <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'><span class="k">print</span> <span class="n">res</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">OUTPUT</span><span class="p">:</span>
+</span><span class='line'><span class="n">bcXoc</span><span class="p">]</span><span class="n">VkTGrE_oKcXT</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>Providing the password gives us a shell running as gold.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>joes_gold@goldstash:~$ ./gold_stash
+</span><span class='line'>          (_/-------------_______________________)
+</span><span class='line'>          `|  /~~~~~~~~~~\                       |
+</span><span class='line'>           ;  |--------(-||______________________|
+</span><span class='line'>           ;  |--------(-| ____________|
+</span><span class='line'>           ;  \__________/&#39;
+</span><span class='line'>         _/__         ___;
+</span><span class='line'>      ,~~    |  __--~~       Gunslinger Joe&#39;s
+</span><span class='line'>     &#39;        ~~| (  |       Private Stash of Gold
+</span><span class='line'>    &#39;      &#39;~~  `____&#39;
+</span><span class='line'>   &#39;      &#39;
+</span><span class='line'>  &#39;      `            Password Protection activated!
+</span><span class='line'> &#39;       `
+</span><span class='line'>&#39;--------`
+</span><span class='line'>Username: Joe
+</span><span class='line'>Password: bcXoc]VkTGrE_oKcXT
+</span><span class='line'>Access granted!
+</span><span class='line'>$ cat FLAG
+</span><span class='line'>flag{joe_thought_youd_never_find_that_module}
+</span><span class='line'>$
+</span></code></pre></td></tr></table></div></figure>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">darby</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-23T13:39:00-04:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/reversing/'>reversing</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-gunslinger-joes-gold-stash/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-gunslinger-joes-gold-stash/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/10/23/hack-dot-lu-2014-hidden-in-plain-sight/" title="Previous Post: Hack.lu 2014 - Hidden in ρlaιn sιght">&laquo; Hack.lu 2014 - Hidden in ρlaιn sιght</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/10/23/hack-dot-lu-2014-wiener/" title="Next Post: Hack.lu 2014 - wiener">Hack.lu 2014 - wiener &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-gunslinger-joes-gold-stash/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-gunslinger-joes-gold-stash/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

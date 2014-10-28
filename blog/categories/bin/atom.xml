@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: bin | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/bin/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hack You Too - Keygen Me?]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/01/07/hack-you-too-keygen-me/"/>
+    <updated>2013-01-07T21:14:00-05:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/01/07/hack-you-too-keygen-me</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>You need the right key.</p>
+
+<p>File: <a href="http://hackyou.ctf.su/files/keygen_me.exe">keygen_me.exe</a></p>
+
+<h2>Analysis</h2>
+
+<p>Windows GUI executable. Simply takes one input and appears to check the result. When we enter junk, we get a message of <code>xD Try again!</code>. Looking at the strings, it is not completely obvious where this is printed. However, there are not many user functions and eventually we see a call to <a href="http://msdn.microsoft.com/en-us/library/ms645489%28VS.85%29.aspx">GetDlgItemTextA()</a> which stores user input from dialog box into a buffer.
+<code>
+.text:01391252                 call    ds:GetDlgItemTextA
+</code></p>
+
+<p>Just following loading the user input into the buffer, we see manipulation of the data and a character by character comparison afterwards.
+<code>
+.text:01391260 loc_1391260:
+.text:01391260                 mov     dl, [ebp+eax+String]
+.text:01391264                 add     dl, al
+.text:01391266                 xor     dl, byte ptr [ebp+eax+Hackplanet]
+.text:0139126A                 inc     eax
+.text:0139126B                 mov     [ebp+eax+key], dl
+.text:0139126F                 cmp     eax, 11
+.text:01391272                 jl      short loc_1391260
+.text:01391274                 cmp     [ebp+key+1], 39
+.text:01391278                 jnz     short loc_13912C5
+.text:0139127A                 cmp     [ebp+key+2], 15
+.text:0139127E                 jnz     short loc_13912C5
+.text:01391280                 cmp     [ebp+key+3], 11
+.text:01391284                 jnz     short loc_13912C5
+.text:01391286                 cmp     [ebp+key+4], 1
+.text:0139128A                 jnz     short loc_13912C5
+.text:0139128C                 cmp     [ebp+key+5], 60
+.text:01391290                 jnz     short loc_13912C5
+.text:01391292                 mov     cl, 10
+.text:01391294                 cmp     [ebp+key+6], cl
+.text:01391297                 jnz     short loc_13912C5
+.text:01391299                 mov     al, 8
+.text:0139129B                 cmp     [ebp+key+7], al
+.text:0139129E                 jnz     short loc_13912C5
+.text:013912A0                 cmp     [ebp+key+8], 28
+.text:013912A4                 jnz     short loc_13912C5
+.text:013912A6                 cmp     [ebp+key+9], al
+.text:013912A9                 jnz     short loc_13912C5
+.text:013912AB                 cmp     [ebp+key+0Ah], 25
+.text:013912AF                 jnz     short loc_13912C5
+.text:013912B1                 cmp     [ebp+key+0Bh], cl
+</code></p>
+
+<p>The following Ruby code reverses the above
+```ruby</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<p>key = &quot;Hackplanet&quot;
+solution = [0x27, 0x0f, 0x0b, 0x01, 0x3c, 0x0a, 0x08, 0x1c, 0x08, 0x19]</p>
+
+<p>solution.each_index do |i|
+    print (( key[i].ord ^ solution[i] ) - i).chr
+end
+puts &quot;&quot;
+```</p>
+
+<p><code>bash
+stacks0n@stacks0ns-MacBook-Pro:~&gt; ./keygen_me.rb
+omfgHacked
+</code></p>
+
+<h2>Solution</h2>
+
+<p>omfgHacked</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ATAST 2012 - Bin 200]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/01/02/atast-2012-bin-200/"/>
+    <updated>2013-01-02T21:51:00-05:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/01/02/atast-2012-bin-200</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>hello again,we have a new binary for you, its also password protected and have some kind of protection mechanisms,see if you can get us the pass. here is the <a href="http://ctf.atast-competition.com/ctf/downloads/bin200.zip">binary</a></p>
+
+<h2>Analysis</h2>
+
+<p>There is a check to determine whether a debugger is attached. To work around that, we need to break at the beginning of main() and manually set $eip to the block for the success case.
+<code>
+.text:080485ED loc_80485ED:                            ; CODE XREF: main+Dj
+.text:080485ED                 mov     dword ptr [esp+0Ch], 0
+.text:080485F5                 mov     dword ptr [esp+8], 0
+.text:080485FD                 mov     dword ptr [esp+4], 0
+.text:08048605                 mov     dword ptr [esp], 0 ; request
+.text:0804860C                 call    _ptrace
+.text:08048611                 test    eax, eax
+.text:08048613                 jns     short loc_8048628
+.text:08048615                 mov     dword ptr [esp], offset s ; &quot;Debugger detected!&quot;
+.text:0804861C                 call    _puts
+.text:08048621                 mov     eax, 0
+.text:08048626                 jmp     short locret_804865B
+.text:08048628 ; ---------------------------------------------------------------------------
+.text:08048628
+.text:08048628 loc_8048628:                            ; CODE XREF: main+52j
+.text:08048628                 mov     eax, [ebp+arg_4]
+.text:0804862B                 add     eax, 4
+.text:0804862E                 mov     eax, [eax]
+.text:08048630                 mov     [esp], eax
+.text:08048633                 call    pwd
+</code></p>
+
+<p>The code then runs the pwd() function, which first checks that the password is of length 7. Then GeneratePassword() is called to create a password.
+<code>
+(gdb) b main
+Breakpoint 1 at 0x80485c4
+(gdb) b * 0x0804859c
+Breakpoint 2 at 0x0804859c
+(gdb) run 1234567
+0x080485c4 in main ()
+(gdb) set $eip=0x08048628
+(gdb) continue
+0x0804859c in pwd ()
+(gdb) x /8bx $esp
+0xbffff238:     0xce    0xf4    0xff    0xbf    0x5c    0xf2    0xff    0xbf
+(gdb) x /s 0xbffff4ce
+0xbffff4ce:     &quot;1234567&quot;
+(gdb) x /s 0xbffff25c
+0xbffff25c:     &quot;fspiyrw&quot;
+</code></p>
+
+<p><code>
+stacks0n@ubuntu:~/Desktop$ ./bin200 fspiyrw
+nice work go ahead validate what you've found
+</code></p>
+
+<h2>Solution</h2>
+
+<p>fspiyrw</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ATAST 2012 - Bin 100]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/01/02/atast-2012-bin-100/"/>
+    <updated>2013-01-02T21:46:00-05:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/01/02/atast-2012-bin-100</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>we recovered a binary from one of X company machines. its password protected :( , see if you can get us the pass. here is the <a href="http://www.atast-ctf.net/ctf/downloads/bin100.zip">binary</a></p>
+
+<h2>Analysis</h2>
+
+<p>Binary simply asks for a password. HexRays decompilation:
+<code>
+    ##  unsigned int v4; // [sp+4Eh] [bp-22h]@1
+    ##  unsigned int v5; // [sp+52h] [bp-1Eh]@1
+    ##  unsigned int v6; // [sp+56h] [bp-1Ah]@1
+    ##  signed __int16 v7; // [sp+5Ah] [bp-16h]@1
+    ##  int v8; // [sp+5Ch] [bp-14h]@1
+    ##
+    ##  v8 = *MK_FP(__GS__, 20);
+    ##  v4 = 0x5375116Fu;
+    ##  v5 = 0x4D6D1512u;
+    ##  v6 = 0x73156978u;
+    ##  v7 = 0x45u;
+    ##  fwrite(&quot;Password Required : &quot;, 1u, 0x14u, stdout);
+    ##  fflush(stdout);
+    ##  fgets((char *)&amp;v2, 20, stdin);
+    ##  for ( i = 0; i &lt; strlen((const char *)&amp;v2); ++i )
+    ##  {
+    ##    *((_BYTE *)&amp;v3 + i) = *((_BYTE *)&amp;v4 + i) ^ 0x21;
+    ##    if ( strncmp((const char *)&amp;v2, (const char *)&amp;v3, i) )
+    ##    {
+    ##      puts(&quot;Wrong !!!! better luck next time :D &quot;);
+    ##      result = 0;
+    ##      goto LABEL_9;
+    ##    }
+    ##  }
+    ##  
+</code></p>
+
+<p>And the following code will get us the password:
+```ruby</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<p>&quot;6f 11 75 53 12 15 6d 4d 78 69 15 73 45&quot;.split(&quot; &quot;).each do |char|
+  print (char.to_i(16) ^ 0x21).chr
+end
+N0Tr34LlYH4Rd
+```</p>
+
+<h2>Solution</h2>
+
+<p>N0Tr34LlYH4Rd</p>
+]]></content>
+  </entry>
+  
+</feed>

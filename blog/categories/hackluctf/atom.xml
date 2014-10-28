@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: hackluctf | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/hackluctf/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2014 - Dalton's Corporate Security Safe for Business]]></title>
+    <link href="http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/"/>
+    <updated>2014-10-24T23:54:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>The Dalton Brothers are tricking people into buying their &quot;safe&quot; locks. So they
+can rob them afterwards. The lock has some safety features, as it resets itself
+after a few seconds. It also requires a lot of valid inputs before it's letting
+you open it. Please find out what their weakness is and report back. </p>
+
+<p><a href="https://wildwildweb.fluxfingers.net:1422/">link</a></p>
+
+<h2>Analysis</h2>
+
+<p>The captcha image is being painted in a canvas clientside by JavaScript. This
+is done in 8 ways. 3 examples are:</p>
+
+<p>1) Base64 Decoding a value
+2) Using Javascript.fromCharCode()
+3) /n/.source</p>
+
+<p>These values are then inserted using
+<a href="http://www.w3schools.com/tags/canvas_filltext.asp">fillText()</a>. The fillText
+function looks like this (var,x,y), where x is left right relative to the HTML
+canvas and y is up down relative to the canvas.  So to put the numbers in
+order, you can grep out the fillText functions and sort by the x position to
+get them in the right order.</p>
+
+<h2>Solution</h2>
+
+<p>Since there is a lot of variance in how the variables are assigned and used to
+build the captcha (including some variable reuse), it seemed to make the most
+sense to store these values immediately after they are used, then populate and
+submit the form automatically. Because of this, I decided to modify the
+JavaScript inline using Burp. I used the following search/replace rules on the
+response body:</p>
+
+<p><code>
+match: &lt;script&gt;
+replace: &lt;script&gt;blakeval={};
+</code></p>
+
+<p><code>
+match: fillText\((.*?)\)
+replace: fillText($1);var args=&quot;$1&quot;.split(','); var b1=args[0]; var b2=args[1]; blakeval[b2]=eval(b1);
+</code></p>
+
+<p><code>
+match: &lt;/script&gt;
+replace: var fieldval = &quot;&quot;; for(var key in blakeval) { fieldval += blakeval[key] }; document.getElementsByName('solution')[0].value = fieldval; document.forms[0].submit()&lt;/script&gt;
+</code></p>
+
+<p>By using the x index from fillItem() as the key in property, it will be autosorted in the way that we need. Then simply populate the form and submit. Wait a while and then the link is unlocked.</p>
+
+<p><code>
+https://wildwildweb.fluxfingers.net:1422/?login=rRrtTE0WYFh5bVHToYQwKyvP
+</code></p>
+
+<p>Flag:
+<code>
+fef9565c97c3a62fe10d2a0084a9e8179d72f4a05084997cb80e900d1a77a42e3
+</code></p>
+
+<h2>Alternative Solution</h2>
+
+<p>This solution (written in Python) utilizes the following workflow:
+ * Request the HTTP session, find the &lt;script&gt; and separate the
+   Javascript into individual lines
+ * Parse the Javascript (minding the X-coordinate of the textfill() function to
+   reassemble the order.  There are a total of eight tricks they're using to
+   obfuscate the characters, so there's are eight branches depending on which
+   one we've encountered.
+ * Extract the characters and PHP session ID, then resubmit the page.
+ * Loop repeatedly until the locks allow access to the flag
+ * Access the flag when the URL is unlocked.</p>
+
+<p>It's a terrible, terrible script, but here it is for grins.</p>
+
+<p>```python</p>
+
+<h1>!/usr/bin/python</h1>
+
+<p>import sys
+import re # RegEx to extract <script> .* </script>
+import requests   # Used for GET/POST requests
+import base64  # Needed to deobfuscate some of the characters</p>
+
+<h1>This generates Javascript output and is used to verify the decoding of each character and position</h1>
+
+<p>debug = False</p>
+
+<h1>The hard work is broken into four functions</h1>
+
+<h1>isALetter - detect the presence of any of the eight obfuscation methods</h1>
+
+<h1>extractLetter - deobfuscate the Javascript (using one of eight techniques)</h1>
+
+<h1>isAPosition - detects the presence of fillText() which is used to draw a character and includes the X,Y coordinates</h1>
+
+<h1>extractPosition - extracts the X coordinates of the character being printed</h1>
+
+<p>def extractLetter(line):
+  if 'atob' in line:
+    if debug: print &quot;1&quot;, line,
+    line = line.split(&quot;(&quot;)[1]
+    line = line.split(&quot;)&quot;)[0]
+    line = base64.b64decode(line)
+    if debug: print  line
+    return line
+  elif 'fromCharCode' in line:
+    if debug: print &quot;2&quot;, line,
+    line = line.split(&quot;(&quot;)[1]
+    line = line.split(&quot;)&quot;)[0]
+    line = chr(int(line))
+    if debug: print  line
+    return line
+  elif '.source' in line:
+    if debug: print &quot;3&quot;, line, 
+    line = line.split(&quot;/&quot;)[1]
+    line = line.split(&quot;/&quot;)[0]
+    if debug: print line
+    return line
+  elif '!1' in line:    #false
+    string = &quot;false&quot;
+    if debug: print &quot;4&quot;, line, 
+    line = line.split(&quot;[&quot;)[1]
+    line = line.split(&quot;]&quot;)[0]
+    line = string[int(line)]
+    if debug: print line
+    return line
+  elif '[]+{}' in line:  #[object Object]
+    string = &quot;[object Object]&quot;
+    if debug: print &quot;5&quot;, line, 
+    line = line.split(&quot;[&quot;)[2]
+    if debug: print &quot;/&quot;,line,&quot;/&quot;,
+    line = line.split(&quot;]&quot;)[0]
+    if debug: print &quot;|&quot;,line,&quot;|&quot;,
+    line = string[int(line)]
+    if debug: print line
+    return line
+  elif &quot;&quot;&quot;[][+[]]+&quot;&quot;&quot;&quot;&quot; in line:
+    string = &quot;undefined&quot;
+    if debug: print &quot;6&quot;, line, 
+    line = line.split(&quot;[&quot;)[4]
+    line = line.split(&quot;]&quot;)[0]
+    line = string[int(line)]
+    if debug: print line
+    return line
+  elif &quot;''+!0&quot; in line:
+    string = &quot;true&quot;
+    if debug: print &quot;7&quot;, line, 
+    line = line.split(&quot;[&quot;)[1]
+    line = line.split(&quot;]&quot;)[0]
+    line = string[int(line)]
+    if debug: print line
+    return line
+  elif &quot;).toString(&quot; in line: 
+    string = &quot;0123456789abcdefghijklmnopqrstuvwxyz&quot;
+    if debug: print &quot;8&quot;, line, 
+    line = line.split(&quot;(&quot;)[1]
+    line = line.split(&quot;)&quot;)[0]
+    line = string[int(line)]
+    if debug: print line
+    return line
+  elif 'var' in line and 'createLinearGradient' not in line and 'getContext' not in line:
+    print &quot;?&quot;, line
+    return &quot;&quot;
+  elif 'fillText' in line:
+    if debug: print &quot;!&quot;, line
+    return &quot;&quot;
+  else: 
+    return &quot;&quot;</p>
+
+<p>def isALetter(line):
+  if 'atob' in line: return True
+  elif 'fromCharCode' in line: return True
+  elif '.source' in line: return True
+  elif '!1' in line: return True
+  elif '[]+{}' in line: return True
+  elif &quot;&quot;&quot;[][+[]]+&quot;&quot;&quot;&quot;&quot; in line: return True
+  elif &quot;''+!0&quot; in line: return True
+  elif &quot;).toString(&quot; in line: return True
+  else: return False</p>
+
+<p>def isAPosition(line):
+  if 'fillText' in line: return True</p>
+
+<p>def extractPosition(line):
+  if 'fillText' in line:
+    pos = line.split(&quot;,&quot;)[1]
+    if debug: print &quot;POS = &quot;, pos
+    return int(pos)
+  else:
+    return false</p>
+
+<p>url='https://wildwildweb.fluxfingers.net:1422/'
+cookies = dict()
+params = dict()
+PHPSESSID = &quot;&quot;</p>
+
+<p>r = requests.get(url, cookies=cookies)</p>
+
+<p>PHPSESSID = r.cookies['PHPSESSID']
+cookies['PHPSESSID'] = PHPSESSID</p>
+
+<p>for i in range(0,100):</p>
+
+<p>r = requests.get(url, cookies=cookies)
+  #print r.cookies['PHPSESSID']</p>
+
+<p>script = re.findall(r&quot;.<em>script.</em>&quot;, r.content)[0]
+  scriptLines = re.sub(r&quot;;&quot;, &quot;;\n&quot;, script)
+  scriptLines = scriptLines.split(&quot;\n&quot;)</p>
+
+<p>answerArray = [None] * 100
+  answerString = &quot;&quot;</p>
+
+<p>for scriptLine in scriptLines:
+    if isALetter(scriptLine):
+      letter = extractLetter(scriptLine)
+    if isAPosition(scriptLine):
+      position = extractPosition(scriptLine)
+      answerArray[position] = letter</p>
+
+<p>for letter in answerArray:
+    if letter != None:
+      answerString += letter</p>
+
+<p>print &quot; -- REPLYING:&quot; , answerString
+  params['solution'] = answerString
+  params['submit'] = &quot;OK&quot;</p>
+
+<p>r = requests.post(url, cookies=cookies, data=params)</p>
+
+<p># print r.content</p>
+
+<p>for line in r.content.splitlines():
+    if '<p>' in line: print line
+    if '<li>' in line:
+      print line
+      if 'a href=&quot;?login=' in line:
+        line = line.split('&quot;')
+        q = requests.get(url + line[1], cookies=cookies)
+        print q.content
+        sys.exit(0)
+    if 'slow' in line: print line
+    if 'anew' in line: print line
+    if 'good' in line: print line
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

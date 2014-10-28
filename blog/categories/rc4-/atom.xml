@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rc4, | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/rc4-/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2013 - Flux Archive Part 2]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-2/"/>
+    <updated>2013-10-27T15:46:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-2</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>These sneaky humans! They do not just use one passcode, but two to enter the Festzelt. We heard that the passcode is hidden inside the archive file. It seems that the FluxFingers overrated their programming skill and had a major logical flaw in the archive file structure. Some of the drunken Oktoberfest humans found it and abused this flaw in order to transfer hidden messages. Find this passcode so we can finally drink their beer!</p>
+
+<h2>Analysis</h2>
+
+<p>Somewhere in the archive there is some hidden data. Playing around with the tool, I notice that when we delete archives the file size does not change. It must just leave the file entry data but delete the file itself.</p>
+
+<p>```bash
+% ./archiv -a myarchive.arc 123456 test </p>
+
+<p>FluxArchiv - solved security since 2007!
+Written by sqall - leading expert in social-kernel-web-reverse-engineering.</p>
+
+<p>Archiv myarchive.arc successfully created.</p>
+
+<p>Progress:
+0% ... 10% ... 20% ... 30% ... 40% ... 50% ... 60% ... 70% ... 80% ... 90% ... 100%</p>
+
+<p>File test successfully added to the archiv.</p>
+
+<p>% ls -al myarchive.arc
+-rw-rw-r-- 1 stacks0n stacks0n 2112 Oct 23 20:39 myarchive.arc</p>
+
+<p>% ./archiv -d myarchive.arc 123456 test </p>
+
+<p>FluxArchiv - solved security since 2007!
+Written by sqall - leading expert in social-kernel-web-reverse-engineering.</p>
+
+<p>File test successfully deleted from the archiv.</p>
+
+<p>% ls -al myarchive.arc
+-rw-rw-r-- 1 stacks0n stacks0n 2112 Oct 23 20:39 myarchive.arc
+```</p>
+
+<p>Looking at sanitizeFilename(), file entries begin at offset 0x20 and there is a magic value of &quot;FluXL1sT&quot;. The filenames are RC4 encrypted with the key being the SHA-1 sum of the archive password. Setting a breakpoint in sanitizeFilename() towards the end of the function, we notice a number of files that are simply empty string. It would appear that they are simply cleared out when deleted.</p>
+
+<p>I wonder if we can simply just encrypt a new filename and replace the entry to access the file without having to learn anything else about the file format. Turns out that I struggled with that, but when decrypting blocks in the file noticed my plaintext being displayed. So rather than actually figure out the format, lets just brute force decrypting blocks and see if we get lucky.</p>
+
+<p>```ruby</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<p>require 'rc4'
+require 'digest/sha1'</p>
+
+<p>f = File.open(&quot;FluxArchiv.arc&quot;, &quot;r&quot;)
+success = false</p>
+
+<p>password = &quot;PWF41L&quot;
+key = Digest::SHA1.digest(password)
+offset = 0</p>
+
+<p>ciphertext = f.read(8)
+while offset &lt; f.size
+    f.seek(offset)
+    ciphertext = f.read(1024)
+    dec = RC4.new(key)
+    cleartext = dec.decrypt(ciphertext)</p>
+
+<pre><code>if cleartext.match(/^[\w\s]{6}/) and cleartext.match(/key|flag/i)
+    puts cleartext
+end
+
+offset += 8
+</code></pre>
+
+<p>end
+```</p>
+
+<h2>Solution</h2>
+
+<p>```bash
+% ruby fluxarchiv2.rb
+e electron and the switch, the
+beauty of the baud.  We make use of a service already existing without paying
+for what could be dirt-cheap if it wasn't run by profiteering gluttons, and
+you call us criminals.  We explore... and you call us criminals.  We seek
+after knowledge... and you call us criminals.  We exist without skin color,
+without nationality, without religious bias... and you call us criminals.
+You build atomic bombs, you wage wars, you murder, cheat, and lie to us
+and try to make us believe it's for our own good, yet we're the criminals.</p>
+
+<p>Yes, I am a criminal.  My crime is that of curiosity.  My crime is
+that of judging people by what they say and think, not what they look like.
+My crime is that of outsmarting you, something that you will never forgive me
+for.</p>
+
+<p>I am a hacker, and this is my manifesto.  You may stop this individual,
+but you can't stop us all... after all, we're all alike.</p>
+
+<p>+++The Mentor+++</p>
+
+<p>Flag: D3letinG-1nd3x_F4iL
+```</p>
+
+<p><code>D3letinG-1nd3x_F4iL</code></p>
+]]></content>
+  </entry>
+  
+</feed>

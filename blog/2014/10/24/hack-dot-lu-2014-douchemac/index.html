@@ -1,0 +1,963 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hack.lu 2014 - Douchemac - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge by martin (Crypto)
+200 (+100) Points Our companion Jesse James shot a carrier pigeon. It had a letter containing weird characters. Maybe it &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-douchemac/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hack.lu 2014 - Douchemac</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-24T14:57:00-04:00" pubdate data-updated="true">Oct 24<span>th</span>, 2014</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<ul>
+<li>by martin (Crypto)</li>
+<li>200 (+100) Points</li>
+</ul>
+
+<p>Our companion Jesse James shot a carrier pigeon. It had a letter containing weird characters. Maybe it has something todo with the local gold mine. </p>
+
+<p>Download</p>
+
+<h2>Analysis</h2>
+
+<p>The download is a pcap of D-BUS traffic.</p>
+
+<p>Eventually, you find:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>------------------------------------------------------
+</span><span class='line'>|        SIMPLE SECURE NOTES STORAGE SYSTEM            |
+</span><span class='line'>| DOUCHEMAC-SHA256-CBC Authentication System           |
+</span><span class='line'>| 1. start a session (valid 10 min)                    |
+</span><span class='line'>| 2. authenticate                                      |
+</span><span class='line'>| 3. work                                              |
+</span><span class='line'>|                                                      |
+</span><span class='line'>|                                                      |
+</span><span class='line'>| NULL padding                                         |
+</span><span class='line'> ------------------------------------------------------
+</span><span class='line'>Use ID: 75288142666
+</span><span class='line'>Use Nonce: z9TxSOvwZ21KDcHQeTef8Q== to xor your key!
+</span></code></pre></td></tr></table></div></figure>
+
+<p>There are two TCP Flows in the PCAP:</p>
+
+<p>One:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>.AUTH EXTERNAL 363636
+</span><span class='line'>REJECTED EXTERNAL DBUS_COOKIE_SHA1 ANONYMOUS
+</span><span class='line'>AUTH DBUS_COOKIE_SHA1 363636
+</span><span class='line'>REJECTED EXTERNAL DBUS_COOKIE_SHA1 ANONYMOUS
+</span><span class='line'>AUTH ANONYMOUS 6c69626462757320312e382e38
+</span><span class='line'>OK aba45dc8a0c4d0ff480a9adc5433de97
+</span><span class='line'>BEGIN
+</span><span class='line'>l...........n.....o...../org/freedesktop/DBus.....s.....org.freedesktop.DBus......s.....org.freedesktop.DBus......s.....Hello...l...
+</span><span class='line'>.......=.....s.....:1.31.....u.......g..s....s.....org.freedesktop.DBus........:1.31.l.................o...../org/freedesktop/DBus.....s.....org.freedesktop.DBus......s.....org.freedesktop.DBus......s.....GetNameOwner......g..s......test.test123.Server.l...
+</span><span class='line'>.............o...../org/freedesktop/DBus.....s.....org.freedesktop.DBus......s.....NameAcquired......s.....:1.31.....g..s....s.....org.freedesktop.DBus........:1.31.l...
+</span><span class='line'>.......=.....s.....:1.31.....u.......g..s....s.....org.freedesktop.DBus........:1.30.l...........c.....o...../Server...s.....:1.30.....s.#...org.freedesktop.DBus.Introspectable.......s.
+</span><span class='line'>...Introspect......l.................o...../org/freedesktop/DBus.....s.....org.freedesktop.DBus......s.....org.freedesktop.DBus......s.....GetNameOwner......g..s......test.test123.Server.l.................s.....:1.31.....u.......g..s....s.....:1.30.......&lt;!DOCTYPE node PUBLIC &quot;-//freedesktop//DTD D-BUS Object Introspection 1.0//EN&quot;
+</span><span class='line'>&quot;http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd&quot;&gt;
+</span><span class='line'>&lt;node name=&quot;/Server&quot;&gt;
+</span><span class='line'>  &lt;interface name=&quot;org.freedesktop.DBus.Introspectable&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;Introspect&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>  &lt;interface name=&quot;test.test123.Interface&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_genrnd&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>  &lt;interface name=&quot;test.test123.Server&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_authc&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;msg&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;iv&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;tag&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_auths&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;msg&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_time&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_list&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_put&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;filename&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;text&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_get&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;filename&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_start&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>&lt;/node&gt;
+</span><span class='line'>.l...
+</span><span class='line'>.......=.....s.....:1.31.....u.......g..s....s.....org.freedesktop.DBus........:1.30.l...........c.....o...../Server...s.....:1.30.....s.#...org.freedesktop.DBus.Introspectable.......s.
+</span><span class='line'>...Introspect......l.................s.....:1.31.....u.......g..s....s.....:1.30.......&lt;!DOCTYPE node PUBLIC &quot;-//freedesktop//DTD D-BUS Object Introspection 1.0//EN&quot;
+</span><span class='line'>&quot;http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd&quot;&gt;
+</span><span class='line'>&lt;node name=&quot;/Server&quot;&gt;
+</span><span class='line'>  &lt;interface name=&quot;org.freedesktop.DBus.Introspectable&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;Introspect&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>  &lt;interface name=&quot;test.test123.Interface&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_genrnd&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>  &lt;interface name=&quot;test.test123.Server&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_authc&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;msg&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;iv&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;tag&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_auths&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;msg&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_time&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_list&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_put&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;filename&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;text&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_get&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;filename&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_start&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>&lt;/node&gt;
+</span><span class='line'>.l...........3.....o...../Server...s.....:1.30.....s.
+</span><span class='line'>...dbus_start......l.................s.....:1.31.....u.......g..s....s.....:1.30....... ------------------------------------------------------
+</span><span class='line'>|        SIMPLE SECURE NOTES STORAGE SYSTEM            |
+</span><span class='line'>| DOUCHEMAC-SHA256-CBC Authentication System           |
+</span><span class='line'>| 1. start a session (valid 10 min)                    |
+</span><span class='line'>| 2. authenticate                                      |
+</span><span class='line'>| 3. work                                              |
+</span><span class='line'>|                                                      |
+</span><span class='line'>|                                                      |
+</span><span class='line'>| NULL padding                                         |
+</span><span class='line'> ------------------------------------------------------
+</span><span class='line'>Use ID: 75288142666
+</span><span class='line'>Use Nonce: z9TxSOvwZ21KDcHQeTef8Q== to xor your key!
+</span><span class='line'>.
+</span></code></pre></td></tr></table></div></figure>
+
+<p>The other:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>.AUTH EXTERNAL 363636
+</span><span class='line'>REJECTED EXTERNAL DBUS_COOKIE_SHA1 ANONYMOUS
+</span><span class='line'>AUTH DBUS_COOKIE_SHA1 363636
+</span><span class='line'>REJECTED EXTERNAL DBUS_COOKIE_SHA1 ANONYMOUS
+</span><span class='line'>AUTH ANONYMOUS 6c69626462757320312e382e38
+</span><span class='line'>OK aba45dc8a0c4d0ff480a9adc5433de97
+</span><span class='line'>BEGIN
+</span><span class='line'>l...........n.....o...../org/freedesktop/DBus.....s.....org.freedesktop.DBus......s.....org.freedesktop.DBus......s.....Hello...l...
+</span><span class='line'>.......=.....s.....:1.32.....u.......g..s....s.....org.freedesktop.DBus........:1.32.l.................o...../org/freedesktop/DBus.....s.....org.freedesktop.DBus......s.....org.freedesktop.DBus......s.....GetNameOwner......g..s......test.test123.Server.l...
+</span><span class='line'>.............o...../org/freedesktop/DBus.....s.....org.freedesktop.DBus......s.....NameAcquired......s.....:1.32.....g..s....s.....org.freedesktop.DBus........:1.32.l...
+</span><span class='line'>.......=.....s.....:1.32.....u.......g..s....s.....org.freedesktop.DBus........:1.30.l...........c.....o...../Server...s.....:1.30.....s.#...org.freedesktop.DBus.Introspectable.......s.
+</span><span class='line'>...Introspect......l.................o...../org/freedesktop/DBus.....s.....org.freedesktop.DBus......s.....org.freedesktop.DBus......s.....GetNameOwner......g..s......test.test123.Server.l.................s.....:1.32.....u.......g..s....s.....:1.30.......&lt;!DOCTYPE node PUBLIC &quot;-//freedesktop//DTD D-BUS Object Introspection 1.0//EN&quot;
+</span><span class='line'>&quot;http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd&quot;&gt;
+</span><span class='line'>&lt;node name=&quot;/Server&quot;&gt;
+</span><span class='line'>  &lt;interface name=&quot;org.freedesktop.DBus.Introspectable&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;Introspect&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>  &lt;interface name=&quot;test.test123.Interface&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_genrnd&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>  &lt;interface name=&quot;test.test123.Server&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_authc&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;msg&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;iv&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;tag&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_auths&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;msg&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_time&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_list&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_put&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;filename&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;text&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_get&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;filename&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_start&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>&lt;/node&gt;
+</span><span class='line'>.l...
+</span><span class='line'>.......=.....s.....:1.32.....u.......g..s....s.....org.freedesktop.DBus........:1.30.l...........c.....o...../Server...s.....:1.30.....s.#...org.freedesktop.DBus.Introspectable.......s.
+</span><span class='line'>...Introspect......l.................s.....:1.32.....u.......g..s....s.....:1.30.......&lt;!DOCTYPE node PUBLIC &quot;-//freedesktop//DTD D-BUS Object Introspection 1.0//EN&quot;
+</span><span class='line'>&quot;http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd&quot;&gt;
+</span><span class='line'>&lt;node name=&quot;/Server&quot;&gt;
+</span><span class='line'>  &lt;interface name=&quot;org.freedesktop.DBus.Introspectable&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;Introspect&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>  &lt;interface name=&quot;test.test123.Interface&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_genrnd&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>  &lt;interface name=&quot;test.test123.Server&quot;&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_authc&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;msg&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;iv&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;tag&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_auths&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;msg&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_time&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_list&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_put&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;filename&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;text&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_get&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;id&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;in&quot;  type=&quot;s&quot; name=&quot;filename&quot; /&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>    &lt;method name=&quot;dbus_start&quot;&gt;
+</span><span class='line'>      &lt;arg direction=&quot;out&quot; type=&quot;s&quot; /&gt;
+</span><span class='line'>    &lt;/method&gt;
+</span><span class='line'>  &lt;/interface&gt;
+</span><span class='line'>&lt;/node&gt;
+</span><span class='line'>.l...........?.....o...../Server...s.....:1.30.....s.....dbus_time.........g..s......75288142666.l.................s.....:1.32.....u.......g..s....s.....:1.30...
+</span><span class='line'>...1412688735.91.l...........?.....o...../Server...s.....:1.30.....s.....dbus_genrnd.......g..s......75288142666.l.................s.....:1.32.....u.......g..s....s.....:1.30.......+pVgvsPDX1LI7xDc/AS9Fg==
+</span><span class='line'>.
+</span></code></pre></td></tr></table></div></figure>
+
+<p>Here, we installed D-Feet, a d-bus debugger that can be used for remote interaction.</p>
+
+<p>Using D-Feet to interact with the server, we called the help function, which returned:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'> ------------------------------------------------------
+</span><span class='line'>|        SIMPLE SECURE NOTES STORAGE SYSTEM            |
+</span><span class='line'>| DOUCHEMAC-SHA256-CBC Authentication System           |
+</span><span class='line'>|                                                      |
+</span><span class='line'>| SPEC:                                                |
+</span><span class='line'>|   blocksize = 16                                     |
+</span><span class='line'>|   k = k ^ nonce                                      |
+</span><span class='line'>|   while len(M) % 16: M || NULL                       |
+</span><span class='line'>|   M = M<em>0 || M</em>1 ...                                 |
+</span><span class='line'>|   tag<em>0 = sha256(k || M</em>0 ^ iv)                      |
+</span><span class='line'>|   tag<em>i = sha256(k || M</em>i ^ tag_i-1)                 |
+</span><span class='line'>|                                                      |
+</span><span class='line'>| FUNCS:                                               |
+</span><span class='line'>|   start : start session                              |
+</span><span class='line'>|   genrnd: get random numer                           |
+</span><span class='line'>|   time  : get time                                   |
+</span><span class='line'>|   list  : list files                                 |
+</span><span class='line'>|   put   : put file                                   |
+</span><span class='line'>|   get   : get file                                   |
+</span><span class='line'>|   auths : server authentication                      |
+</span><span class='line'>|   authc : client authentication                      |
+</span><span class='line'>|                                                      |
+</span><span class='line'>| NOTE:                                                |
+</span><span class='line'>|   session times out                                  |
+</span><span class='line'>|   connection limit                                   |
+</span><span class='line'> ------------------------------------------------------
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Calling the start function gives us a session ID and a nonce:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>\r\nUse ID: 688383258476362303\r\nUse Nonce: 2bH5BJ5gR4FPnw8JIPvMgw== to xor your key!\r\n&#39;
+</span></code></pre></td></tr></table></div></figure>
+It became apparent that we needed to authenticate to the server by calling authc(id, msg, iv, tag) where msg is a base64-encoded raw message, the iv we used, and the tag of the message as generated by the algorithm in &#8220;SPEC&#8221; of the help response.
+Auths(id, msg) would return an iv and tag of msg, but when we try to feed this output directly into authc(), we receive:
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>u&#39;IV : eDmGlE34dc6xjskpRtaCQg==\r\nMsg: YmxhaA==\r\nTag: GGzDwlaGGl+MBlMO2Svbmw==\r\n&#39;
+</span><span class='line'>u&#39;Please choose another message!\r\n&#39;
+</span></code></pre></td></tr></table></div></figure>
+Next, we tried exploiting the fact that, given the algorithm they are using, we could flip a bit in the first block of the message and flip the corresponding bit in the IV without affecting the tag of the message. So we gave auths() the msg in the first line below, and then flipped a bit in the provided IV and in the original msg (line 2). We gave this to authc() and received line 3.
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>u&#39;IV : JNuQTRBq+1uYePtwjyt8KQ==\r\nMsg: AAAAAAAAAAAAAAAAAAAAAA==\r\nTag: 78Eb6hYOZFu4yOGNVWxjDQ==\r\n&#39;
+</span><span class='line'>&quot;215791365151423835&quot;, &#39;AQAAAAAAAAAAAAAAAAAAAA==&#39;, &#39;JduQTRBq+1uYePtwjyt8KQ==&#39;, &#39;78Eb6hYOZFu4yOGNVWxjDQ==&#39;
+</span><span class='line'>u&#39;Please choose a different message length (blocks: 1)!\r\n&#39;
+</span></code></pre></td></tr></table></div></figure>
+
+<p>Now we knew that the message we give to authc() needs to be of different length than the one we give to auths(). Finally, we saw that we could extend the message in the following way:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'> if M_i = M_0 ^ iv ^ tag_0
+</span><span class='line'> then tag_1 = sha256(k || M_i ^ tag_0) = sha256(k || M_0 ^ iv ^ tag_0 ^ tag_0) = tag_0
+</span></code></pre></td></tr></table></div></figure>
+
+<p>So, we generated the following from auths() using a message block of all 0&#8217;s:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>u&#39;IV : qyvebQDUhwtfPApJ/liLzQ==\r\nMsg: AAAAAAAAAAAAAAAAAAAAAA==\r\nTag: HBF3ALjqxh6DncNXUxU8EA==\r\n&#39;
+</span></code></pre></td></tr></table></div></figure>
+
+<p>and then we could append a second block onto our message, M<em>1 = M</em>0 ^ iv ^ tag. Giving this longer message to authc() along with the same tag and iv yielded authentication:1.</p>
+
+<p>We then simply needed to call list() and decode the response to get the name of the file containing the flag, secret.txt. We then encoded secret.txt and sent the get(id, file) command, which returned the flag:</p>
+
+<p>u&#8217;flag{c6Lnm39r950dlh6WzeIN}\n&#8217;</p>
+
+<p>helpful script:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">base64</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">flip<em>bit</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+</span><span class='line'>  <span class="n">s</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">^</span><span class="mi">1</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">xor</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">):</span>
+</span><span class='line'>  <span class="n">s1</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">m1</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">s2</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">m2</span><span class="p">))</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="nb">bytearray</span><span class="p">(</span><span class="n">x</span><span class="o">^</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">s2</span><span class="p">)))</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">cat</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span><span class="n">m2</span><span class="p">):</span>
+</span><span class='line'>  <span class="n">s1</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">m1</span><span class="p">))</span>
+</span><span class='line'>  <span class="n">s2</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">m2</span><span class="p">))</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">s1</span><span class="o">+</span><span class="n">s2</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">#u&#39;IV : EgPPG3/6IoWYHDK7/ySL1g==\r\nMsg: AAAAAAAAAAAAAAAAAAAAAA==\r\nTag: 31HfnMcBiAZj8CgMaZC78w==\r\n&#39;</span>
+</span><span class='line'><span class="c"># want msg = (M</em>0 || M<em>0 ^ iv ^ tag</em>0)</span>
+</span><span class='line'><span class="c"># return msg, iv, tag</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">mk<em>params</span><span class="p">(</span><span class="n">iv</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+</span><span class='line'>  <span class="n">m</em>i</span> <span class="o">=</span> <span class="n">cat</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">xor</span><span class="p">(</span><span class="n">xor</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">iv</span><span class="p">),</span> <span class="n">tag</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>  <span class="k">print</span> <span class="s">&quot;&#39;</span><span class="si">%s</span><span class="s">&#39;, &#39;</span><span class="si">%s</span><span class="s">&#39;, &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">m_i</span><span class="p">,</span> <span class="n">iv</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">m3g4tr0n</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-24T14:57:00-04:00" pubdate data-updated="true">Oct 24<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/crypto/'>crypto</a>, <a class='category' href='/blog/categories/hacklu/'>hacklu</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-douchemac/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-douchemac/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/" title="Previous Post: Hack.lu 2014 - ImageUpload">&laquo; Hack.lu 2014 - ImageUpload</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/" title="Next Post: Hack.lu 2014 - Dalton's Corporate Security Safe for Business">Hack.lu 2014 - Dalton's Corporate Security Safe for Business &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-douchemac/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-douchemac/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

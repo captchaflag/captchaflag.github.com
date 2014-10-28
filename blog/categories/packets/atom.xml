@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: packets | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/packets/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ATAST 2012 - Net 100]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/01/02/atast-2012-net-100/"/>
+    <updated>2013-01-02T21:41:00-05:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/01/02/atast-2012-net-100</id>
+    <content type="html"><![CDATA[<h2>Analysis</h2>
+
+<p>Filtered trafficdown to HTTP POST requests and saw this:
+<code>
+POST /js/php/email.php HTTP/1.1
+from=agentx@x.com&amp;subject=secret&amp;msg=aXRzbm90cmVhbGx5YXNlY3JldA==
+</code>
+Decodes to 'itsnotreallyasecret' but that is not the flag. Looking at all the web requests I notice requests to
+atast-ctf.net and see a download of a PDF file. The PDF is password protected, but luckily we know the password.
+Once we unlock the PDF, we get our flag.</p>
+
+<h2>Solution</h2>
+
+<p>cd757750ed89d2fd85e5b93cb52fd049</p>
+]]></content>
+  </entry>
+  
+</feed>

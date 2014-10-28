@@ -1,0 +1,413 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hack.lu 2013 - Flux Archive Part 1 - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge These funny humans try to exclude us from the delicious beer of the Oktoberfest! They made up a passcode for everyone who wants to enter &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-1/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hack.lu 2013 - Flux Archive Part 1</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-27T15:42:00-04:00" pubdate data-updated="true">Oct 27<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>These funny humans try to exclude us from the delicious beer of the Oktoberfest! They made up a passcode for everyone who wants to enter the Festzelt. Sadly, our human informant friend could not learn the passcode for us. But he heard a conversation between two drunken humans, that they were using the same passcode for this intercepted archive file. They claimed that the format is is absolutely secure and solves any kind of security issue. It&#8217;s written by this funny hacker group named FluxFingers. Real jerks if you ask me. Anyway, it seems that the capability of drunken humans to remember things is limited. So they just used a 6 character passcode with only numbers and upper-case letters. So crack this passcode and get our ticket to their delicious german beer!</p>
+
+<p>Here is the challenge: https://ctf.fluxfingers.net/static/downloads/fluxarchiv/hacklu2013<em>archiv</em>challenge1.tar.gz</p>
+
+<h2>Analysis</h2>
+
+<p>Provided with a 64-bit ELF and a data file.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>stacks0n@ubuntu:~/Desktop$ ./archiv
+</span><span class='line'>
+</span><span class='line'>################################################################################
+</span><span class='line'>
+</span><span class='line'>FluxArchiv - solved security since 2007!
+</span><span class='line'>Written by sqall - leading expert in social-kernel-web-reverse-engineering.
+</span><span class='line'>
+</span><span class='line'>################################################################################
+</span><span class='line'>
+</span><span class='line'>Unknown or invalid command.
+</span><span class='line'>
+</span><span class='line'>Usage: ./archiv &lt;command&gt; &lt;archiv&gt; &lt;password&gt; &lt;file&gt;
+</span><span class='line'>commands:
+</span><span class='line'>-l &lt;archiv&gt; &lt;password&gt; - lists all files in the archiv.
+</span><span class='line'>-a &lt;archiv&gt; &lt;password&gt; &lt;file&gt; - adds a file to the archiv (when archiv does not exist create a new archiv).
+</span><span class='line'>-x &lt;archiv&gt; &lt;password&gt; &lt;filename&gt; - extracts the given filename from the archiv.
+</span><span class='line'>-d &lt;archiv&gt; &lt;password&gt; &lt;filename&gt; - delete the given filename from the archiv.</span></code></pre></td></tr></table></div></figure>
+
+<p>Presumably, we could try to brute force the entire key space (36^6) but that might take a while when trying to execute the program. So let&#8217;s look into some of the key functions. Tracing backwards from the output of &quot;Given password is not correct&quot; we target verifyArchiv()</p>
+
+<h3>verifyArchiv</h3>
+
+<p>This method reads 0x14 (20) bytes from the archive file starting at offset 0xC (12) which is our target hash to verify that the password is accurate. It starts by grabbing bytes from hash_password (SHA-1 sum of password) out of order, but in a predictable manner. Look at the python code for that order. Then, the byte stream of the hash is run through SHA-1 and compared against the target. Thus, we can brute force the entire key space only running the code necessary to find the target.</p>
+
+<h2>Code</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/env python</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">hashlib</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">string</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">itertools</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">bruteforce</span><span class="p">(</span><span class="n">charset</span><span class="p">,</span> <span class="n">maxlength</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">charset</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxlength</span><span class="p">,</span> <span class="n">maxlength</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="n">bruteforce</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">digits</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+</span><span class='line'>    <span class="nb">hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span><span class="n">attempt</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">hash_scramble</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">15</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">16</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">17</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">19</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">+</span> <span class="nb">hash</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>
+</span><span class='line'>    <span class="n">new_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">(</span><span class="n">hash_scramble</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">new_hash</span> <span class="o">==</span> <span class="s">&quot;372942df2712824505d8171f4f0bcb14153d39ba&quot;</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">print</span> <span class="s">&quot;Found passphrase: &quot;</span> <span class="o">+</span> <span class="n">attempt</span>
+</span><span class='line'>        <span class="k">break</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">stacks0n</span><span class="nd">@ubuntu</span><span class="p">:</span><span class="o">~/</span><span class="n">Desktop</span><span class="err">$</span> <span class="n">python</span> <span class="n">fluxarchiv</span><span class="o">.</span><span class="n">py</span>
+</span><span class='line'><span class="n">Found</span> <span class="n">passphrase</span><span class="p">:</span> <span class="n">PWF41L</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">stacks0n</span><span class="nd">@ubuntu</span><span class="p">:</span><span class="o">~/</span><span class="n">Desktop</span><span class="err">$</span> <span class="o">./</span><span class="n">archiv</span> <span class="o">-</span><span class="n">l</span> <span class="n">FluxArchiv</span><span class="o">.</span><span class="n">arc</span> <span class="n">PWF41L</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">################################################################################</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">FluxArchiv</span> <span class="o">-</span> <span class="n">solved</span> <span class="n">security</span> <span class="n">since</span> <span class="mi">2007</span><span class="err">!</span>
+</span><span class='line'><span class="n">Written</span> <span class="n">by</span> <span class="n">sqall</span> <span class="o">-</span> <span class="n">leading</span> <span class="n">expert</span> <span class="ow">in</span> <span class="n">social</span><span class="o">-</span><span class="n">kernel</span><span class="o">-</span><span class="n">web</span><span class="o">-</span><span class="n">reverse</span><span class="o">-</span><span class="n">engineering</span><span class="o">.</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">################################################################################</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Filename</span><span class="p">:</span>                                               <span class="n">Size</span> <span class="ow">in</span> <span class="n">archiv</span><span class="p">:</span>
+</span><span class='line'><span class="o">--------------------------------------------------------------------------------</span>
+</span><span class='line'><span class="n">attentionzombie</span><span class="o">.</span><span class="n">mp3</span>                                                     <span class="mi">22</span> <span class="n">kB</span>
+</span><span class='line'><span class="n">Did_You_Know</span><span class="o">.</span><span class="n">jpg</span>                                                        <span class="mi">139</span> <span class="n">kB</span>
+</span><span class='line'><span class="n">fluxfingers</span><span class="o">.</span><span class="n">png</span>                                                 <span class="mi">9</span> <span class="n">kB</span>
+</span><span class='line'><span class="n">th_oh</span><span class="o">-</span><span class="n">noes</span><span class="o">-</span><span class="n">everybody</span><span class="o">-</span><span class="n">panic</span><span class="o">.</span><span class="n">gif</span>                                                  <span class="mi">131</span> <span class="n">kB</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">stacks0n</span><span class="nd">@ubuntu</span><span class="p">:</span><span class="o">~/</span><span class="n">Desktop</span><span class="err">$</span> <span class="n">ls</span> <span class="o">-</span><span class="n">alh</span> <span class="n">attentionzombie</span><span class="o">.</span><span class="n">mp3</span> <span class="n">Did_You_Know</span><span class="o">.</span><span class="n">jpg</span> <span class="n">fluxfingers</span><span class="o">.</span><span class="n">png</span> <span class="n">th_oh</span><span class="o">-</span><span class="n">noes</span><span class="o">-</span><span class="n">everybody</span><span class="o">-</span><span class="n">panic</span><span class="o">.</span><span class="n">gif</span>
+</span><span class='line'><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">stacks0n</span> <span class="n">stacks0n</span>  <span class="mi">23</span><span class="n">K</span> <span class="n">Oct</span> <span class="mi">23</span> <span class="mo">04</span><span class="p">:</span><span class="mi">30</span> <span class="n">attentionzombie</span><span class="o">.</span><span class="n">mp3</span>
+</span><span class='line'><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">stacks0n</span> <span class="n">stacks0n</span> <span class="mi">135</span><span class="n">K</span> <span class="n">Oct</span> <span class="mi">23</span> <span class="mo">04</span><span class="p">:</span><span class="mi">30</span> <span class="n">Did_You_Know</span><span class="o">.</span><span class="n">jpg</span>
+</span><span class='line'><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">stacks0n</span> <span class="n">stacks0n</span> <span class="mf">9.0</span><span class="n">K</span> <span class="n">Oct</span> <span class="mi">23</span> <span class="mo">04</span><span class="p">:</span><span class="mi">31</span> <span class="n">fluxfingers</span><span class="o">.</span><span class="n">png</span>
+</span><span class='line'><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">rw</span><span class="o">-</span><span class="n">r</span><span class="o">--</span> <span class="mi">1</span> <span class="n">stacks0n</span> <span class="n">stacks0n</span> <span class="mi">127</span><span class="n">K</span> <span class="n">Oct</span> <span class="mi">23</span> <span class="mo">04</span><span class="p">:</span><span class="mi">31</span> <span class="n">th_oh</span><span class="o">-</span><span class="n">noes</span><span class="o">-</span><span class="n">everybody</span><span class="o">-</span><span class="n">panic</span><span class="o">.</span><span class="n">gif</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>Nothing stands out as to what the flag might be. Okay, I&#8217;m dumb it is the password :)</p>
+
+<h2>Solution</h2>
+
+<p>PWF41L</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Captchaflag</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-27T15:42:00-04:00" pubdate data-updated="true">Oct 27<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/brute/'>brute</a>, <a class='category' href='/blog/categories/reversing-/'>reversing,</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-1/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-1/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/10/27/hack-dot-lu-2013-packed/" title="Previous Post: Hack.lu 2013 - Packed">&laquo; Hack.lu 2013 - Packed</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-2/" title="Next Post: Hack.lu 2013 - Flux Archive Part 2">Hack.lu 2013 - Flux Archive Part 2 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-1/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-flux-archive-part-1/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

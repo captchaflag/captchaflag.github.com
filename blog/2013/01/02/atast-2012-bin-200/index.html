@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>ATAST 2012 - Bin 200 - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge hello again,we have a new binary for you, its also password protected and have some kind of protection mechanisms,see if you can get us the &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2013/01/02/atast-2012-bin-200/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">ATAST 2012 - Bin 200</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T21:51:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>hello again,we have a new binary for you, its also password protected and have some kind of protection mechanisms,see if you can get us the pass. here is the <a href="http://ctf.atast-competition.com/ctf/downloads/bin200.zip">binary</a></p>
+
+<h2>Analysis</h2>
+
+<p>There is a check to determine whether a debugger is attached. To work around that, we need to break at the beginning of main() and manually set $eip to the block for the success case.
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>.text:080485ED loc<em>80485ED:                            ; CODE XREF: main+Dj
+</span><span class='line'>.text:080485ED                 mov     dword ptr [esp+0Ch], 0
+</span><span class='line'>.text:080485F5                 mov     dword ptr [esp+8], 0
+</span><span class='line'>.text:080485FD                 mov     dword ptr [esp+4], 0
+</span><span class='line'>.text:08048605                 mov     dword ptr [esp], 0 ; request
+</span><span class='line'>.text:0804860C                 call    _ptrace
+</span><span class='line'>.text:08048611                 test    eax, eax
+</span><span class='line'>.text:08048613                 jns     short loc</em>8048628
+</span><span class='line'>.text:08048615                 mov     dword ptr [esp], offset s ; &quot;Debugger detected!&quot;
+</span><span class='line'>.text:0804861C                 call    <em>puts
+</span><span class='line'>.text:08048621                 mov     eax, 0
+</span><span class='line'>.text:08048626                 jmp     short locret</em>804865B
+</span><span class='line'>.text:08048628 ; ---------------------------------------------------------------------------
+</span><span class='line'>.text:08048628
+</span><span class='line'>.text:08048628 loc<em>8048628:                            ; CODE XREF: main+52j
+</span><span class='line'>.text:08048628                 mov     eax, [ebp+arg</em>4]
+</span><span class='line'>.text:0804862B                 add     eax, 4
+</span><span class='line'>.text:0804862E                 mov     eax, [eax]
+</span><span class='line'>.text:08048630                 mov     [esp], eax
+</span><span class='line'>.text:08048633                 call    pwd</span></code></pre></td></tr></table></div></figure></p>
+
+<p>The code then runs the pwd() function, which first checks that the password is of length 7. Then GeneratePassword() is called to create a password.
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(gdb) b main
+</span><span class='line'>Breakpoint 1 at 0x80485c4
+</span><span class='line'>(gdb) b * 0x0804859c
+</span><span class='line'>Breakpoint 2 at 0x0804859c
+</span><span class='line'>(gdb) run 1234567
+</span><span class='line'>0x080485c4 in main ()
+</span><span class='line'>(gdb) set $eip=0x08048628
+</span><span class='line'>(gdb) continue
+</span><span class='line'>0x0804859c in pwd ()
+</span><span class='line'>(gdb) x /8bx $esp
+</span><span class='line'>0xbffff238:     0xce    0xf4    0xff    0xbf    0x5c    0xf2    0xff    0xbf
+</span><span class='line'>(gdb) x /s 0xbffff4ce
+</span><span class='line'>0xbffff4ce:     &quot;1234567&quot;
+</span><span class='line'>(gdb) x /s 0xbffff25c
+</span><span class='line'>0xbffff25c:     &quot;fspiyrw&quot;</span></code></pre></td></tr></table></div></figure></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>stacks0n@ubuntu:~/Desktop$ ./bin200 fspiyrw
+</span><span class='line'>nice work go ahead validate what you've found</span></code></pre></td></tr></table></div></figure>
+
+<h2>Solution</h2>
+
+<p>fspiyrw</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">stacks0n</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T21:51:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/bin/'>bin</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2013/01/02/atast-2012-bin-200/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2013/01/02/atast-2012-bin-200/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/02/atast-2012-bin-100/" title="Previous Post: ATAST 2012 - Bin 100">&laquo; ATAST 2012 - Bin 100</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/01/02/atast-2012-challenge-10/" title="Next Post: ATAST 2012 - Challenge 10">ATAST 2012 - Challenge 10 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2013/01/02/atast-2012-bin-200/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2013/01/02/atast-2012-bin-200/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

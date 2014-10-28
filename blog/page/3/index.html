@@ -1,0 +1,832 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge hello again.recentely we intercepted a transmission between Our Rival company and one of their agents.
+the transmission contained two sets &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/page/3/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/02/atast-2012-challenge-10/">ATAST 2012 - Challenge 10</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T21:57:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+        
+         | <a href="/blog/2013/01/02/atast-2012-challenge-10/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Challenge</h2>
+
+<p>hello again.recentely we intercepted a transmission between Our Rival company  and one of their agents.
+the transmission contained two sets of data.</p>
+
+<p>first set was 77.46.113.96.109.110.96.90.62.109.116.107.111.90.65.80.105.94.79.100.106.105.103</p>
+
+<p>and the second set was 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ZnVuY3Rpb24gZG9fc29tZXRoaW5nKCRzb21ldGhpbmdfdG9fd29ya19vbikNCnsNCiANCiAgICAkaWwgPSBzdHJsZW4oJHNvbWV0aGluZ190b193b3JrX29uKTsNCiAgICAkcmsgPSByYW5kKDEsIDkpOyANCiANCiAgICAkaSA9IDA7DQogICAgd2hpbGUgKCRpIDwgJGlsKQ0KICAgIHsNCiANCiAgICAgICAgJGljWyRpXSA9IChvcmQoJHNvbWV0aGluZ190b193b3JrX29uWyRpXSkgLSAkcmspOw0KIA0KICAgICAgICAkaSsrOyANCiAgICB9DQoNCiAgICAkam9iZG9uZSA9IGltcGxvZGUoJy4nLCAkaWMpIC4gJy4nIC4gKG9yZCgkcmspKzUwKTsNCiAgICByZXR1cm4gJGpvYmRvbmU7DQp9</span></code></pre></td></tr></table></div></figure></p>
+
+<p>see what you can do ;)</p>
+
+<h2>Analysis</h2>
+
+<p>The second set is Base64 data of what looks like PHP code:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">function do<em>something($something</em>to<em>work</em>on)</span>
+</span><span class='line'><span class="x">{</span>
+</span><span class='line'><span class="x"> </span>
+</span><span class='line'><span class="x">    $il = strlen($something<em>to</em>work<em>on);</span>
+</span><span class='line'><span class="x">    $rk = rand(1, 9); </span>
+</span><span class='line'><span class="x"> </span>
+</span><span class='line'><span class="x">    $i = 0;</span>
+</span><span class='line'><span class="x">    while ($i &lt; $il)</span>
+</span><span class='line'><span class="x">    {</span>
+</span><span class='line'><span class="x"> </span>
+</span><span class='line'><span class="x">        $ic[$i] = (ord($something</em>to<em>work</em>on[$i]) - $rk);</span>
+</span><span class='line'><span class="x"> </span>
+</span><span class='line'><span class="x">        $i++; </span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">    $jobdone = implode(&#39;.&#39;, $ic) . &#39;.&#39; . (ord($rk)+50);</span>
+</span><span class='line'><span class="x">    return $jobdone;</span>
+</span><span class='line'><span class="x">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>So, I wrote the following code to crack their message. Note, need to run it for all values of $rk:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">do<em>something</span><span class="p">(</span><span class="nv">$something</em>to<em>work</em>on</span><span class="p">,</span> <span class="nv">$cipher</span><span class="p">,</span> <span class="nv">$rk</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nv">$key</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>    <span class="nv">$il</span> <span class="o">=</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$something<em>to</em>work<em>on</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$il</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$ic</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="nv">$something</em>to<em>work</em>on</span><span class="p">[</span><span class="nv">$i</span><span class="p">])</span> <span class="o">-</span> <span class="nv">$rk</span><span class="p">);</span>
+</span><span class='line'>        <span class="nv">$key</span><span class="p">[</span><span class="nv">$ic</span><span class="p">[</span><span class="nv">$i</span><span class="p">]]</span> <span class="o">=</span> <span class="nv">$something<em>to</em>work<em>on</span><span class="p">[</span><span class="nv">$i</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">&lt;</span> <span class="nb">sizeof</span><span class="p">(</span><span class="nv">$cipher</span><span class="p">))</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">print</span> <span class="nv">$key</span><span class="p">[</span><span class="nv">$cipher</span><span class="p">[</span><span class="nv">$i</span><span class="p">]];</span>
+</span><span class='line'>        <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="k">while</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nx">do</em>something</span><span class="p">(</span><span class="s2">&quot;!@#$%^&amp;*()_-0123456789+=[]{};:&#39;</span><span class="se">&amp;quot;</span><span class="s2">,.&lt;&gt;/?`~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="k">array</span><span class="p">(</span><span class="mi">77</span><span class="p">,</span><span class="mi">46</span><span class="p">,</span><span class="mi">113</span><span class="p">,</span><span class="mi">96</span><span class="p">,</span><span class="mi">109</span><span class="p">,</span><span class="mi">110</span><span class="p">,</span><span class="mi">96</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">62</span><span class="p">,</span><span class="mi">109</span><span class="p">,</span><span class="mi">116</span><span class="p">,</span><span class="mi">107</span><span class="p">,</span><span class="mi">111</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">65</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">105</span><span class="p">,</span><span class="mi">94</span><span class="p">,</span><span class="mi">79</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">106</span><span class="p">,</span><span class="mi">105</span><span class="p">,</span><span class="mi">103</span><span class="p">),</span> <span class="nv">$i</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">stacks0n@stacks0ns-MacBook-Pro:~/&gt; php chall10.php</span>
+</span><span class='line'><span class="x">N/ranoa[?nulp[BQj_Pekjh</span>
+</span><span class='line'><span class="x">O0sbopb@ovmqCRk`Qflki</span>
+</span><span class='line'><span class="x">P1tcpqc]Apwnr]DSlaRgmlj</span>
+</span><span class='line'><span class="x">Q2udqrd^Bqxos^ETmbShnmk</span>
+</span><span class='line'><span class="x">R3verse_Crypt_FUncTionl</span>
+</span><span class='line'><span class="x">S4wfstf`Dszqu`GVodUjpom</span>
+</span><span class='line'><span class="x">T5xgtugaEt{rvaHWpeVkqpn</span>
+</span><span class='line'><span class="x">U6yhuvhbFuswbIXqfWlrqo</span>
+</span><span class='line'><span class="x">V7zivwicGv}txcJYrgXmsrp</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<h2>Solution</h2>
+
+<p>R3verse<em>Crypt</em>FUncTion</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/02/atast-2012-bin-200/">ATAST 2012 - Bin 200</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T21:51:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+        
+         | <a href="/blog/2013/01/02/atast-2012-bin-200/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Challenge</h2>
+
+<p>hello again,we have a new binary for you, its also password protected and have some kind of protection mechanisms,see if you can get us the pass. here is the <a href="http://ctf.atast-competition.com/ctf/downloads/bin200.zip">binary</a></p>
+
+<h2>Analysis</h2>
+
+<p>There is a check to determine whether a debugger is attached. To work around that, we need to break at the beginning of main() and manually set $eip to the block for the success case.
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>.text:080485ED loc<em>80485ED:                            ; CODE XREF: main+Dj
+</span><span class='line'>.text:080485ED                 mov     dword ptr [esp+0Ch], 0
+</span><span class='line'>.text:080485F5                 mov     dword ptr [esp+8], 0
+</span><span class='line'>.text:080485FD                 mov     dword ptr [esp+4], 0
+</span><span class='line'>.text:08048605                 mov     dword ptr [esp], 0 ; request
+</span><span class='line'>.text:0804860C                 call    _ptrace
+</span><span class='line'>.text:08048611                 test    eax, eax
+</span><span class='line'>.text:08048613                 jns     short loc</em>8048628
+</span><span class='line'>.text:08048615                 mov     dword ptr [esp], offset s ; &quot;Debugger detected!&quot;
+</span><span class='line'>.text:0804861C                 call    <em>puts
+</span><span class='line'>.text:08048621                 mov     eax, 0
+</span><span class='line'>.text:08048626                 jmp     short locret</em>804865B
+</span><span class='line'>.text:08048628 ; ---------------------------------------------------------------------------
+</span><span class='line'>.text:08048628
+</span><span class='line'>.text:08048628 loc<em>8048628:                            ; CODE XREF: main+52j
+</span><span class='line'>.text:08048628                 mov     eax, [ebp+arg</em>4]
+</span><span class='line'>.text:0804862B                 add     eax, 4
+</span><span class='line'>.text:0804862E                 mov     eax, [eax]
+</span><span class='line'>.text:08048630                 mov     [esp], eax
+</span><span class='line'>.text:08048633                 call    pwd</span></code></pre></td></tr></table></div></figure></p>
+
+<p>The code then runs the pwd() function, which first checks that the password is of length 7. Then GeneratePassword() is called to create a password.
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(gdb) b main
+</span><span class='line'>Breakpoint 1 at 0x80485c4
+</span><span class='line'>(gdb) b * 0x0804859c
+</span><span class='line'>Breakpoint 2 at 0x0804859c
+</span><span class='line'>(gdb) run 1234567
+</span><span class='line'>0x080485c4 in main ()
+</span><span class='line'>(gdb) set $eip=0x08048628
+</span><span class='line'>(gdb) continue
+</span><span class='line'>0x0804859c in pwd ()
+</span><span class='line'>(gdb) x /8bx $esp
+</span><span class='line'>0xbffff238:     0xce    0xf4    0xff    0xbf    0x5c    0xf2    0xff    0xbf
+</span><span class='line'>(gdb) x /s 0xbffff4ce
+</span><span class='line'>0xbffff4ce:     &quot;1234567&quot;
+</span><span class='line'>(gdb) x /s 0xbffff25c
+</span><span class='line'>0xbffff25c:     &quot;fspiyrw&quot;</span></code></pre></td></tr></table></div></figure></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>stacks0n@ubuntu:~/Desktop$ ./bin200 fspiyrw
+</span><span class='line'>nice work go ahead validate what you've found</span></code></pre></td></tr></table></div></figure>
+
+<h2>Solution</h2>
+
+<p>fspiyrw</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/02/atast-2012-bin-100/">ATAST 2012 - Bin 100</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T21:46:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+        
+         | <a href="/blog/2013/01/02/atast-2012-bin-100/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Challenge</h2>
+
+<p>we recovered a binary from one of X company machines. its password protected :( , see if you can get us the pass. here is the <a href="http://www.atast-ctf.net/ctf/downloads/bin100.zip">binary</a></p>
+
+<h2>Analysis</h2>
+
+<p>Binary simply asks for a password. HexRays decompilation:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>##  unsigned int v4; // [sp+4Eh] [bp-22h]@1
+</span><span class='line'>##  unsigned int v5; // [sp+52h] [bp-1Eh]@1
+</span><span class='line'>##  unsigned int v6; // [sp+56h] [bp-1Ah]@1
+</span><span class='line'>##  signed <strong>int16 v7; // [sp+5Ah] [bp-16h]@1
+</span><span class='line'>##  int v8; // [sp+5Ch] [bp-14h]@1
+</span><span class='line'>##
+</span><span class='line'>##  v8 = *MK_FP(</strong>GS_<em>, 20);
+</span><span class='line'>##  v4 = 0x5375116Fu;
+</span><span class='line'>##  v5 = 0x4D6D1512u;
+</span><span class='line'>##  v6 = 0x73156978u;
+</span><span class='line'>##  v7 = 0x45u;
+</span><span class='line'>##  fwrite(&quot;Password Required : &quot;, 1u, 0x14u, stdout);
+</span><span class='line'>##  fflush(stdout);
+</span><span class='line'>##  fgets((char *)&amp;v2, 20, stdin);
+</span><span class='line'>##  for ( i = 0; i &lt; strlen((const char *)&amp;v2); ++i )
+</span><span class='line'>##  {
+</span><span class='line'>##    *((</em>BYTE *)&amp;v3 + i) = *((<em>BYTE *)&amp;v4 + i) ^ 0x21;
+</span><span class='line'>##    if ( strncmp((const char *)&amp;v2, (const char *)&amp;v3, i) )
+</span><span class='line'>##    {
+</span><span class='line'>##      puts(&quot;Wrong !!!! better luck next time :D &quot;);
+</span><span class='line'>##      result = 0;
+</span><span class='line'>##      goto LABEL</em>9;
+</span><span class='line'>##    }
+</span><span class='line'>##  }
+</span><span class='line'>##  </span></code></pre></td></tr></table></div></figure></p>
+
+<p>And the following code will get us the password:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/bin/env ruby</span>
+</span><span class='line'><span class="s2">&quot;6f 11 75 53 12 15 6d 4d 78 69 15 73 45&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">char</span><span class="o">|</span>
+</span><span class='line'>  <span class="nb">print</span> <span class="p">(</span><span class="n">char</span><span class="o">.</span><span class="n">to_i</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="o">^</span> <span class="mh">0x21</span><span class="p">)</span><span class="o">.</span><span class="n">chr</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="no">N0Tr34LlYH4Rd</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h2>Solution</h2>
+
+<p>N0Tr34LlYH4Rd</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/02/atast-2012-net-100/">ATAST 2012 - Net 100</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T21:41:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+        
+         | <a href="/blog/2013/01/02/atast-2012-net-100/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Analysis</h2>
+
+<p>Filtered trafficdown to HTTP POST requests and saw this:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>POST /js/php/email.php HTTP/1.1
+</span><span class='line'>from=agentx@x.com&amp;subject=secret&amp;msg=aXRzbm90cmVhbGx5YXNlY3JldA==</span></code></pre></td></tr></table></div></figure>
+Decodes to &#8216;itsnotreallyasecret&#8217; but that is not the flag. Looking at all the web requests I notice requests to
+atast-ctf.net and see a download of a PDF file. The PDF is password protected, but luckily we know the password.
+Once we unlock the PDF, we get our flag.</p>
+
+<h2>Solution</h2>
+
+<p>cd757750ed89d2fd85e5b93cb52fd049</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/02/stego-300/">Hack You Too - Stego 300</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T18:53:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+        
+         | <a href="/blog/2013/01/02/stego-300/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Challenge</h2>
+
+<p>What can be hidden here?</p>
+
+<p>File: <a href="http://hackyou.ctf.su/files/stego_300.jpg">stego_300.jpg</a></p>
+
+<h2>Analysis</h2>
+
+<p>Let&#8217;s see about any hidden or appended data:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@bt:~/Desktop# stegdetect stego<em>300.jpg 
+</span><span class='line'>stego</em>300.jpg : skipped (false positive likely) appended(1827)&lt;[nonrandom][data][Rar!.....s......]&gt; </span></code></pre></td></tr></table></div></figure></p>
+
+<p>Okay, looks like a RAR file might be appended to the end of the image.
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>stacks0n@stacks0n-MacBook-Pro:~/Desktop&gt; binwalk stego<em>300.jpg<br>
+</span><span class='line'>
+</span><span class='line'>DECIMAL         HEX             DESCRIPTION
+</span><span class='line'>-------------------------------------------------------------------------------------------------------
+</span><span class='line'>112861          0x1B8DD         RAR archive data [NSRL|RAR]
+</span><span class='line'>443990          0x6C656         7-zip archive data, version 0.3
+</span><span class='line'>
+</span><span class='line'>stacks0n@stacks0n-MacBook-Pro:~/Desktop&gt; dd if=stego</em>300.jpg bs=1 skip=112861 of=stego300.rar</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Sure enough. When extracting stego300.rar we see two files:
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@bt:~/Desktop# unrar l stego300.rar 
+</span><span class='line'>
+</span><span class='line'>UNRAR 3.90 beta 2 freeware      Copyright (c) 1993-2009 Alexander Roshal
+</span><span class='line'>
+</span><span class='line'>Archive stego300.rar
+</span><span class='line'>
+</span><span class='line'> Name             Size   Packed Ratio  Date   Time     Attr      CRC   Meth Ver
+</span><span class='line'>-------------------------------------------------------------------------------
+</span><span class='line'> DO<em>NOT</em>LOOKING<em>HERE.mp3   331005   331005 100% 04-12-12 21:21  ...H.A.   CDBAD2DD m0d 2.0
+</span><span class='line'> Flag.7z           198      198 100% 04-12-12 22:18  .....A.   EC3A9712 m0b 2.9
+</span><span class='line'>-------------------------------------------------------------------------------
+</span><span class='line'>    2           331203   331203 100%</span></code></pre></td></tr></table></div></figure>
+* DO</em>NOT<em>LOOKING</em>HERE.mp3 is a clip from Suzanne Vega&#8217;s &quot;Tom&#8217;s Diner&quot;
+* Flag.7z is password protected</p>
+
+<p>Next step is to look into mp3 steganography, which likely contains the passphrase to extract the flag. Looking around I find <a href="http://www.petitcolas.net/fabien/steganography/mp3stego/">MP3Stego</a> tools which should help. When running, it requires a passphrase so let&#8217;s try the text on the original image &#8216;MUSTNOTHACK&#8217;</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>C:\Users\stacks0n\Desktop&gt; Decode.exe -P MUSTNOTHACK -X DO_NOT_LOOKING_HERE.mp3
+</span><span class='line'>MP3StegoEncoder 1.1.17
+</span><span class='line'>See README file for copyright info
+</span><span class='line'>Input file = 'DO_NOT_LOOKING_HERE.mp3'  output file = 'DO_NOT_LOOKING_HERE.mp3.pcm'
+</span><span class='line'>Will attempt to extract hidden information. Output: DO_NOT_LOOKING_HERE.mp3.txt
+</span><span class='line'>the bit stream file DO_NOT_LOOKING_HERE.mp3 is a BINARY file
+</span><span class='line'>HDR: s=FFF, id=1, l=3, ep=off, br=9, sf=0, pd=1, pr=0, m=3, js=0, c=0, o=0, e=0
+</span><span class='line'>alg.=MPEG-1, layer=III, tot bitrate=128, sfrq=44.1
+</span><span class='line'>mode=single-ch, sblim=32, jsbd=32, ch=1
+</span><span class='line'>[Frame  791]Avg slots/frame = 417.434; b/smp = 2.90; br = 127.839 kbps
+</span><span class='line'>Decoding of "DO_NOT_LOOKING_HERE.mp3" is finished
+</span><span class='line'>The decoded PCM output file name is "DO_NOT_LOOKING_HERE.mp3.pcm"
+</span><span class='line'>
+</span><span class='line'>C:\Users\stacks0n\Desktop&gt; type DO_NOT_LOOKING_HERE.mp3.txt
+</span><span class='line'>INEVERASKEDABOUTTHIS!</span></code></pre></td></tr></table></div></figure>
+
+<p>This gives us the passphrase needed to open up Flag.7z.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>root@bt:~/Desktop# 7z x Flag.7z 
+</span><span class='line'>
+</span><span class='line'>7-Zip 9.04 beta  Copyright (c) 1999-2009 Igor Pavlov  2009-05-30
+</span><span class='line'>p7zip Version 9.04 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,1 CPU)
+</span><span class='line'>
+</span><span class='line'>Processing archive: Flag.7z
+</span><span class='line'>
+</span><span class='line'>Enter password (will not be echoed) :
+</span><span class='line'>
+</span><span class='line'>Extracting  K3y
+</span><span class='line'>
+</span><span class='line'>Everything is Ok
+</span><span class='line'>
+</span><span class='line'>Size:       13
+</span><span class='line'>Compressed: 198
+</span><span class='line'> 
+</span><span class='line'>root@bt:~/Desktop# cat K3y 
+</span><span class='line'>VERYEASYSTEGO</span></code></pre></td></tr></table></div></figure>
+
+<h2>Solution</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>VERYEASYSTEGO</span></code></pre></td></tr></table></div></figure>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/2/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton&#8217;s Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

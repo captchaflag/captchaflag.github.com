@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: files, | CaptchaFlag CTF Team]]></title>
+  <link href="http://www.captchaflag.com/blog/categories/files-/atom.xml" rel="self"/>
+  <link href="http://www.captchaflag.com/"/>
+  <updated>2014-10-28T16:35:43-04:00</updated>
+  <id>http://www.captchaflag.com/</id>
+  <author>
+    <name><![CDATA[Captchaflag]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Hack.lu 2013 - Packed]]></title>
+    <link href="http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-packed/"/>
+    <updated>2013-10-27T15:39:00-04:00</updated>
+    <id>http://www.captchaflag.com/blog/2013/10/27/hack-dot-lu-2013-packed</id>
+    <content type="html"><![CDATA[<h2>Challenge</h2>
+
+<p>We just found a dead robot. It seems there is some useful data left but somehow it got confused with other data and now we don't know what's useful and what's junk. We just know there is only one way to go but there are many dead ends.</p>
+
+<p>Here is the challenge: http://ctf.fluxfingers.net/static/downloads/packed/packed</p>
+
+<h2>Hint</h2>
+
+<p>Think outside the box - being several types at once like an animal that can change its color. Excuse the inaccuracy, but that's what you're searching for.</p>
+
+<h2>Analysis</h2>
+
+<p>We are provided with a file that appears to contain a bunch of different data and files packaged together. After a bit of basic analysis, we see the following:</p>
+
+<ul>
+<li>a string alluding to rot13 encryption</li>
+<li>strange looking text with a few instances of (&quot;zip&quot;)</li>
+<li>PDF (&quot;no hint here&quot;)</li>
+<li>Base64 encoded blob which happens to be an open office document (&quot;no hint here&quot;)
+
+<ul>
+<li>embedded PNG (&quot;no hint here&quot;) within the .odt </li>
+</ul></li>
+</ul>
+
+<p>If we rot13 the strange looking plaintext we find the following python script:</p>
+
+<p>```python
+cipher = &quot;H51\\'Ux2J&amp;+(3Z;Uxcx0Xxs\x13h\x014$V!R($R&gt;\t/)R!\x01&lt;.\x13,N-aP4M4aRuG1-VuU0 GuH+a@0W=3R9\x01&gt;(<em>0\x01,8C0Rx GuN6\&quot;V|\x1ez
+KZ3\x014$]}R!2\x1d4S?7\x1au\x1fxs\t</em>\x01xa\x13<Gx)R&Ip2J&\x0f93T#zj\x1c\x1ap\x13rk\x00g\x01e|\x13g\x19ju\x0ba\x18jt\x02o+xa\x13u\x01
+xa\x13%S1/Gu\x03\x1b.\\:N7.\\:N4o\x13\x0cN-3\x133M9&\x13<Rx A2WjiZ{DvaX0Xjh\x136N6\"R!\x01\x07rC0p\x138a\x1dc22ieu\x161Fw+=-@0\x1bRa
+\x13u\x01(3Z;UxcR\'F.s\x1c>D!s\x13&lt;Rx,Z&amp;R1/Tw+R&quot;</p>
+
+<p>n = 0 ;
+import hashlib, sys;</p>
+
+<p>try:
+    key = sys.argv[1]</p>
+
+<p>except IndexError :
+    sys.exit(&quot;x\x9c\xf3N\xadT0T\xc8\xcd,.\xce\xccKW\xc8\xccSH,J/\x03\x00M\x97\x07\&quot;.decode(&quot;zip&quot;))</p>
+
+<p>f = getattr(hashlib,&quot;x\x9c\xcbM1\x05\x00\x02G\x01\x07&quot;.decode(&quot;zip&quot;))</p>
+
+<p>while n &lt; (5 *10 **6 ):
+    key = (f(key).digest());
+    n = n + 1
+    key = key[:5].upper()</p>
+
+<p>while len(key) &lt; len(cipher):
+    key = key * 2
+    plain =&quot;&quot;.join (map (chr ,[ord (a )^ord (b )for a ,b in zip (cipher ,key )]))
+try:
+    exec plain
+except:
+    print &quot;x\x9c\x0b/\xca\xcfKW\xf0N\xadT\x04\x00\x14d\x03x&quot;.decode(&quot;zip&quot;), repr(plain)
+```</p>
+
+<p>There is another block of 256-bytes that we aren't entirely sure what to do with, but analyzing the code further its simply using a 5-character key to XOR decrypt the ciphertext. More than likely the plaintext that is being sent to exec() is going to be python code, so let's break out xortool to see if we can find a key. Note, we specify the most common character should be space.</p>
+
+<p><code>bash
+% python xortool.py -l 5 -c ' ' ciphertext
+1 possible key(s) of length 5:
+!XA3U
+</code></p>
+
+<p>Then, we can simply patch the python code to force the decryption. Patch the last block of code to to look like the following:
+<code>python
+key = &quot;!XA3U&quot;
+while len(key) &lt; len(cipher):
+    key = key * 2
+    plain =&quot;&quot;.join (map (chr ,[ord (a )^ord (b )for a ,b in zip (cipher ,key )]))
+try:
+    print plain
+    exec plain
+</code></p>
+
+<p>Ah-hah, this now yields the following code:
+<code>python
+import sys
+print &quot;Key 2 = leetspeak(what do you call a file that is several file types at once)?&quot;
+if len(sys.argv) &gt; 2:
+    if hash(sys.argv[2])%2**32 == 2824849251:
+        print &quot;Coooooooool. Your flag is argv2(i.e. key2) concat _3peQKyRHBjsZ0TNpu&quot;
+else:
+    print &quot;argv2/key2 is missing&quot;
+</code></p>
+
+<p>Without the hint not sure we would have solved it, but they were hinting that key2 should be chameleon. So leetspeak() it and we get ch4m3l30n.</p>
+
+<h2>Solution</h2>
+
+<p><code>ch4m3l30n_3peQKyRHBjsZ0TNpu</code></p>
+]]></content>
+  </entry>
+  
+</feed>

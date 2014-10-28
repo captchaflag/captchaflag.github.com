@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>ATAST 2012 - Challenge 10 - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge hello again.recentely we intercepted a transmission between Our Rival company and one of their agents.
+the transmission contained two sets &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2013/01/02/atast-2012-challenge-10/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">ATAST 2012 - Challenge 10</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T21:57:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>hello again.recentely we intercepted a transmission between Our Rival company  and one of their agents.
+the transmission contained two sets of data.</p>
+
+<p>first set was 77.46.113.96.109.110.96.90.62.109.116.107.111.90.65.80.105.94.79.100.106.105.103</p>
+
+<p>and the second set was 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ZnVuY3Rpb24gZG9fc29tZXRoaW5nKCRzb21ldGhpbmdfdG9fd29ya19vbikNCnsNCiANCiAgICAkaWwgPSBzdHJsZW4oJHNvbWV0aGluZ190b193b3JrX29uKTsNCiAgICAkcmsgPSByYW5kKDEsIDkpOyANCiANCiAgICAkaSA9IDA7DQogICAgd2hpbGUgKCRpIDwgJGlsKQ0KICAgIHsNCiANCiAgICAgICAgJGljWyRpXSA9IChvcmQoJHNvbWV0aGluZ190b193b3JrX29uWyRpXSkgLSAkcmspOw0KIA0KICAgICAgICAkaSsrOyANCiAgICB9DQoNCiAgICAkam9iZG9uZSA9IGltcGxvZGUoJy4nLCAkaWMpIC4gJy4nIC4gKG9yZCgkcmspKzUwKTsNCiAgICByZXR1cm4gJGpvYmRvbmU7DQp9</span></code></pre></td></tr></table></div></figure></p>
+
+<p>see what you can do ;)</p>
+
+<h2>Analysis</h2>
+
+<p>The second set is Base64 data of what looks like PHP code:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">function do<em>something($something</em>to<em>work</em>on)</span>
+</span><span class='line'><span class="x">{</span>
+</span><span class='line'><span class="x"> </span>
+</span><span class='line'><span class="x">    $il = strlen($something<em>to</em>work<em>on);</span>
+</span><span class='line'><span class="x">    $rk = rand(1, 9); </span>
+</span><span class='line'><span class="x"> </span>
+</span><span class='line'><span class="x">    $i = 0;</span>
+</span><span class='line'><span class="x">    while ($i &lt; $il)</span>
+</span><span class='line'><span class="x">    {</span>
+</span><span class='line'><span class="x"> </span>
+</span><span class='line'><span class="x">        $ic[$i] = (ord($something</em>to<em>work</em>on[$i]) - $rk);</span>
+</span><span class='line'><span class="x"> </span>
+</span><span class='line'><span class="x">        $i++; </span>
+</span><span class='line'><span class="x">    }</span>
+</span><span class='line'>
+</span><span class='line'><span class="x">    $jobdone = implode(&#39;.&#39;, $ic) . &#39;.&#39; . (ord($rk)+50);</span>
+</span><span class='line'><span class="x">    return $jobdone;</span>
+</span><span class='line'><span class="x">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>So, I wrote the following code to crack their message. Note, need to run it for all values of $rk:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">do<em>something</span><span class="p">(</span><span class="nv">$something</em>to<em>work</em>on</span><span class="p">,</span> <span class="nv">$cipher</span><span class="p">,</span> <span class="nv">$rk</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nv">$key</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>    <span class="nv">$il</span> <span class="o">=</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$something<em>to</em>work<em>on</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$il</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$ic</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="nv">$something</em>to<em>work</em>on</span><span class="p">[</span><span class="nv">$i</span><span class="p">])</span> <span class="o">-</span> <span class="nv">$rk</span><span class="p">);</span>
+</span><span class='line'>        <span class="nv">$key</span><span class="p">[</span><span class="nv">$ic</span><span class="p">[</span><span class="nv">$i</span><span class="p">]]</span> <span class="o">=</span> <span class="nv">$something<em>to</em>work<em>on</span><span class="p">[</span><span class="nv">$i</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">&lt;</span> <span class="nb">sizeof</span><span class="p">(</span><span class="nv">$cipher</span><span class="p">))</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">print</span> <span class="nv">$key</span><span class="p">[</span><span class="nv">$cipher</span><span class="p">[</span><span class="nv">$i</span><span class="p">]];</span>
+</span><span class='line'>        <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="k">while</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nx">do</em>something</span><span class="p">(</span><span class="s2">&quot;!@#$%^&amp;*()_-0123456789+=[]{};:&#39;</span><span class="se">&amp;quot;</span><span class="s2">,.&lt;&gt;/?`~abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="k">array</span><span class="p">(</span><span class="mi">77</span><span class="p">,</span><span class="mi">46</span><span class="p">,</span><span class="mi">113</span><span class="p">,</span><span class="mi">96</span><span class="p">,</span><span class="mi">109</span><span class="p">,</span><span class="mi">110</span><span class="p">,</span><span class="mi">96</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">62</span><span class="p">,</span><span class="mi">109</span><span class="p">,</span><span class="mi">116</span><span class="p">,</span><span class="mi">107</span><span class="p">,</span><span class="mi">111</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">65</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">105</span><span class="p">,</span><span class="mi">94</span><span class="p">,</span><span class="mi">79</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">106</span><span class="p">,</span><span class="mi">105</span><span class="p">,</span><span class="mi">103</span><span class="p">),</span> <span class="nv">$i</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">stacks0n@stacks0ns-MacBook-Pro:~/&gt; php chall10.php</span>
+</span><span class='line'><span class="x">N/ranoa[?nulp[BQj_Pekjh</span>
+</span><span class='line'><span class="x">O0sbopb@ovmqCRk`Qflki</span>
+</span><span class='line'><span class="x">P1tcpqc]Apwnr]DSlaRgmlj</span>
+</span><span class='line'><span class="x">Q2udqrd^Bqxos^ETmbShnmk</span>
+</span><span class='line'><span class="x">R3verse_Crypt_FUncTionl</span>
+</span><span class='line'><span class="x">S4wfstf`Dszqu`GVodUjpom</span>
+</span><span class='line'><span class="x">T5xgtugaEt{rvaHWpeVkqpn</span>
+</span><span class='line'><span class="x">U6yhuvhbFuswbIXqfWlrqo</span>
+</span><span class='line'><span class="x">V7zivwicGv}txcJYrgXmsrp</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<h2>Solution</h2>
+
+<p>R3verse<em>Crypt</em>FUncTion</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">stacks0n</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-02T21:57:00-05:00" pubdate data-updated="true">Jan 2<span>nd</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/reversing/'>reversing</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2013/01/02/atast-2012-challenge-10/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2013/01/02/atast-2012-challenge-10/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/02/atast-2012-bin-200/" title="Previous Post: ATAST 2012 - Bin 200">&laquo; ATAST 2012 - Bin 200</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/01/02/atast-2012-challenge-11/" title="Next Post: ATAST 2012 - Challenge 11">ATAST 2012 - Challenge 11 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2013/01/02/atast-2012-challenge-10/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2013/01/02/atast-2012-challenge-10/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

