@@ -1,28 +1,42 @@
 ---
 layout: post
-title: "Dalton's Corporate Security Safe for Business"
-date: 2014-10-24 09:54
+title: "Hack.lu 2014 - Dalton's Corporate Security Safe for Business"
+date: 2014-10-24 23:54
 comments: true
 categories: [web, hacklu, hackluctf, burp]
 author: hammertime
 ---
 
 ## Challenge
-The Dalton Brothers are tricking people into buying their ¡°safe¡± locks. So they can rob them afterwards. The lock has some safety features, as it resets itself after a few seconds. It also requires a lot of valid inputs before it's letting you open it. Please find out what their weakness is and report back. 
+The Dalton Brothers are tricking people into buying their "safe" locks. So they
+can rob them afterwards. The lock has some safety features, as it resets itself
+after a few seconds. It also requires a lot of valid inputs before it's letting
+you open it. Please find out what their weakness is and report back. 
 
 [link](https://wildwildweb.fluxfingers.net:1422/)
 
 ## Analysis
-The captcha image is being painted in a canvas clientside by JavaScript. This is done in 8 ways. 3 examples are:
+The captcha image is being painted in a canvas clientside by JavaScript. This
+is done in 8 ways. 3 examples are:
 
 1) Base64 Decoding a value
 2) Using Javascript.fromCharCode()
 3) /n/.source
 
-These values are then inserted using [fillText()](http://www.w3schools.com/tags/canvas_filltext.asp). The fillText function looks like this (var,x,y), where x is left right relative to the HTML canvas and y is up down relative to the canvas.  So to put the numbers in order, you can grep out the fillText functions and sort by the x position to get them in the right order.
+These values are then inserted using
+[fillText()](http://www.w3schools.com/tags/canvas_filltext.asp). The fillText
+function looks like this (var,x,y), where x is left right relative to the HTML
+canvas and y is up down relative to the canvas.  So to put the numbers in
+order, you can grep out the fillText functions and sort by the x position to
+get them in the right order.
 
 ## Solution
-Since there is a lot of variance in how the variables are assigned and used to build the captcha (including some variable reuse), it seemed to make the most sense to store these values immediately after they are used, then populate and submit the form automatically. Because of this, I decided to modify the JavaScript inline using Burp. I used the following search/replace rules on the response body:
+Since there is a lot of variance in how the variables are assigned and used to
+build the captcha (including some variable reuse), it seemed to make the most
+sense to store these values immediately after they are used, then populate and
+submit the form automatically. Because of this, I decided to modify the
+JavaScript inline using Burp. I used the following search/replace rules on the
+response body:
 
 ```
 match: <script>
@@ -53,8 +67,12 @@ fef9565c97c3a62fe10d2a0084a9e8179d72f4a05084997cb80e900d1a77a42e3
 ## Alternative Solution
 
 This solution (written in Python) utilizes the following workflow:
- * Request the HTTP session, find the &lt;script&gt; and separate the Javascript into individual lines
- * Parse the Javascript (minding the X-coordinate of the textfill() function to reassemble the order.  There are a total of eight tricks they're using to obfuscate the characters, so there's are eight branches depending on which one we've encountered.
+ * Request the HTTP session, find the &lt;script&gt; and separate the
+   Javascript into individual lines
+ * Parse the Javascript (minding the X-coordinate of the textfill() function to
+   reassemble the order.  There are a total of eight tricks they're using to
+   obfuscate the characters, so there's are eight branches depending on which
+   one we've encountered.
  * Extract the characters and PHP session ID, then resubmit the page.
  * Loop repeatedly until the locks allow access to the flag
  * Access the flag when the URL is unlocked.
